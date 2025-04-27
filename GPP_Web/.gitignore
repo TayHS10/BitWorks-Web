@@ -1,0 +1,73 @@
+# .NET Core and ASP.NET Core build outputs
+bin/
+obj/
+
+# User-specific files for Visual Studio
+.vs/
+.vscode/
+
+# User-specific files and settings
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# User-specific and temporary files in Visual Studio for Mac
+.idea/
+
+# Ignore NuGet package folders
+packages/
+.nuget/
+
+# Ignore Visual Studio temporary files, build results, and user-specific files
+.vs2019/
+.vs2017/
+
+# Ignore logs
+*.log
+
+# Ignore development certificates for ASP.NET Core
+*.pfx
+*.cer
+
+# Ignore JetBrains Rider IDE files
+.idea/
+
+# Ignore npm package dependencies (for frontend code if applicable)
+node_modules/
+
+# Ignore temporary files created by the system
+Thumbs.db
+Desktop.ini
+
+# Ignore Mac system files
+.DS_Store
+
+# Ignore Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# Ignore Azure App Service publish settings (Azure-specific)
+.publish/
+
+# Ignore build results in appdata folder (Windows-specific)
+AppData/
+
+# Ignore Xamarian and mobile development files
+.idea/
+
+# Ignore Xamarin Studio files (older files for Xamarin Studio)
+.xamarin/
+
+# Ignore database files
+*.mdf
+*.ldf
+
+# Ignore coverage and test result reports (if using tools like NUnit, MSTest, etc.)
+coverage/
+TestResults/
+
+# Ignore temporary ASP.NET files
+TemporaryASP.NETFiles/
