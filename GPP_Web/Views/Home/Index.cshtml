@@ -1,8 +1,179 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model List<GPP_Web.DTOs.Project.ProjectResponseDTO>
+
+@{
+    ViewData["Title"] = "Inicio";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<style>
+    .section-container {
+        width: min(80vw, 1200px);
+        margin-bottom: 3rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .hero-section {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+        padding: 40px 0;
+        flex-wrap: wrap;
+    }
+
+    .hero-content {
+        flex: 1;
+        min-width: 300px;
+    }
+
+    .hero-image {
+        flex: 1;
+        min-width: 300px;
+        text-align: center;
+    }
+
+        .hero-image img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+
+    .section-title {
+        text-align: center;
+        margin-bottom: 2rem;
+        color: #343a40;
+    }
+
+    .card-section {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        justify-content: center;
+        padding: 20px 0;
+    }
+
+    .custom-card {
+        background-color: #ffffff;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 20px;
+        flex: 1;
+        min-width: 280px;
+        max-width: 350px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        text-align: center;
+        color: #333333;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .custom-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+        }
+
+        .custom-card h4 {
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+
+        .custom-card p {
+            color: #555555;
+        }
+
+    .icon-feature {
+        font-size: 3em;
+        color: #007bff;
+        margin-bottom: 15px;
+        display: block;
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .custom-card:hover .icon-feature {
+        transform: scale(1.1) rotateY(180deg);
+    }
+
+    .carousel > article h2,
+    .carousel > article p,
+    .carousel > article div {
+    }
+</style>
+
+<div class="section-container">
+    <div class="hero-section">
+        <div class="hero-content">
+            <h2>Bienvenido a Gestión de Proyectos Plus</h2>
+            <p class="lead">Optimiza la administración de tus proyectos con nuestra plataforma intuitiva y potente.</p>
+            <p>
+                En **Gestión de Proyectos Plus**, entendemos la complejidad de llevar tus iniciativas del concepto a la realidad. Nuestra solución integral te brinda las herramientas necesarias para supervisar el presupuesto, gestionar tareas y coordinar equipos de manera eficiente, asegurando que cada proyecto cumpla sus objetivos a tiempo y dentro del presupuesto.
+            </p>
+            <p>
+                Explora a continuación los proyectos activos y descubre cómo estamos impulsando el éxito.
+            </p>
+        </div>
+        <div class="hero-image">
+            <img src="https://images.pexels.com/photos/3183159/pexels-photo-3183159.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Equipo de trabajo colaborando">
+        </div>
+    </div>
+</div>
+
+<hr />
+
+<div class="section-container">
+    <h2 class="section-title">Nuestros Proyectos Activos</h2>
+
+    @if (ViewBag.ErrorMessage != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            @ViewBag.ErrorMessage
+        </div>
+    }
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="carousel" mask>
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                var project = Model[i];
+                <article>
+                    <div class="card">
+                        <div class="card-image">
+                        </div>
+                        <div class="category"> @project.ProjectCode </div>
+                        <div class="heading">
+                            @project.ProjectName
+                            <div class="author"> Encargado: <span class="name">@project.Manager?.FullName</span></div>
+                        </div>
+                    </div>
+                </article>
+            }
+        </div>
+    }
+    else
+    {
+        <p class="text-center">No hay proyectos activos para mostrar en este momento.</p>
+    }
+</div>
+
+<hr />
+
+<div class="section-container">
+    <h2 class="section-title">¿Por qué elegirnos?</h2>
+    <div class="card-section">
+        <div class="custom-card">
+            <i class="fas fa-dollar-sign icon-feature"></i>
+            <h4>Gestión de Presupuesto</h4>
+            <p>Controla cada céntimo con herramientas avanzadas para asignar y monitorear el presupuesto de tus proyectos.</p>
+        </div>
+        <div class="custom-card">
+            <i class="fas fa-handshake icon-feature"></i>
+            <h4>Colaboración Eficiente</h4>
+            <p>Facilita la comunicación y el trabajo en equipo con funcionalidades que conectan a todos los miembros.</p>
+        </div>
+        <div class="custom-card">
+            <i class="fas fa-chart-line icon-feature"></i>
+            <h4>Informes Detallados</h4>
+            <p>Obtén insights valiosos con reportes personalizables que te ayudan a tomar decisiones informadas.</p>
+        </div>
+    </div>
 </div>

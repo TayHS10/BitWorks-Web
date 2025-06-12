@@ -4,15 +4,19 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - GPP_Web</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hover.css/2.3.1/css/hover-min.css">
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/GPP_Web.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/carousel-styles.css" asp-append-version="true" />
 </head>
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">GPP_Web</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                    <img src="~/images/logos/logo-gpp.png" alt="GPP_Web Logo" style="width: 200px; height: auto;" />
+                </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -20,12 +24,56 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-dark hvr-underline-from-center" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link text-dark hvr-underline-from-center" asp-area="" asp-controller="Home" asp-action="Privacy">
+                                Privacy
+                            </a>
                         </li>
+
+                        @* Opciones de menú condicionales por rol *@
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            @* Ejemplo: Opción solo para el rol "Admin" *@
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark hvr-underline-from-center" asp-area="" asp-controller="Admin" asp-action="Dashboard">Admin Dashboard</a>
+                                </li>
+                            }
+
+                            @* Ejemplo: Opción para los roles "Manager" o "Admin" *@
+                            @* Nota: Si un Admin también es Manager, podrías usar || User.IsInRole("Admin") si quieres que los Admins también vean esta opción *;
+                                    Actualmente solo está para "Manager". *@
+                            @if (User.IsInRole("Manager")) // Agregado || User.IsInRole("Admin") para mayor flexibilidad
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark hvr-underline-from-center" asp-area="" asp-controller="Projects" asp-action="Manage">Gestionar Proyectos</a>
+                                </li>
+                            }
+
+                        }
                     </ul>
+
+                    <div class="navbar-nav">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            @* Muestra el nombre de usuario si está autenticado *@
+                            <span class="nav-item nav-link text-dark me-2">¡Hola, @User.Identity.Name!</span>
+
+                            @* Botón de Logout *@
+                            <form asp-controller="Auth" asp-action="Logout" method="post" class="d-flex">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="button2">Cerrar Sesión</button>
+                            </form>
+                        }
+                        else
+                        {
+                            @* Botón de Login si no está autenticado *@
+                            <a class="button2" asp-controller="Auth" asp-action="Login">Iniciar Sesión</a>
+                        }
+                    </div>
                 </div>
             </div>
         </nav>

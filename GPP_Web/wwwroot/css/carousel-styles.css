@@ -1,0 +1,185 @@
+﻿/* wwwroot/css/carousel-styles.css */
+
+@layer base, demo;
+@import url(https://fonts.bunny.net/css?family=abel:400);
+
+/* ============================================= */
+/* ESTILOS PARA LA NUEVA CARD (INTEGRADOS)       */
+/* ============================================= */
+.card {
+    width: 190px;
+    background: white;
+    padding: .4em;
+    border-radius: 6px;
+    /* Añadimos una sombra sutil para que destaque */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    color: #333; /* Color de texto por defecto para la card */
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* La card ocupará toda la altura del article */
+}
+
+.card-image {
+    background-color: rgb(236, 236, 236);
+    background-image: url('https://yt3.googleusercontent.com/ytc/AIdro_lWm9gUNnRzycFD_WeEyUEDvVN3xnnbdStZjuelt8ubE8c=s900-c-k-c0x00ffffff-no-rj');
+    background-size: cover;
+    background-position: center;
+    width: 100%;
+    height: 130px;
+    border-radius: 6px 6px 0 0;
+    transition: transform 0.2s ease-in-out;
+}
+
+    .card-image:hover {
+        transform: scale(0.98);
+    }
+
+.category {
+    text-transform: uppercase;
+    font-size: 0.7em;
+    font-weight: 600;
+    color: rgb(63, 121, 230);
+    padding: 10px 7px 0;
+}
+
+    .category:hover {
+        cursor: pointer;
+    }
+
+.heading {
+    font-weight: 600;
+    color: rgb(88, 87, 87);
+    padding: 7px;
+    flex-grow: 1; /* Permite que este elemento crezca y empuje el autor hacia abajo */
+}
+
+    .heading:hover {
+        cursor: pointer;
+    }
+
+.author {
+    color: gray;
+    font-weight: 400;
+    font-size: 11px;
+    padding-top: 10px; /* Reducido para mejor ajuste */
+}
+
+.name {
+    font-weight: 600;
+}
+
+    .name:hover {
+        cursor: pointer;
+    }
+
+
+/* ============================================= */
+/* ESTILOS DEL CAROUSEL (MODIFICADOS)            */
+/* ============================================= */
+@layer demo {
+    .carousel {
+        --items: 6; /* Ajusta este número a la cantidad de proyectos que muestras */
+        --carousel-duration: 40s;
+
+        @media (width > 600px) {
+            --carousel-duration: 30s;
+        }
+        /* AJUSTADO: Dimensiones para la nueva card */
+        --carousel-width: min( 80vw, 1200px );
+        --carousel-item-width: 190px; /* Ancho exacto de la nueva card */
+        --carousel-item-height: 270px; /* Altura ajustada para la nueva card */
+        --carousel-item-gap: 2rem;
+        position: relative;
+        width: var(--carousel-width);
+        height: var(--carousel-item-height);
+        overflow: clip;
+    }
+
+        .carousel[mask] {
+            mask-image: linear-gradient( to right, transparent, black 10% 90%, transparent );
+        }
+
+        .carousel[reverse] > article {
+            animation-direction: reverse;
+        }
+
+        /* MODIFICADO: El article ahora es un contenedor transparente */
+        .carousel > article {
+            position: absolute;
+            top: 0;
+            left: calc(100% + var(--carousel-item-gap));
+            width: var(--carousel-item-width);
+            height: var(--carousel-item-height);
+            /* Se eliminaron estilos visuales como border, padding, background, etc. */
+            /* La clase .card se encarga de la apariencia. */
+            /* animación */
+            will-change: transform;
+            animation-name: marquee;
+            animation-duration: var(--carousel-duration);
+            animation-timing-function: linear;
+            animation-iteration-count: infinite;
+            /* El cálculo del delay se mantiene igual */
+            animation-delay: calc( var(--carousel-duration) / var(--items) * -1 * var(--i));
+            &:nth-child(1)
+
+{
+    --i: 0;
+}
+
+&:nth-child(2) {
+    --i: 1;
+}
+
+&:nth-child(3) {
+    --i: 2;
+}
+
+&:nth-child(4) {
+    --i: 3;
+}
+
+&:nth-child(5) {
+    --i: 4;
+}
+
+&:nth-child(6) {
+    --i: 5;
+}
+/* Añade más si esperas tener más de 6 elementos visibles a la vez */
+&:nth-child(7) {
+    --i: 6;
+}
+
+&:nth-child(8) {
+    --i: 7;
+}
+
+}
+
+/* ELIMINADO: Estilos antiguos para img, h2, p, etc. ya que no aplican a la nueva estructura. */
+
+@keyframes marquee {
+    100% {
+        transform: translateX( calc( (var(--items) * (var(--carousel-item-width) + var(--carousel-item-gap))) * -1 ) );
+    }
+}
+
+}
+
+
+/* ============================================= */
+/* ESTILOS BASE (SIN CAMBIOS)                  */
+/* ============================================= */
+@layer base {
+    * {
+        box-sizing: border-box;
+    }
+
+    :root {
+        color-scheme: light dark;
+        --bg-dark: rgb(2, 6, 24);
+        --bg-light: rgb(229, 229, 229);
+        --txt-light: rgb(10, 10, 10);
+        --txt-dark: rgb(245, 245, 245);
+    }
+}
