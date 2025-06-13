@@ -1,105 +1,173 @@
 ﻿@model GPP_Web.DTOs.User.LoginUserDTO
+
 @{
     ViewData["Title"] = "Login";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <style>
-    /* Estilos personalizados para un look más moderno */
-    body {
-        background-color: #f0f2f5; /* Un gris claro para el fondo */
-    }
-
-    .login-container {
+    /* Estilos generales del formulario */
+    .form-container {
         display: flex;
         justify-content: center;
         align-items: center;
-        min-height: calc(100vh - 56px); /* Ajusta si tu navbar tiene una altura diferente */
-        padding: 20px;
+        min-height: 100vh;
+        background-color: #f0f2f5; /* Fondo gris claro */
+        padding: 10px; /* Agregar espacio adicional para pantallas pequeñas */
     }
 
-    .card {
+    .form-card {
+        background-color: #ffffff;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+        width: 100%; /* Asegura que el formulario ocupe el 100% del ancho disponible */
+        max-width: 450px; /* Limitar el tamaño máximo en pantallas grandes */
+    }
+
+        .form-card h3 {
+            text-align: center;
+            color: #151717;
+            font-weight: 600;
+        }
+
+        .form-card .form-label {
+            color: #151717;
+            font-weight: 600;
+        }
+
+    .inputForm {
+        border: 1.5px solid #ecedec;
+        border-radius: 10px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        padding-left: 10px;
+        transition: 0.2s ease-in-out;
+    }
+
+    .input {
+        margin-left: 10px;
+        border-radius: 10px;
         border: none;
-        border-radius: 1rem; /* Bordes más redondeados */
-        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1); /* Sombra más pronunciada */
-        max-width: 450px; /* Limita el ancho de la tarjeta */
         width: 100%;
+        height: 100%;
+        background: transparent; /* Sin fondo */
+        color: #151717; /* Color de texto */
     }
 
-    .card-header {
-        background: linear-gradient(135deg, #007bff, #0056b3); /* Degradado azul */
+        .input::placeholder {
+            color: #8c8c8c; /* Color de texto en el placeholder */
+        }
+
+        .input:focus {
+            outline: none;
+        }
+
+    .inputForm:focus-within {
+        border: 1.5px solid #2d79f3;
+    }
+
+    .button-submit {
+        margin: 20px 0 10px 0;
+        background-color: #151717;
+        border: none;
         color: white;
-        border-bottom: none;
-        border-top-left-radius: 1rem;
-        border-top-right-radius: 1rem;
-        padding: 1.5rem;
+        font-size: 15px;
+        font-weight: 500;
+        border-radius: 10px;
+        height: 50px;
+        width: 100%;
+        cursor: pointer;
     }
 
-    .form-control {
-        border-radius: 0.5rem;
-        padding: 0.75rem 1rem;
-        border: 1px solid #ced4da;
+    .span {
+        font-size: 14px;
+        color: #2d79f3;
+        font-weight: 500;
+        cursor: pointer;
     }
 
-        .form-control:focus {
-            border-color: #80bdff;
-            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-        }
-
-    .btn-primary {
-        background-color: #007bff;
-        border-color: #007bff;
-        border-radius: 0.5rem;
-        padding: 0.75rem 1.5rem;
-        font-size: 1.1rem;
-        transition: background-color 0.2s ease, border-color 0.2s ease;
+    .flex-row {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+        justify-content: space-between;
     }
-
-        .btn-primary:hover {
-            background-color: #0056b3;
-            border-color: #004a99;
-        }
 
     .alert {
         border-radius: 0.5rem;
     }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .p {
+        text-align: center;
+        color: black;
+        font-size: 14px;
+        margin: 5px 0;
+    }
+
+    .reset-password-link {
+        display: block;
+        text-align: center;
+        margin-top: 15px;
+        font-size: 14px;
+    }
+
+        .reset-password-link a {
+            color: #2d79f3;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+            .reset-password-link a:hover {
+                text-decoration: underline;
+            }
 </style>
 
-<div class="login-container">
-    <div class="card">
-        <div class="card-header text-center">
-            <h3 class="mb-0">Bienvenido</h3>
-            <p class="text-white-50 mb-0">Inicia sesión en tu cuenta</p>
-        </div>
-        <div class="card-body p-4 p-md-5">
-            <form asp-action="Login" method="post">
-                @Html.AntiForgeryToken()
-                <div asp-validation-summary="ModelOnly" class="text-danger mb-4 text-center fs-6"></div>
+<div class="form-container">
+    <div class="form-card">
+        <h3>Bienvenido</h3>
+        <p class="text-center text-muted">Inicia sesión en tu cuenta</p>
 
-                @if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
-                {
-                    <div class="alert alert-danger text-center mb-4" role="alert">
-                        @ViewBag.ErrorMessage
-                    </div>
-                }
+        <!-- Mostrar el mensaje de error solo si existe -->
+        @if (ViewBag.ErrorMessage != null)
+        {
+            <div class="alert alert-danger text-center mb-4" role="alert">
+                @ViewBag.ErrorMessage
+            </div>
+        }
 
-                <div class="mb-3">
-                    <label asp-for="Email" class="form-label fs-6"></label>
-                    <input asp-for="Email" class="form-control" autocomplete="username" placeholder="Tu correo electrónico" />
-                    <span asp-validation-for="Email" class="text-danger mt-1 d-block"></span>
+        <form asp-action="Login" method="post">
+            @Html.AntiForgeryToken()
+
+            <!-- Aquí hemos eliminado el @Html.ValidationSummary() para evitar que aparezca un segundo mensaje -->
+            <div class="flex-column">
+                <label asp-for="Email" class="form-label fs-6">Correo electrónico</label>
+                <div class="inputForm">
+                    <input asp-for="Email" class="input" autocomplete="username" placeholder="Introduce tu correo electrónico" />
                 </div>
-                <div class="mb-4">
-                    <label asp-for="Password" class="form-label fs-6"></label>
-                    <input asp-for="Password" class="form-control" type="password" autocomplete="current-password" placeholder="Tu contraseña" />
-                    <span asp-validation-for="Password" class="text-danger mt-1 d-block"></span>
+                <span asp-validation-for="Email" class="text-danger mt-1 d-block"></span>
+            </div>
+
+            <div class="flex-column">
+                <label asp-for="Password" class="form-label fs-6">Contraseña</label>
+                <div class="inputForm">
+                    <input asp-for="Password" class="input" type="password" autocomplete="current-password" placeholder="Introduce tu contraseña" />
                 </div>
-                <div class="d-grid gap-2 mb-4">
-                    <button type="submit" class="btn btn-primary">Entrar</button>
-                </div>
-                <div class="text-center">
-                    <a href="#" class="text-decoration-none text-muted small">¿Olvidaste tu contraseña?</a>
-                </div>
-            </form>
+                <span asp-validation-for="Password" class="text-danger mt-1 d-block"></span>
+            </div>
+
+            <button type="submit" class="button-submit">Iniciar sesión</button>
+        </form>
+
+        <!-- Enlace para restablecer la contraseña -->
+        <div class="reset-password-link">
+            <a href="@Url.Action("ForgotPassword", "Auth")">Restablecer contraseña</a>
         </div>
     </div>
 </div>
@@ -108,4 +176,16 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <script>
+        // Función para mostrar u ocultar la contraseña
+        function togglePasswordVisibility() {
+            var passwordInput = document.querySelector('input[type="password"]');
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+            } else {
+                passwordInput.type = "password";
+            }
+        }
+    </script>
 }

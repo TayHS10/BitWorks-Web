@@ -1,63 +1,144 @@
-/* wwwroot/css/site.css */
+/* Variables CSS para colores de la plantilla (puedes ajustar estos valores) */
+:root {
+    --bs-primary: #3A889D; /* Color principal de la plantilla */
+    --bs-secondary: #00bf8c; /* Color secundario/de acento */
+    --text-gradient-start: #8c52ff;
+    --text-gradient-end: #00bf8c;
+    --background-gradient-start: #8c52ff;
+    --background-gradient-end: #00bf8c;
+    --dark-text: #343a40; /* Un gris oscuro para texto general */
+    --light-text: #EEEEEE; /* Un gris claro para texto en fondos oscuros */
+}
 
+/* Estilos generales */
 html {
     font-size: 14px;
     position: relative;
     min-height: 100%;
 }
 
-@media (min-width: 768px) {
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    margin-bottom: 0;
+    color: var(--dark-text);
+}
+
+/* Asegurando que las imágenes sean responsivas */
+.profile-img, .carousel img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Estilo general para el contenido */
+.container-fluid, .container {
+    max-width: 100%;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Gradiente de texto */
+.text-gradient {
+    background: -webkit-linear-gradient(left, var(--text-gradient-start), var(--text-gradient-end));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Estilos para el sidebar y la navegación lateral */
+#sidebarMenu {
+    position: fixed; /* Fija el sidebar a la izquierda */
+    top: 0;
+    left: 0;
+    height: 100vh; /* Asegura que ocupe el 100% de la altura de la pantalla */
+    width: 250px; /* Ancho fijo del sidebar */
+    z-index: 1000; /* Asegura que el sidebar esté encima de otros elementos */
+    padding-top: 1rem; /* Espacio para el logo/título */
+    background-color: #343a40; /* Fondo oscuro para el sidebar */
+    overflow-y: auto; /* Permite que se desplace el contenido si es necesario */
+}
+
+/* El contenedor principal se ajustará cuando el sidebar esté visible */
+.content-shifted-left {
+    margin-left: 250px; /* Empuja el contenido principal hacia la derecha cuando el sidebar está visible */
+    padding-top: 2rem;
+}
+
+/* Estilos para el texto del sidebar */
+#sidebarMenu .nav-link {
+    font-weight: 500;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+    #sidebarMenu .nav-link:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
+    }
+
+    #sidebarMenu .nav-link.active {
+        background-color: var(--bs-primary);
+        color: white;
+    }
+
+/* --- Estilos para el botón de logout --- */
+.dropdown-menu {
+    position: relative; /* Asegura que los elementos dentro no se salgan de la pantalla */
+    z-index: 1001; /* Asegura que el menú desplegable esté por encima de otros elementos */
+    max-width: 100%; /* Evita que el menú se recorte */
+    overflow: visible; /* Asegura que no se oculte el contenido */
+}
+
+/* --- Asegurando que el sidebar y el botón de logout no se corten en pantallas pequeñas --- */
+@media (max-width: 767px) {
+    #sidebarMenu {
+        position: absolute; /* Cambia a posición absoluta en pantallas pequeñas */
+        top: 0;
+        left: 0;
+        height: auto; /* Ajusta la altura para que no se recorte */
+        width: 100%;
+    }
+
+    /* Asegura que el contenido se muestre correctamente en dispositivos pequeños */
+    .content-shifted-left {
+        margin-left: 0; /* En pantallas pequeñas, no hay margen izquierdo */
+    }
+
+    .offcanvas-body {
+        padding-right: 1.5rem; /* Espaciado para que el botón de logout no se corte */
+    }
+
+    .offcanvas {
+        padding-top: 5rem; /* Ajusta el padding superior del menú en dispositivos pequeños */
+    }
+
+    /* Asegura que el botón de logout esté visible y no se corte */
+    .offcanvas-footer {
+        display: block;
+        position: absolute;
+        bottom: 1rem;
+        width: 100%;
+    }
     html {
         font-size: 16px;
     }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-body {
-    margin-bottom: 60px;
-    /* Ensure body text color is consistent for base elements */
-    color: #333333; /* Example: a dark gray that works in light mode */
-    /* If you want dark mode support here, you'd add: */
-    /* color: light-dark(#333333, #EEEEEE); */ /* Example: dark text in light, light text in dark */
-    /* But the current 'light-dark' in carousel-styles.css body will handle it.
-       If your nav bar still has issues, it means it's inheriting this or needs its own specific colors. */
-}
-
-.section-title {
-    text-align: center;
-    margin-bottom: 2rem;
-    color: #343a40; /* A dark color for section titles */
-}
-
-.custom-card {
-    background-color: #ffffff; /* Explicit white background for light mode */
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 20px;
-    flex: 1;
-    min-width: 280px;
-    max-width: 350px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    text-align: center;
-    /* FORCE DARK COLOR for card text in the last section */
-    color: #333333; /* Dark gray for general text in cards */
-}
-
-    .custom-card h4 {
-        color: #007bff; /* Blue for card titles */
-        margin-bottom: 10px;
+    .form-card {
+        padding: 20px;
     }
 
-    .custom-card p {
-        color: #555555; /* Slightly lighter dark gray for paragraphs in cards */
+    .header-section img {
+        max-width: 100%;
     }
+}
 
+/* --- Estilos adicionales para el carrusel --- */
+.carousel .card {
+    flex: 1 0 300px;
+    max-width: 100%;
+    margin: 1rem;
+}
 
-/* ===== ESTILOS PARA EL BOTÓN DE LOGIN (Añadir al final de site.css) ===== */
-/* From Uiverse.io by shah1345 */
+/* Estilos del botón 'button2' */
 .button2 {
     display: inline-block;
     transition: all 0.2s ease-in;
@@ -70,9 +151,9 @@ body {
     font-size: 12px;
     border-radius: 0.5em;
     background: #ffffff;
-    border: 1px solid #e8e8e8;
-    box-shadow: 6px 6px 12px #c5c5c5, -6px -6px 12px #ffffff;
-    text-decoration: none; /* Añadido para quitar el subrayado de la etiqueta <a> */
+    border: 2px solid #e8e8e8;
+    /*box-shadow: 6px 6px 12px #c5c5c5, -6px -6px 12px #ffffff;*/
+    text-decoration: none;
 }
 
     .button2:active {
@@ -113,7 +194,7 @@ body {
     .button2:hover {
         color: #ffffff;
         border: 1px solid #009087;
-        text-decoration: none; /* Añadido para quitar el subrayado en hover */
+        text-decoration: none;
     }
 
         .button2:hover:before {
@@ -124,6 +205,38 @@ body {
 
         .button2:hover:after {
             top: -45%;
-            background-color: #009087;
+            background-color: #3A889D;
             transform: translateX(-50%) scaleY(1.3) scaleX(0.8);
         }
+
+
+/* Estilo personalizado para el botón de Cerrar Sesión en el menú móvil */
+.btn-logout-mobile {
+    background-color: #ff4d4d; /* Fondo rojo */
+    color: white; /* Texto blanco */
+    font-weight: bold; /* Negrita */
+    border-radius: 0.5rem; /* Bordes redondeados */
+    border: none; /* Sin borde */
+    padding: 10px; /* Espaciado */
+    transition: all 0.3s ease-in-out; /* Transición suave al pasar el ratón */
+}
+
+    /* Efecto hover para el botón */
+    .btn-logout-mobile:hover {
+        background-color: #e60000; /* Fondo rojo oscuro cuando el ratón pasa */
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Sombra */
+        transform: translateY(-2px); /* Efecto de elevar el botón */
+    }
+
+    /* Efecto de enfoque (focus) */
+    .btn-logout-mobile:focus {
+        outline: none; /* Elimina el contorno predeterminado */
+        box-shadow: 0 0 0 0.25rem rgba(255, 77, 77, 0.5); /* Contorno sutil */
+    }
+
+.navbar-logo {
+    max-width: 250px; /* Establece el ancho máximo a 200px */
+    width: 100%; /* Asegura que la imagen sea responsiva */
+    height: auto; /* Mantiene la proporción de la imagen */
+}
+

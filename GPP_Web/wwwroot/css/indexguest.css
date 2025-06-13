@@ -1,0 +1,275 @@
+﻿/* Estilos para el Carrusel */
+.carousel {
+    --items: 6;
+    --carousel-duration: 40s;
+
+    @media (width > 600px) {
+        --carousel-duration: 30s;
+    }
+
+    --carousel-width: min(80vw, 1200px); /* Ajuste para que no sea demasiado ancho */
+    --carousel-item-width: 280px;
+    --carousel-item-height: 350px;
+    --carousel-item-gap: 2rem;
+    --clr-cta: rgb(0, 132, 209);
+    position: relative;
+    width: var(--carousel-width);
+    height: var(--carousel-item-height);
+    overflow: clip;
+    &[mask]
+
+{
+    /* fade out on sides */
+    mask-image: linear-gradient(to right, transparent, black 10% 90%, transparent);
+}
+
+&[reverse] > article {
+    animation-direction: reverse;
+}
+
+/* Hover pausa la animación */
+&:hover > article {
+    animation-play-state: paused;
+}
+
+}
+
+.carousel > article {
+    position: absolute;
+    top: 0;
+    left: calc(100% + var(--carousel-item-gap));
+    width: var(--carousel-item-width);
+    height: var(--carousel-item-height);
+    display: grid;
+    grid-template-rows: 200px auto 1fr auto;
+    gap: 0.25rem;
+    border: 1px solid light-dark(rgba(0 0 0 / 0.25), rgba(255 255 255 / 0.15));
+    padding-block-end: 1rem;
+    border-radius: 10px;
+    background: light-dark(white, rgba(255 255 255 / 0.05));
+    color: light-dark(rgb(49, 65, 88), white);
+    /* Animación */
+    will-change: transform;
+    animation-name: marquee;
+    animation-duration: var(--carousel-duration);
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-delay: calc(var(--carousel-duration) / var(--items) * 1 * var(--i) * -1);
+    &:nth-child(1)
+
+{
+    --i: 0;
+}
+
+&:nth-child(2) {
+    --i: 1;
+}
+
+&:nth-child(3) {
+    --i: 2;
+}
+
+&:nth-child(4) {
+    --i: 3;
+}
+
+&:nth-child(5) {
+    --i: 4;
+}
+
+&:nth-child(6) {
+    --i: 5;
+}
+
+&:nth-child(7) {
+    --i: 6;
+}
+
+&:nth-child(8) {
+    --i: 7;
+}
+
+}
+
+.carousel img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px 10px 0 0;
+}
+
+.carousel > article > *:not(img) {
+    padding: 0 1rem;
+}
+
+.carousel > article > div {
+    grid-row: span 2;
+    display: grid;
+    grid-template-rows: subgrid;
+    font-size: 0.8rem;
+}
+
+.carousel > article h2 {
+    font-size: 1.2rem;
+    font-weight: 300;
+    padding-block: 0.75rem 0.25rem;
+    margin: 0;
+}
+
+.carousel > article p {
+    margin: 0;
+}
+
+.carousel > article a {
+    text-decoration: none;
+    text-transform: lowercase;
+    border: 1px solid var(--clr-cta);
+    color: light-dark(var(--clr-cta), white);
+    border-radius: 3px;
+    padding: 0.25rem 0.5rem;
+    place-self: start;
+    transition: 150ms ease-in-out;
+    &:hover, &:focus-visible
+
+{
+    background-color: var(--clr-cta);
+    color: white;
+    outline: none;
+}
+
+}
+
+@keyframes marquee {
+    100% {
+        transform: translateX(calc((var(--items) * (var(--carousel-item-width) + var(--carousel-item-gap))) * -1));
+    }
+}
+
+/* Estilos para la sección "¿Por qué elegirnos?" */
+#porque-elegirnos {
+    background-color: #f8f9fa; /* Fondo claro para la sección */
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+
+    #porque-elegirnos .section-title {
+        font-size: 2rem;
+        font-weight: bold;
+        margin-bottom: 2rem;
+    }
+
+    #porque-elegirnos .custom-card {
+        background-color: #ffffff;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        #porque-elegirnos .custom-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+        }
+
+    #porque-elegirnos .icon-feature {
+        font-size: 3em;
+        color: var(--bs-primary);
+        margin-bottom: 15px;
+        display: block;
+        transition: transform 0.3s ease-in-out;
+    }
+
+    #porque-elegirnos .custom-card:hover .icon-feature {
+        transform: scale(1.1) rotateY(180deg);
+    }
+
+    #porque-elegirnos h4 {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+    }
+
+    #porque-elegirnos p {
+        font-size: 1rem;
+        color: var(--dark-text);
+    }
+
+    /* Estilos de columna dentro de la sección "¿Por qué elegirnos?" */
+    #porque-elegirnos .row-cols-md-3 .col {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    /* Asegurando que las columnas no estén demasiado juntas */
+    #porque-elegirnos .col {
+        margin-bottom: 1rem;
+    }
+
+/* Estilo moderno para la imagen de perfil */
+.profile-img {
+    max-width: 600px; /* Limitar el tamaño máximo a 600px */
+    width: 100%; /* Asegura que la imagen sea responsiva */
+    height: auto; /* Mantener la proporción de la imagen */
+    border-radius: 20px; /* Bordes redondeados */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* Sombra suave alrededor */
+    transition: all 0.3s ease; /* Transición suave para el hover */
+}
+
+    /* Efecto de hover para la imagen */
+    .profile-img:hover {
+        transform: scale(1.05); /* Aumenta ligeramente el tamaño de la imagen */
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada en hover */
+        filter: brightness(1.05); /* Aumenta ligeramente el brillo de la imagen */
+    }
+
+/* Estilos para imágenes circulares, en caso de que prefieras un estilo circular */
+.profile-img-circle {
+    max-width: 150px; /* Limitar el tamaño máximo de la imagen circular */
+    width: 100%;
+    height: 150px; /* Hacer que la altura sea igual al ancho */
+    border-radius: 50%; /* Hacer la imagen circular */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* Sombra suave alrededor */
+    transition: all 0.3s ease; /* Transición suave para el hover */
+}
+
+    .profile-img-circle:hover {
+        transform: scale(1.05); /* Aumenta ligeramente el tamaño de la imagen */
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada en hover */
+        filter: brightness(1.05); /* Aumenta ligeramente el brillo de la imagen */
+    }
+
+
+/* Estilos para las cards */
+.card {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    color: black; /* Texto negro para los cards */
+    height: 250px; /* Establecer una altura fija más corta para los cards */
+    overflow: hidden; /* Ocultar contenido que sobresalga */
+}
+
+/* Ajuste para los cards dentro del carrusel */
+.carousel-item .card {
+    height: 250px; /* Establecer altura específica */
+    max-width: 100%; /* Asegura que el card no se estire más allá del contenedor */
+}
+
+/* Ajustes en el contenido del card */
+.card-image img {
+    height: 100px; /* Limitar la altura de las imágenes dentro del card */
+    object-fit: cover; /* Asegura que las imágenes no se deformen */
+}
+
+/* Estilo para el gradiente del texto */
+/*.text-gradient {
+    background: linear-gradient(to left, var(--text-gradient-start), var(--text-gradient-end));
+    -webkit-background-clip: text;*/ /* Asegura que el gradiente se aplique solo al texto */
+    /*background-clip: text;
+    color: transparent;*/ /* Hace que el texto sea transparente para que el gradiente sea visible */
+/*}*/
+

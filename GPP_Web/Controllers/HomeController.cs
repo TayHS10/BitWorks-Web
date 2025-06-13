@@ -1,4 +1,5 @@
 using GPP_Web.DTOs.Project;
+using GPP_Web.DTOs.RoleChangeRequest;
 using GPP_Web.Models;
 using GPP_Web.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -66,5 +67,35 @@ namespace GPP_Web.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        // Método para mostrar la vista de "Convertirse en colaborador"
+        public IActionResult ConvertirseEnColaborador()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ConvertirseEnColaborador(CreateRoleChangeRequestDTO request)
+        {
+            if (ModelState.IsValid)
+            {
+                // Especificamos explícitamente los tipos genéricos: el tipo de solicitud (TRequest) y el tipo de respuesta (ApiResponse<object>).
+                var response = await _apiClient.PostAsync<CreateRoleChangeRequestDTO, ApiResponse<object>>("api/RoleChangeRequest", request);
+
+                if (response.Success)
+                {
+                    ViewBag.SuccessMessage = "Gracias por tu interés, nos pondremos en contacto pronto.";
+                    return View();
+                }
+                else
+                {
+                    ViewBag.ErrorMessage = response.Message ?? "Ocurrió un error al registrar tu solicitud.";
+                    return View();
+                }
+            }
+
+            return View(request);
+        }
+
     }
 }

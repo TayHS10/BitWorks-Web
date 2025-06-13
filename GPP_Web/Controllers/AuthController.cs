@@ -1,10 +1,12 @@
 ﻿using GPP_Web.DTOs.User;
+using GPP_Web.Models;
 using GPP_Web.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text.Json; 
 
 namespace GPP_Web.Controllers
@@ -65,7 +67,16 @@ namespace GPP_Web.Controllers
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, authApiResponse?.Msj ?? "Error al intentar iniciar sesión. Credenciales incorrectas.");
+                    // Si la autenticación falla, verificamos si el mensaje es "Credenciales inválidas"
+                    if (authApiResponse?.Msj.Contains("Credenciales inválidas") == true)
+                    {
+                        ModelState.AddModelError(string.Empty, "Credenciales inválidas. Por favor, verifique su usuario y contraseña.");
+                        ViewBag.ErrorMessage = "Credenciales inválidas. Por favor, intente de nuevo.";
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, authApiResponse?.Msj ?? "Error al intentar iniciar sesión.");
+                    }
                 }
             }
             catch (HttpRequestException ex)
@@ -84,6 +95,7 @@ namespace GPP_Web.Controllers
             return View(loginRequest);
         }
 
+
         /// <summary>
         /// Maneja la solicitud de cierre de sesión, desconectando al usuario de la aplicación.
         /// </summary>
@@ -95,5 +107,102 @@ namespace GPP_Web.Controllers
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Login", "Auth");
         }
+
+        // Método para mostrar la vista de restablecimiento de contraseña
+        [HttpGet]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        // Método que maneja el formulario de restablecimiento de contraseña
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordRequestDTO forgotPasswordRequest)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(forgotPasswordRequest);
+            }
+
+            try
+            {
+                // Llamar a la API para procesar la solicitud de restablecimiento de contraseña
+                var response = await _apiClient.PostAsync<ForgotPasswordRequestDTO, ApiResponse<string>>("Auth/forgot-password-request", forgotPasswordRequest);
+
+                if (response.Success)
+                {
+                    ViewBag.SuccessMessage = "Se ha enviado un correo para restablecer tu contraseña.";
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, response.Message ?? "Error al intentar enviar el correo de restablecimiento.");
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, $"Ocurrió un error inesperado: {ex.Message}. Por favor, intenta de nuevo.");
+            }
+
+            return View(forgotPasswordRequest);
+        }
+
+        [HttpGet]
+        public IActionResult ResetPasswordConfirm(string email, string token)
+        {
+            // Verificamos que el email y el token no estén vacíos
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(token))
+            {
+                return RedirectToAction("Login", "Auth");
+            }
+
+            // Pasamos el email y el token a la vista
+            ViewData["Email"] = email;
+            ViewData["Token"] = token;
+
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPasswordConfirm(ResetPasswordConfirmDTO request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(request);
+            }
+
+            try
+            {
+                // Verificamos si las contraseñas coinciden
+                if (request.NewPassword != request.ConfirmNewPassword)
+                {
+                    ModelState.AddModelError(string.Empty, "Las contraseñas no coinciden.");
+                    return View(request);
+                }
+
+                // Llamar a la API para confirmar el restablecimiento de la contraseña
+                var response = await _apiClient.PostAsync<ResetPasswordConfirmDTO, ApiResponse<string>>("Auth/reset-password-confirm", request);
+
+                if (response.Success)
+                {
+                    // Pasar mensaje de éxito a la vista
+                    ViewBag.SuccessMessage = "Contraseña restablecida con éxito.";
+                }
+                else
+                {
+                    // Pasar mensaje de error a la vista
+                    ModelState.AddModelError(string.Empty, response.Message ?? "Error al intentar restablecer la contraseña.");
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, $"Ocurrió un error inesperado: {ex.Message}. Por favor, intenta de nuevo.");
+            }
+
+            return View(request);
+        }
+
+
     }
 }
