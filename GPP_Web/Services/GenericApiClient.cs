@@ -50,52 +50,6 @@ namespace GPP_Web.Services
         }
 
 
-        //public async Task<AuthResponse> AuthenticateAsync(string endpoint, LoginUserDTO loginRequest)
-        //{
-        //    try
-        //    {
-        //        var response = await _httpClient.PostAsJsonAsync(endpoint, loginRequest, _jsonSerializerOptions);
-
-        //        var responseBody = await response.Content.ReadAsStringAsync();
-
-        //        // Aquí deserializamos directamente al AuthResponseDTO, que NO es un ApiResponse<T> genérico
-        //        var authApiResponse = JsonSerializer.Deserialize<AuthResponse>(responseBody, _jsonSerializerOptions);
-
-        //        // Puedes añadir aquí una verificación de código de estado HTTP si lo deseas,
-        //        // antes de devolver el authApiResponse
-        //        if (!response.IsSuccessStatusCode && authApiResponse == null)
-        //        {
-        //            throw new HttpRequestException($"La autenticación a {endpoint} falló con el código de estado {response.StatusCode} y no se pudo deserializar la respuesta de error.");
-        //        }
-        //        if (!response.IsSuccessStatusCode)
-        //        {
-        //            var errorResponseBody = await response.Content.ReadAsStringAsync();
-        //            Console.WriteLine($"Error HTTP StatusCode: {response.StatusCode}");
-        //            Console.WriteLine($"Error Raw Response Content: {errorResponseBody}");
-        //            // ...
-        //        }
-        //        else
-        //        {
-        //            var responseBody = await response.Content.ReadAsStringAsync();
-        //            Console.WriteLine($"Raw Response Content (Success): {responseBody}");
-        //        }
-
-        //        return authApiResponse ?? new AuthResponse { Result = false, Msj = "Respuesta de autenticación vacía o nula." };
-        //    }
-        //    catch (HttpRequestException ex)
-        //    {
-        //        throw new HttpRequestException($"Error de conexión o HTTP al intentar autenticar: {ex.Message}", ex);
-        //    }
-        //    catch (JsonException ex)
-        //    {
-        //        throw new JsonException($"Error al procesar la respuesta de autenticación: {ex.Message}", ex);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new Exception($"Error inesperado durante la autenticación: {ex.Message}", ex);
-        //    }
-        //}
-
         public async Task<AuthResponse> AuthenticateAsync(string endpoint, LoginUserDTO loginRequest)
         {
             try

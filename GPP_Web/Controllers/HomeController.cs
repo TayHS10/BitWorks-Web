@@ -31,8 +31,20 @@ namespace GPP_Web.Controllers
         /// <remarks>Si la recuperación de proyectos falla, se muestra un mensaje de error y se devuelve una lista vacía para evitar que la vista se rompa.</remarks>
         public async Task<IActionResult> Index()
         {
+            // Verificar si el usuario está autenticado y si es un Manager
+            if (User.Identity.IsAuthenticated && User.IsInRole("Manager"))
+            {
+                // Si es Manager, redirigir al Dashboard del Manager
+                return RedirectToAction("Dashboard", "Manager");
+            }
+            else if (User.IsInRole("Accountant"))
+            {
+                // Si es Accountant, redirigir al Dashboard del Contador
+                return RedirectToAction("Dashboard", "Accountant");
+            }
             try
             {
+
                 var response = await _apiClient.GetAsync<List<ProjectResponseDTO>>("api/Project/active");
 
                 if (response.Success && response.Data != null)

@@ -1,0 +1,94 @@
+﻿@model GPP_Web.DTOs.Expense.CreateExpenseDTO
+
+@{
+    ViewData["Title"] = "Registrar Gasto";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" href="~/css/createexpense.css">
+
+<!-- Botón de retroceso con imagen pequeña -->
+<div class="back-button">
+    <a href="javascript:history.back()" class="btn btn-link" style="text-decoration: none;">
+        <img src="~/images/icons/back.png" alt="Volver" class="back-icon"> Volver
+    </a>
+</div>
+
+<h1 class="text-center">Registrar Gasto</h1>
+
+<!-- Mensaje de éxito (modal o card de notificación) -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<!-- Errores generales -->
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>Errores:</strong>
+        <ul>
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <li>@error.ErrorMessage</li>
+            }
+        </ul>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<!-- Formulario de Registro de Gasto -->
+<form method="post" enctype="multipart/form-data" class="form-container">
+    <div class="form-group">
+        <label for="BudgetPartId">Partida Presupuestaria</label>
+        <input type="text" class="form-control" id="BudgetPartId" name="BudgetPartId" value="@ViewBag.BudgetPartId" readonly />
+        @if (ViewData.ModelState["BudgetPartId"]?.Errors.Any() == true)
+        {
+            <span class="text-danger">@ViewData.ModelState["BudgetPartId"]?.Errors.FirstOrDefault()?.ErrorMessage</span>
+        }
+    </div>
+
+    <div class="form-group">
+        <label for="ExpenseAmount">Monto del Gasto</label>
+        <input type="number" class="form-control" id="ExpenseAmount" name="ExpenseAmount" placeholder="Ingrese el monto" step="0.01" required />
+        @if (ViewData.ModelState["ExpenseAmount"]?.Errors.Any() == true)
+        {
+            <span class="text-danger">@ViewData.ModelState["ExpenseAmount"]?.Errors.FirstOrDefault()?.ErrorMessage</span>
+        }
+    </div>
+
+    <div class="form-group">
+        <label for="ExpenseDate">Fecha del Gasto</label>
+        <input type="date" class="form-control" id="ExpenseDate" name="ExpenseDate" required />
+        @if (ViewData.ModelState["ExpenseDate"]?.Errors.Any() == true)
+        {
+            <span class="text-danger">@ViewData.ModelState["ExpenseDate"]?.Errors.FirstOrDefault()?.ErrorMessage</span>
+        }
+    </div>
+
+    <!-- Campo para subir la imagen (referencia del documento) -->
+    <div class="form-group">
+        <label for="DocumentFile">Subir Documento (Imagen)</label>
+        <input type="file" class="form-control" id="DocumentFile" name="DocumentFile" accept="image/*" />
+        @if (ViewData.ModelState["DocumentFile"]?.Errors.Any() == true)
+        {
+            <span class="text-danger">@ViewData.ModelState["DocumentFile"]?.Errors.FirstOrDefault()?.ErrorMessage</span>
+        }
+    </div>
+
+    <div class="form-group">
+        <label for="Description">Descripción</label>
+        <textarea class="form-control" id="Description" name="Description" placeholder="Descripción del gasto" rows="4"></textarea>
+        @if (ViewData.ModelState["Description"]?.Errors.Any() == true)
+        {
+            <span class="text-danger">@ViewData.ModelState["Description"]?.Errors.FirstOrDefault()?.ErrorMessage</span>
+        }
+    </div>
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary btn-block">Registrar Gasto</button>
+    </div>
+</form>

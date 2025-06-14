@@ -1,0 +1,85 @@
+﻿@model IEnumerable<GPP_Web.DTOs.Project.ProjectResponseDTO>
+
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" href="~/css/managerdashboard.css">
+
+<!-- Cards de acceso rápido con enlaces -->
+<div class="quick-access mb-5">
+    <a href="@Url.Action("ActiveProjects", "Projects")" class="card">
+        <img src="~/images/icons/projects.png" alt="Mis Proyectos Icon" class="card__icon">
+        <h3 class="card__title">Mis Proyectos</h3>
+        <p class="card__content">Accede a la lista de tus proyectos activos de manera rápida.</p>
+        <div class="card__arrow">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" height="15" width="15">
+                <path fill="#fff" d="M13.4697 17.9697C13.1768 18.2626 13.1768 18.7374 13.4697 19.0303C13.7626 19.3232 14.2374 19.3232 14.5303 19.0303L20.3232 13.2374C21.0066 12.554 21.0066 11.446 20.3232 10.7626L14.5303 4.96967C14.2374 4.67678 13.7626 4.67678 13.4697 4.96967C13.1768 5.26256 13.1768 5.73744 13.4697 6.03033L18.6893 11.25H4C3.58579 11.25 3.25 11.5858 3.25 12C3.25 12.4142 3.58579 12.75 4 12.75H18.6893L13.4697 17.9697Z"></path>
+            </svg>
+        </div>
+    </a>
+
+    <a href="@Url.Action("Create", "Expenses")" class="card">
+        <img src="~/images/icons/agregar.png" alt="Agregar proyecto Icon" class="card__icon">
+        <h3 class="card__title">Registrar Gasto</h3>
+        <p class="card__content">Registra un nuevo gasto con un solo clic.</p>
+        <div class="card__arrow">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" height="15" width="15">
+                <path fill="#fff" d="M13.4697 17.9697C13.1768 18.2626 13.1768 18.7374 13.4697 19.0303C13.7626 19.3232 14.2374 19.3232 14.5303 19.0303L20.3232 13.2374C21.0066 12.554 21.0066 11.446 20.3232 10.7626L14.5303 4.96967C14.2374 4.67678 13.7626 4.67678 13.4697 4.96967C13.1768 5.26256 13.1768 5.73744 13.4697 6.03033L18.6893 11.25H4C3.58579 11.25 3.25 11.5858 3.25 12C3.25 12.4142 3.58579 12.75 4 12.75H18.6893L13.4697 17.9697Z"></path>
+            </svg>
+        </div>
+    </a>
+
+    <a href="@Url.Action("Statistics", "Projects")" class="card">
+        <img src="~/images/icons/gastos.png" alt="Historial de Gastos Icon" class="card__icon">
+        <h3 class="card__title">Historial de Gastos</h3>
+        <p class="card__content">Consulta el registro de gastos generales de los proyectos.</p>
+        <div class="card__arrow">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" height="15" width="15">
+                <path fill="#fff" d="M13.4697 17.9697C13.1768 18.2626 13.1768 18.7374 13.4697 19.0303C13.7626 19.3232 14.2374 19.3232 14.5303 19.0303L20.3232 13.2374C21.0066 12.554 21.0066 11.446 20.3232 10.7626L14.5303 4.96967C14.2374 4.67678 13.7626 4.67678 13.4697 4.96967C13.1768 5.26256 13.1768 5.73744 13.4697 6.03033L18.6893 11.25H4C3.58579 11.25 3.25 11.5858 3.25 12C3.25 12.4142 3.58579 12.75 4 12.75H18.6893L13.4697 17.9697Z"></path>
+            </svg>
+        </div>
+    </a>
+</div>
+
+<h1 class="text-center dashboard-title">Resumen</h1>
+
+<!-- Tabla de proyectos -->
+<div class="table-responsive-container">
+    <table class="table table-striped table-responsive">
+        <thead>
+            <tr>
+                <th>Código</th>
+                <th>Título</th>
+                <th>Presupuesto</th>
+                <th>Presupuesto restante</th>
+                <th>Opciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.ProjectCode)</td>
+                    <td>@Html.DisplayFor(modelItem => item.ProjectName)</td>
+                    <td>₡@Html.DisplayFor(modelItem => item.Budget)</td>
+                    <td>₡@Html.DisplayFor(modelItem => item.RemainingBudget)</td>
+                    <td>
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                Opciones
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <li><a class="dropdown-item" href="@Url.Action("Index", "BudgetPart", new { projectId = item.ProjectId })">Ver Partidas</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("GeneralView", "Project", new { projectId = item.ProjectId })">Vista General</a></li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

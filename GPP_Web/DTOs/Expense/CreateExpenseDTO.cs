@@ -21,6 +21,7 @@ namespace GPP_Web.DTOs.Expense
         [StringLength(500, ErrorMessage = "La descripción no puede exceder los 500 caracteres.")]
         public string? Description { get; set; }
 
-        //public IFormFile? DocumentFile { get; set; } // Campo para el archivo
+        // Campo para recibir el archivo (imagen)
+        public IFormFile? DocumentFile { get; set; }  // Para cargar el archivo
     }
 }

@@ -1,0 +1,101 @@
+﻿/* Estilos para la página de partidas presupuestarias */
+/* Estilos para el botón de retroceso */
+.back-button {
+    margin-bottom: 20px;
+    padding-left: 20px;
+}
+
+    .back-button .btn-link {
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        color: #3A889D; /* Cambio el color del texto del enlace a #3A889D */
+    }
+
+    .back-button .back-icon {
+        width: 20px; /* Tamaño pequeño del ícono */
+        height: 20px;
+        margin-right: 8px; /* Espacio entre el ícono y el texto */
+    }
+
+    .back-button .btn-link:hover {
+        color: #3A889D; /* Cambio el color del hover al mismo color que el texto */
+        text-decoration: underline; /* Mantener subrayado al hacer hover */
+    }
+/* FIN ESTILOS para el botón de retroceso */
+
+/* Estilo para la tabla */
+.table-responsive-container {
+    margin-top: 20px;
+    padding: 0 20px;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+}
+
+    .table th, .table td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .table th {
+        background-color: #f8f9fa;
+    }
+
+.table-striped tbody tr:nth-child(odd) {
+    background-color: #f2f2f2;
+}
+
+/* Estilos para el botón de hamburguesa */
+.dropdown-menu {
+    min-width: 200px;
+}
+
+    .dropdown-menu .dropdown-item {
+        padding: 10px;
+        font-size: 1rem;
+    }
+
+@media (max-width: 767px) {
+    .table-responsive-container {
+        padding: 0 10px;
+    }
+
+    .table th, .table td {
+        padding: 8px 10px;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+.dashboard-title {
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--bs-primary);
+    text-transform: uppercase;
+    margin-bottom: 40px;
+}
+
+/* Responsive ajustes */
+@media (max-width: 767px) {
+    .table-responsive-container {
+        padding: 0 10px;
+    }
+
+    .table th, .table td {
+        padding: 8px 10px;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}

@@ -1,0 +1,123 @@
+﻿@model GPP_Web.DTOs.Project.CreateProjectDTO
+
+@{
+    ViewData["Title"] = "Crear Proyecto";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="~/css/create-project.css">
+<!-- Botón de retroceso con imagen pequeña -->
+<div class="back-button">
+    <a href="javascript:history.back()" class="btn btn-link" style="text-decoration: none;">
+        <img src="~/images/icons/back.png" alt="Volver" class="back-icon"> Volver
+    </a>
+</div>
+
+<h1 class="text-center">Crear Proyecto</h1>
+
+<!-- Mensaje de éxito (modal o card de notificación) -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<!-- Errores generales -->
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>Errores:</strong>
+        <ul>
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <li>@error.ErrorMessage</li>
+            }
+        </ul>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<!-- Formulario de Registro de Proyecto -->
+<form method="post" class="form-container">
+    <div class="form-group">
+        <label for="ProjectCode">Código del Proyecto</label>
+        <input type="text" class="form-control" id="ProjectCode" name="ProjectCode" value="@Model.ProjectCode" required />
+    </div>
+
+    <div class="form-group">
+        <label for="ProjectName">Nombre del Proyecto</label>
+        <input type="text" class="form-control" id="ProjectName" name="ProjectName" value="@Model.ProjectName" required />
+    </div>
+
+    <div class="form-group">
+        <label for="Description">Descripción</label>
+        <textarea class="form-control" id="Description" name="Description" placeholder="Descripción del proyecto" rows="4">@Model.Description</textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="Budget">Presupuesto</label>
+        <input type="number" class="form-control" id="Budget" name="Budget" value="@Model.Budget" required />
+    </div>
+
+    <div class="form-group">
+        <label for="ManagerEmail">Correo del Gestor</label>
+        <input type="email" class="form-control" id="ManagerEmail" name="ManagerEmail" value="@Model.ManagerEmail" required />
+    </div>
+
+    <div class="form-group">
+        <div id="budgetPartsContainer">
+            <h3 class="h5 mb-3">Partidas Presupuestarias</h3>
+            <div id="budgetParts">
+                @if (Model.BudgetParts != null && Model.BudgetParts.Count > 0)
+                {
+                    @foreach (var part in Model.BudgetParts)
+                    {
+                        <div class="budget-part mb-3">
+                            <label for="PartName" class="form-label">Nombre de la Partida</label>
+                            <input type="text" class="form-control" name="BudgetParts[@Model.BudgetParts.IndexOf(part)].PartName" value="@part.PartName" required />
+
+                            <label for="AllocatedAmount" class="form-label">Monto Asignado</label>
+                            <input type="number" class="form-control" name="BudgetParts[@Model.BudgetParts.IndexOf(part)].AllocatedAmount" value="@part.AllocatedAmount" required />
+                        </div>
+                    }
+                }
+            </div>
+            <button type="button" class="btn btn-outline-secondary" id="addBudgetPart">Agregar Partida</button>
+        </div>
+    </div>
+
+    @if (ViewData.ModelState["BudgetParts"]?.Errors.Any() == true)
+    {
+        <div class="text-danger">
+            @ViewData.ModelState["BudgetParts"]?.Errors.FirstOrDefault()?.ErrorMessage
+        </div>
+    }
+
+    <!-- Botón para crear el proyecto -->
+    <div class="form-group text-center mt-4">
+        <button type="submit" class="btn btn-primary btn-lg">Crear Proyecto</button>
+    </div>
+</form>
+
+<script>
+    let partIndex = @Model.BudgetParts.Count;
+
+    document.getElementById('addBudgetPart').addEventListener('click', function() {
+        const budgetPartsContainer = document.getElementById('budgetParts');
+
+        const newPart = document.createElement('div');
+        newPart.classList.add('budget-part', 'mb-3');
+
+        newPart.innerHTML = `
+            <label for="PartName" class="form-label">Nombre de la Partida</label>
+            <input type="text" class="form-control" name="BudgetParts[${partIndex}].PartName" required />
+
+            <label for="AllocatedAmount" class="form-label">Monto Asignado</label>
+            <input type="number" class="form-control" name="BudgetParts[${partIndex}].AllocatedAmount" required />
+        `;
+
+        budgetPartsContainer.appendChild(newPart);
+        partIndex++;
+    });
+</script>

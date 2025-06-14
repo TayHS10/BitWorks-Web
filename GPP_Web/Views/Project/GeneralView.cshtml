@@ -1,0 +1,27 @@
+﻿@model GPP_Web.DTOs.Project.ProjectResponseDTO
+
+@{
+    ViewData["Title"] = "Vista General del Proyecto";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" href="~/css/projectgeneralview.css">
+
+<!-- Card de Vista General del Proyecto -->
+<div class="project-card">
+    <div class="card-header">
+        <h2 class="card-title">@Model.ProjectName</h2>
+        <p class="card-code">Código: @Model.ProjectCode</p>
+    </div>
+    <div class="card-body">
+        <p><strong>Descripción:</strong> @Model.Description</p>
+        <p><strong>Presupuesto Asignado:</strong> ₡@Model.Budget</p>
+        <p><strong>Presupuesto Restante:</strong> ₡@Model.RemainingBudget</p>
+        <p><strong>Estado:</strong> @Model.Status</p>
+        <p><strong>Correo del Encargado:</strong> @Model.ManagerEmail</p>
+        <p><strong>Fecha de Creación:</strong> @Model.CreatedAt?.ToString("dd MMM yyyy")</p>
+    </div>
+    <div class="card-footer">
+        <a href="@Url.Action("Dashboard", "Manager")" class="btn btn-secondary">Volver a la Lista</a>
+    </div>
+</div>

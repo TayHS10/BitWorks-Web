@@ -28,6 +28,7 @@
     <Folder Include="wwwroot\images\icons\" />
     <Folder Include="wwwroot\images\backgrounds\" />
     <Folder Include="wwwroot\images\logos\" />
+    <Folder Include="wwwroot\images\documents\" />
   </ItemGroup>
 
 </Project>

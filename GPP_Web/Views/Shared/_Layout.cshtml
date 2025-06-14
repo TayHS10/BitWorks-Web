@@ -78,11 +78,24 @@
                     }
                     @if (User.IsInRole("Manager"))
                     {
-                        <li>
-                            <a asp-area="" asp-controller="Projects" asp-action="Manage" class="nav-link text-white @(ViewContext.RouteData.Values["Controller"].ToString() == "Projects" ? "active" : "")">
-                                <i class="bi bi-kanban me-2"></i>Gestionar Proyectos
+                       <li>
+                            <a asp-area="" asp-controller="Project" asp-action="ManagerProjects" class="nav-link text-white @(ViewContext.RouteData.Values["Controller"].ToString() == "Project" ? "active" : "")">
+                                <i class="bi bi-file-earmark-text me-2"></i>Mis Proyectos
                             </a>
                         </li>
+
+
+                    }
+                    @if (User.IsInRole("Accountant"))
+                    {
+                       <li>
+                            <a asp-controller="Project" asp-action="CreateProject" class="nav-link text-white @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Project" && ViewContext.RouteData.Values["Action"]?.ToString() == "Create" ? "active" : "")">
+                                <i class="bi bi-file-earmark-text me-2"></i>Registro de Proyectos
+                            </a>
+                        </li>
+
+
+
                     }
                     <li>
                         <a href="#" class="nav-link text-white">

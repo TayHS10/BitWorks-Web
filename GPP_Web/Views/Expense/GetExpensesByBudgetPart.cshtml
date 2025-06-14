@@ -1,0 +1,64 @@
+﻿@model IEnumerable<GPP_Web.DTOs.Expense.ExpenseResponseDTO>
+
+@{
+    ViewData["Title"] = "Gastos de la Partida";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" href="~/css/expense.css">
+
+<!-- Botón de retroceso con imagen pequeña -->
+<div class="back-button">
+    <a href="javascript:history.back()" class="btn btn-link" style="text-decoration: none;">
+        <img src="~/images/icons/back.png" alt="Volver" class="back-icon"> Volver
+    </a>
+</div>
+
+<h1 class="text-center">Gastos de la Partida Presupuestaria</h1>
+
+<!-- Mensajes de error -->
+@if (ViewBag.ErrorMessage != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @ViewBag.ErrorMessage
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<!-- Tabla de gastos -->
+<div class="table-responsive-container">
+    <table class="table table-striped table-responsive">
+        <thead>
+            <tr>
+                <th>Monto del Gasto</th>
+                <th>Fecha del Gasto</th>
+                <th>Estado</th>
+                <th>Adjunto</th>
+                <th>Descripción</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var expense in Model)
+            {
+                <tr>
+                    <td>₡@Html.DisplayFor(modelItem => expense.ExpenseAmount)</td>
+                    <td>@Html.DisplayFor(modelItem => expense.ExpenseDate)</td>
+                    <td>@Html.DisplayFor(modelItem => expense.Status)</td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(expense.DocumentReference))
+                        {
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="window.open('@Url.Content("~/images/documents/" + expense.DocumentReference)', '_blank')">Acceder al Documento</button>
+                        }
+                        else
+                        {
+                            <span>No disponible</span>
+                        }
+                    </td>
+                    <td>@Html.DisplayFor(modelItem => expense.Description)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
