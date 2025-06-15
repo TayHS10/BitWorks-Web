@@ -1,0 +1,56 @@
+﻿@model IEnumerable<GPP_Web.DTOs.User.UserResponseDTO>
+
+@{
+    ViewData["Title"] = "Dashboard - Usuarios";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" href="~/css/admin-dashboard.css">
+
+<h1 class="text-center dashboard-title">Lista de Usuarios</h1>
+
+<!-- Mensajes de error o éxito -->
+@if (ViewBag.ErrorMessage != null)
+{
+    <div class="alert alert-danger">
+        @ViewBag.ErrorMessage
+    </div>
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+<!-- Tabla de Usuarios -->
+<div class="table-responsive">
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>Nombre Completo</th>
+                <th>Correo Electrónico</th>
+                <th>Rol</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model)
+            {
+                <tr>
+                    <td>@user.FullName</td>
+                    <td>@user.Email</td>
+                    <td>@user.Role</td>
+                    <td>
+                        <!-- Botón para desactivar usuario -->
+                        <form method="post" action="@Url.Action("DeactivateUser", "Admin")" class="d-inline">
+                            <input type="hidden" name="userId" value="@user.UserId" />
+                            <button type="submit" class="btn btn-danger btn-sm">Desactivar</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

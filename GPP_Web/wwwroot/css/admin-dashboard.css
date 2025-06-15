@@ -1,0 +1,68 @@
+﻿/* Estilos generales para el dashboard */
+.table-responsive {
+    margin-top: 30px;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+}
+
+    .table th, .table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .table th {
+        background-color: #3A889D;
+        color: white;
+    }
+
+.table-striped tbody tr:nth-child(odd) {
+    background-color: #f2f2f2;
+}
+
+/* Estilos para los mensajes de error y éxito */
+.alert {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.alert-success {
+    background-color: #28a745;
+    color: white;
+}
+
+.alert-danger {
+    background-color: #dc3545;
+    color: white;
+}
+
+/* Botón para desactivar usuario */
+.btn-danger {
+    background-color: #dc3545;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+    .btn-danger:hover {
+        background-color: #c82333;
+    }
+
+/* Responsive */
+@media (max-width: 767px) {
+    .table th, .table td {
+        padding: 8px;
+    }
+
+    .table-responsive {
+        padding: 0 10px;
+    }
+}

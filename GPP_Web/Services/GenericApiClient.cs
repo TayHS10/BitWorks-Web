@@ -49,6 +49,17 @@ namespace GPP_Web.Services
             return apiResponse;
         }
 
+        public async Task<ApiResponse<TResponseData>> PutAsync<TResponseData>(string endpoint, object data)
+        {
+            var response = await _httpClient.PutAsJsonAsync(endpoint, data);
+
+            response.EnsureSuccessStatusCode(); // Lanza una excepción si la respuesta no es exitosa
+
+            var apiResponse = await response.Content.ReadFromJsonAsync<ApiResponse<TResponseData>>();
+
+            return apiResponse;
+        }
+
 
         public async Task<AuthResponse> AuthenticateAsync(string endpoint, LoginUserDTO loginRequest)
         {

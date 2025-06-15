@@ -93,11 +93,16 @@
                                 <i class="bi bi-file-earmark-text me-2"></i>Registro de Proyectos
                             </a>
                         </li>
+                        <li>
+                            <a asp-controller="Project" asp-action="DeleteProjects" class="nav-link text-white @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Project" && ViewContext.RouteData.Values["Action"]?.ToString() == "DeactivateProject" ? "active" : "")">
+                                <i class="bi bi-file-earmark-x me-2"></i>Desactivar Proyecto
+                            </a>
+                        </li>
 
 
 
                     }
-                    <li>
+                    @* <li>
                         <a href="#" class="nav-link text-white">
                             <i class="bi bi-file-earmark-bar-graph me-2"></i>Reportes
                         </a>
@@ -106,7 +111,7 @@
                         <a href="#" class="nav-link text-white">
                             <i class="bi bi-people me-2"></i>Usuarios
                         </a>
-                    </li>
+                    </li> *@
                 </ul>
                 <hr>
                 <form asp-controller="Auth" asp-action="Logout" method="post">

@@ -1,0 +1,52 @@
+﻿@model IEnumerable<GPP_Web.DTOs.Project.ProjectResponseDTO>
+
+@{
+    ViewData["Title"] = "Desactivar proyectos";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" href="~/css/deactivate-project.css">
+
+<h1 class="text-center dashboard-title">Proyectos Activos</h1>
+
+<!-- Mensajes de error o éxito -->
+@if (ViewBag.ErrorMessage != null)
+{
+    <div class="alert alert-danger">
+        @ViewBag.ErrorMessage
+    </div>
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+<!-- Lista de Proyectos -->
+<div class="project-list">
+    @foreach (var project in Model)
+    {
+        <div class="project-card">
+            <div class="card-header">
+                <h2>@project.ProjectName</h2>
+                <p class="card-code">Código: @project.ProjectCode</p>
+            </div>
+            <div class="card-body">
+                <p><strong>Presupuesto Asignado:</strong> ₡@project.Budget</p>
+                <p><strong>Presupuesto Restante:</strong> ₡@project.RemainingBudget</p>
+                <p><strong>Estado:</strong> @project.Status</p>
+                <p><strong>Correo del Encargado:</strong> @project.ManagerEmail</p>
+                <p><strong>Fecha de Creación:</strong> @project.CreatedAt?.ToString("dd MMM yyyy")</p>
+            </div>
+            <div class="card-footer">
+                <!-- Botón para desactivar el proyecto -->
+                <form method="post" action="@Url.Action("DeactivateProject", "Project")" class="d-inline">
+                    <input type="hidden" name="projectId" value="@project.ProjectId" />
+                    <button type="submit" class="btn btn-danger">Desactivar</button>
+                </form>
+            </div>
+        </div>
+    }
+</div>

@@ -115,5 +115,57 @@ namespace GPP_Web.Controllers
 
             return View(projectDto);
         }
+
+        // Acción para obtener los proyectos activos
+        public async Task<IActionResult> DeleteProjects()
+        {
+            try
+            {
+                // Llamada a la API para obtener los proyectos activos
+                var response = await _apiClient.GetAsync<List<ProjectResponseDTO>>("api/Project/active");
+
+                if (response.Success && response.Data != null)
+                {
+                    return View(response.Data); // Retorna los proyectos activos a la vista
+                }
+                else
+                {
+                    ViewBag.ErrorMessage = response.Message ?? "No se pudieron cargar los proyectos activos.";
+                    return View(new List<ProjectResponseDTO>());
+                }
+            }
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = $"Ocurrió un error inesperado: {ex.Message}";
+                return View(new List<ProjectResponseDTO>());
+            }
+        }
+        // Acción para desactivar un proyecto
+        [HttpPost]
+        public async Task<IActionResult> DeactivateProject(int projectId)
+        {
+            try
+            {
+                // Realizamos una solicitud PUT para desactivar el proyecto
+                var response = await _apiClient.PutAsync<ApiResponse<object>>($"api/Project/{projectId}/Deactivate", null);
+
+                if (response.Success)
+                {
+                    TempData["SuccessMessage"] = "El proyecto ha sido desactivado correctamente.";
+                }
+                else
+                {
+                    ViewBag.ErrorMessage = response.Message ?? "No se pudo desactivar el proyecto.";
+                }
+
+                return RedirectToAction("ManagerProjects");
+            }
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = $"Ocurrió un error inesperado: {ex.Message}";
+                return RedirectToAction("ManagerProjects");
+            }
+        }
+
     }
 }

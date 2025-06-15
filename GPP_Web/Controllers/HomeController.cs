@@ -42,6 +42,11 @@ namespace GPP_Web.Controllers
                 // Si es Accountant, redirigir al Dashboard del Contador
                 return RedirectToAction("Dashboard", "Accountant");
             }
+            else if (User.IsInRole("Admin"))
+            {
+                // Si es Accountant, redirigir al Dashboard del Contador
+                return RedirectToAction("Dashboard", "Admin");
+            }
             try
             {
 
