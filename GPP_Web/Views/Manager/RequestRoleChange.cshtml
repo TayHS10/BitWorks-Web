@@ -1,0 +1,296 @@
+﻿@model GPP_Web.DTOs.RoleChangeRequest.CreateRoleChangeRequestDTO
+
+@{
+    ViewData["Title"] = "Solicitar Cambio de Rol";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    // Obtener los roles de ViewBag (que son los valores en inglés)
+    var requestedRoles = ViewBag.RequestedRoles as List<string> ?? new List<string>();
+
+    // Mapeo de valores en inglés a nombres de visualización en español para el dropdown
+    var roleDisplayNames = new Dictionary<string, string>
+    {
+        { "Accountant", "Contador" },
+        { "Manager", "Gerente" } // Añadimos Gerente aquí para su propia opción de cambio
+    };
+}
+
+@* Enlaces a librerías externas de CSS *@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.8/dist/sweetalert2.min.css">
+
+<style>
+    /* Estilos generales y variables - Consistentes con otras vistas */
+    :root {
+        --primary-color: #3A889D; /* Azul oscuro */
+        --secondary-color: #275849; /* Verde oscuro/azulado para contrastes */
+        --light-gray-bg: #eff1f3; /* Fondo gris claro para el cuerpo */
+        --dark-text-color: #343a40; /* Color de texto oscuro general */
+        --border-color: #e9ecef; /* Color de borde suave */
+        --card-bg: #ffffff; /* Fondo blanco para tarjetas y formularios */
+        --input-border: #ced4da; /* Borde estándar para inputs */
+        --focus-ring-color: rgba(58, 136, 157, 0.25); /* Color de sombra para el focus del input */
+        --danger-color: #dc3545; /* Color rojo para errores */
+        --success-color: #28a745; /* Verde para éxito */
+        --info-color: #17a2b8; /* Azul claro para información */
+    }
+
+    body {
+        background-color: var(--light-gray-bg) !important;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        color: var(--dark-text-color);
+        padding: 20px; /* Padding general para el cuerpo */
+    }
+
+    .container-main {
+        padding: 20px;
+        max-width: 800px; /* Ancho más adecuado para un formulario */
+        margin: 0 auto;
+    }
+
+    .view-title {
+        color: var(--primary-color);
+        font-weight: 700;
+        font-size: 2.8rem; /* Tamaño de título más grande */
+        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    /* Estilo del contenedor del formulario (simula una tarjeta) */
+    .form-card {
+        background-color: var(--card-bg);
+        border-radius: 1rem;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        padding: 2.5rem;
+    }
+
+    /* Estilos para los grupos de formulario (etiqueta + input) */
+    .form-group {
+        margin-bottom: 1.5rem; /* Espacio entre grupos de formulario */
+    }
+
+        .form-group label {
+            display: block; /* Etiqueta en su propia línea */
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark-text-color);
+        }
+
+        .form-group .form-control,
+        .form-group .form-select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: var(--dark-text-color);
+            background-color: #fff;
+            border: 1px solid var(--input-border);
+            border-radius: 0.5rem;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+
+            .form-group .form-control:focus,
+            .form-group .form-select:focus {
+                border-color: var(--primary-color);
+                outline: 0;
+                box-shadow: 0 0 0 0.25rem var(--focus-ring-color);
+            }
+
+        .form-group textarea.form-control {
+            min-height: 120px; /* Altura mínima para el área de texto */
+            resize: vertical; /* Permite redimensionar verticalmente */
+        }
+
+    /* Estilos para mensajes de validación */
+    .text-danger {
+        color: var(--danger-color);
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+        display: block;
+    }
+
+    /* Estilos para campos solo de lectura */
+    .form-control[readonly] {
+        background-color: #e9ecef; /* Un fondo grisáceo para indicar que es de solo lectura */
+        cursor: not-allowed;
+    }
+
+    /* Estilos para botones */
+    .btn-primary-custom {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 12px 25px;
+        border: none;
+        border-radius: 0.75rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+        .btn-primary-custom:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+    .btn-secondary-custom {
+        background-color: #6c757d;
+        color: white;
+        padding: 12px 25px;
+        border: none;
+        border-radius: 0.75rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+        .btn-secondary-custom:hover {
+            background-color: #5a6268;
+            transform: translateY(-2px);
+        }
+
+    .form-buttons {
+        display: flex;
+        gap: 15px; /* Espacio entre los botones */
+        justify-content: center; /* Centrar los botones */
+        margin-top: 2rem;
+    }
+
+    /* Estilo del botón de retroceso (similar a otras vistas) */
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        margin-bottom: 2rem; /* Espacio debajo del botón */
+        color: var(--primary-color);
+        font-size: 1.1rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        margin-left: 20px; /* Alineación con el padding general */
+    }
+
+        .back-link:hover {
+            color: var(--secondary-color);
+            transform: translateX(-5px); /* Efecto de deslizamiento al volver */
+        }
+
+        .back-link i {
+            font-size: 1.5rem; /* Tamaño del icono */
+            margin-right: 0.5rem; /* Espacio entre icono y texto */
+        }
+</style>
+
+<div class="container-main animate__animated animate__fadeIn">
+
+    @* Ajusta el enlace de "Volver al Dashboard" para el Manager *@
+    <a href="@Url.Action("Index", "Manager")" class="back-link animate__animated animate__fadeInLeft">
+        <i class="bi bi-arrow-left"></i> Volver al Dashboard
+    </a>
+
+    <h1 class="view-title">Solicitar Cambio de Rol</h1>
+
+    <div class="form-card animate__animated animate__fadeInUp">
+        <form asp-action="RequestRoleChange" asp-controller="Manager" method="post">
+            @* Asegúrate de que el controller sea "Manager" *@
+            @Html.AntiForgeryToken()
+
+            @* Campo de solo lectura para el Email del usuario autenticado *@
+            <div class="form-group">
+                <label asp-for="EmailAddress">Tu Email:</label>
+                <input asp-for="EmailAddress" class="form-control" readonly />
+            </div>
+
+            @* Campo editable para el Nombre Completo *@
+            <div class="form-group">
+                <label asp-for="FullName">Tu Nombre Completo:</label>
+                <input asp-for="FullName" class="form-control" placeholder="Introduce tu nombre completo" />
+                <span asp-validation-for="FullName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="RequestedRole">Rol Solicitado:</label>
+                <select asp-for="RequestedRole" class="form-select">
+                    <option value="">-- Selecciona un Rol --</option>
+                    @foreach (var roleValue in requestedRoles)
+                    {
+                        <option value="@roleValue">
+                            @* Mostrar el nombre en español basado en el mapeo *@
+                            @(roleDisplayNames.ContainsKey(roleValue) ? roleDisplayNames[roleValue] : roleValue)
+                        </option>
+                    }
+                </select>
+                <span asp-validation-for="RequestedRole" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Justification">Justificación:</label>
+                <textarea asp-for="Justification" class="form-control" rows="5" placeholder="Explica por qué necesitas este cambio de rol..."></textarea>
+                <span asp-validation-for="Justification" class="text-danger"></span>
+            </div>
+
+            <div class="form-buttons">
+                <button type="submit" class="btn-primary-custom">
+                    <i class="bi bi-send-fill"></i> Enviar Solicitud
+                </button>
+                @* Ajusta el enlace de Cancelar para el Manager *@
+                <a asp-action="Dashboard" asp-controller="Manager" class="btn-secondary-custom">
+                    <i class="bi bi-x-circle-fill"></i> Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+
+    @* --- Manejo de mensajes con SweetAlert2 --- *@
+    @if (TempData["SuccessMessage"] is string successMessage && !string.IsNullOrWhiteSpace(successMessage))
+    {
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: '@Html.Raw(successMessage)',
+                    confirmButtonText: 'Aceptar',
+                    customClass: {
+                        popup: 'animate__animated animate__fadeInDown'
+                    }
+                });
+            });
+        </script>
+    }
+
+    @if (TempData["ErrorMessage"] is string errorMessage && !string.IsNullOrWhiteSpace(errorMessage))
+    {
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                Swal.fire({
+                    icon: 'error',
+                    title: '¡Error!',
+                    html: '@Html.Raw(errorMessage.Replace("\n", "<br>"))',
+                    confirmButtonText: 'Aceptar',
+                    customClass: {
+                        popup: 'animate__animated animate__shakeX'
+                    }
+                });
+            });
+        </script>
+    }
+</div>
+
+@section Scripts {
+    @* Enlaces a librerías externas de JavaScript *@
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.8/dist/sweetalert2.all.min.js"></script>
+    @* Validaciones del lado del cliente de ASP.NET Core *@
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+}

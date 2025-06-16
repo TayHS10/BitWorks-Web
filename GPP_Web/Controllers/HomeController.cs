@@ -114,5 +114,19 @@ namespace GPP_Web.Controllers
             return View(request);
         }
 
+        // --- NUEVO MÉTODO: Términos y Condiciones ---
+        [HttpGet]
+        public IActionResult TermsAndConditions()
+        {
+            return View();
+        }
+
+        // --- NUEVO MÉTODO: Acerca de Nosotros ---
+        [HttpGet]
+        public IActionResult AboutUs()
+        {
+            return View();
+        }
+
     }
 }

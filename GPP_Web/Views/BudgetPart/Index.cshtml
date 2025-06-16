@@ -276,7 +276,7 @@
                                                 </a>
                                             </li>
                                             <li>
-                                                <a class="dropdown-item" href="@Url.Action("Index", "Expense", new { budgetPartId = item.BudgetPartId })">
+                                                <a class="dropdown-item" href="@Url.Action("GetExpensesByBudgetPart", "Expense", new { budgetPartId = item.BudgetPartId })">
                                                     <i class="bi bi-clipboard-data"></i> Ver Registro de Gastos
                                                 </a>
                                             </li>
@@ -284,16 +284,6 @@
                                                 <a class="dropdown-item" href="@Url.Action("TransferAmount", "BudgetPart", new { budgetPartId = item.BudgetPartId })">
                                                     @* Corregido: 'new teorias' a 'new' *@
                                                     <i class="bi bi-arrow-left-right"></i> Transferir Montos
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item text-warning" href="@Url.Action("Edit", "BudgetPart", new { id = item.BudgetPartId })">
-                                                    <i class="bi bi-pencil-square"></i> Editar Partida
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item text-danger" href="@Url.Action("Delete", "BudgetPart", new { id = item.BudgetPartId })">
-                                                    <i class="bi bi-trash"></i> Eliminar Partida
                                                 </a>
                                             </li>
                                         </ul>

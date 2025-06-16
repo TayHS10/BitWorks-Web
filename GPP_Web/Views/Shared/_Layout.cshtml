@@ -36,7 +36,8 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0 small fw-bolder">
                         <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Inicio</a></li>
-                        <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Home" asp-action="ConvertirseEnColaborador">Colaboradores</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Home" asp-action="TermsAndConditions">Términos y Condiciones</a></li>
+<li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Home" asp-action="AboutUs">Acerca de Nosotros</a></li>
                         <li class="nav-item">
                             <a class="nav-link button2 ms-lg-3" asp-controller="Auth" asp-action="Login">Iniciar Sesión</a>
                         </li>
@@ -70,31 +71,51 @@
                         </a>
                     </li>
                     @if (User.IsInRole("Admin"))
-                    {
+{
                         <li>
-                            <a asp-area="" asp-controller="Admin" asp-action="Dashboard" class="nav-link text-white @(ViewContext.RouteData.Values["Controller"].ToString() == "Admin" ? "active" : "")">
-                                <i class="bi bi-person-gear me-2"></i>Admin Dashboard
+                            <a asp-area="" asp-controller="Admin" asp-action="RoleRequests" class="nav-link text-white @(ViewContext.RouteData.Values["Controller"].ToString() == "Admin" && ViewContext.RouteData.Values["Action"].ToString() == "RoleRequests" ? "active" : "")">
+                                <i class="bi bi-person-gear me-2"></i>Solicitudes
+                            </a>
+                        </li>
+                        <li>
+                            <a asp-area="" asp-controller="Admin" asp-action="CreateUser" class="nav-link text-white @(ViewContext.RouteData.Values["Controller"].ToString() == "Admin" && ViewContext.RouteData.Values["Action"].ToString() == "CreateUser" ? "active" : "")">
+                                <i class="bi bi-person-plus me-2"></i>Crear Usuario
+                            </a>
+                        </li>
+                        <li>
+                            <a asp-area="" asp-controller="Admin" asp-action="ManageUsers" class="nav-link text-white @(ViewContext.RouteData.Values["Controller"].ToString() == "Admin" && ViewContext.RouteData.Values["Action"].ToString() == "ManageUsers" ? "active" : "")">
+                                <i class="bi bi-people-fill me-2"></i>Gestión de Usuarios
                             </a>
                         </li>
                     }
                     @if (User.IsInRole("Manager"))
                     {
-                       <li>
-                            <a asp-area="" asp-controller="Project" asp-action="ManagerProjects" class="nav-link text-white @(ViewContext.RouteData.Values["Controller"].ToString() == "Project" ? "active" : "")">
+                        <li>
+                            <a asp-area="" asp-controller="Project" asp-action="ManagerProjects" class="nav-link text-white @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Project" && ViewContext.RouteData.Values["Action"]?.ToString() == "ManagerProjects" ? "active" : "")">
                                 <i class="bi bi-file-earmark-text me-2"></i>Mis Proyectos
+                            </a>
+                        </li>
+                        <li>
+                            <a asp-area="" asp-controller="Manager" asp-action="RequestRoleChange" class="nav-link text-white @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Manager" && ViewContext.RouteData.Values["Action"]?.ToString() == "RequestRoleChange" ? "active" : "")">
+                                <i class="bi bi-person-up me-2"></i>Solicitar Cambio de Rol
                             </a>
                         </li>
                     }
                     @if (User.IsInRole("Accountant"))
                     {
-                       <li>
-                            <a asp-controller="Project" asp-action="CreateProject" class="nav-link text-white @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Project" && ViewContext.RouteData.Values["Action"]?.ToString() == "Create" ? "active" : "")">
+                        <li>
+                            <a asp-area="" asp-controller="Project" asp-action="CreateProject" class="nav-link text-white @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Project" && ViewContext.RouteData.Values["Action"]?.ToString() == "CreateProject" ? "active" : "")">
                                 <i class="bi bi-file-earmark-text me-2"></i>Registro de Proyectos
                             </a>
                         </li>
                         <li>
-                            <a asp-controller="Project" asp-action="DeleteProjects" class="nav-link text-white @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Project" && ViewContext.RouteData.Values["Action"]?.ToString() == "DeactivateProject" ? "active" : "")">
+                            <a asp-area="" asp-controller="Project" asp-action="DeleteProjects" class="nav-link text-white @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Project" && ViewContext.RouteData.Values["Action"]?.ToString() == "DeleteProjects" ? "active" : "")">
                                 <i class="bi bi-file-earmark-x me-2"></i>Desactivar Proyecto
+                            </a>
+                        </li>
+                        <li>
+                            <a asp-area="" asp-controller="Accountant" asp-action="RequestRoleChange" class="nav-link text-white @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Accountant" && ViewContext.RouteData.Values["Action"]?.ToString() == "RequestRoleChange" ? "active" : "")">
+                                <i class="bi bi-person-up me-2"></i>Solicitar Cambio de Rol
                             </a>
                         </li>
                     }

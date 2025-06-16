@@ -4,8 +4,276 @@
     ViewData["Title"] = "Crear Proyecto";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<link rel="stylesheet" href="~/css/create-project.css">
-<!-- Botón de retroceso con imagen pequeña -->
+
+<style>
+    /* Estilos generales y variables */
+    :root {
+        --primary-color: #3A889D; /* Azul oscuro */
+        --secondary-color: #275849; /* Verde oscuro/azulado para contrastes */
+        --light-gray-bg: #eff1f3; /* Fondo gris claro para el cuerpo */
+        --dark-text-color: #343a40; /* Color de texto oscuro general */
+        --border-color: #e9ecef; /* Color de borde suave */
+        --card-bg: #ffffff; /* Fondo blanco para tarjetas y formularios */
+        --input-border: #ced4da; /* Borde estándar para inputs */
+        --focus-ring-color: rgba(58, 136, 157, 0.25); /* Color de sombra para el focus del input */
+        --danger-color: #dc3545; /* Color rojo para errores */
+    }
+
+    /* Estilo para el cuerpo de la página */
+    body {
+        background-color: var(--light-gray-bg) !important;
+        font-family: 'Plus Jakarta Sans', sans-serif; /* Fuente principal */
+        color: var(--dark-text-color); /* Color de texto predeterminado */
+    }
+
+    /* Contenedor principal del formulario */
+    .form-container {
+        background-color: var(--card-bg); /* Fondo blanco */
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); /* Sombra suave */
+        max-width: 800px; /* Ancho máximo del formulario */
+        margin: 40px auto; /* Centrar y dar espacio vertical */
+        border: 1px solid var(--border-color); /* Borde sutil */
+    }
+
+    /* Título principal del formulario */
+    h1 {
+        color: var(--primary-color);
+        margin-bottom: 30px;
+        font-weight: 700;
+        font-size: 2.5rem;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1); /* Sombra de texto ligera */
+        padding-top: 20px;
+    }
+
+    /* Título de la sección de partidas presupuestarias */
+    h3.h5 {
+        color: var(--secondary-color);
+        font-weight: 600;
+        margin-top: 30px;
+        border-bottom: 2px solid var(--border-color); /* Separador visual */
+        padding-bottom: 10px;
+    }
+
+    /* Grupos de formulario (label + input/textarea) */
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--dark-text-color);
+            margin-bottom: 8px;
+            display: block; /* Asegura que el label esté en su propia línea sobre el input */
+        }
+
+    /* Estilo general para todos los controles de formulario (input, textarea) */
+    .form-control {
+        border-radius: 8px;
+        border: 1px solid var(--input-border);
+        padding: 12px 15px;
+        font-size: 1rem;
+        color: var(--dark-text-color);
+        transition: all 0.3s ease; /* Transición suave para cambios de estilo */
+    }
+
+        .form-control:focus {
+            border-color: var(--primary-color); /* Borde primario al enfocar */
+            box-shadow: 0 0 0 0.25rem var(--focus-ring-color); /* Sombra de enfoque */
+            outline: none; /* Elimina el contorno predeterminado del navegador */
+        }
+
+    /* Ajuste para textareas */
+    textarea.form-control {
+        resize: vertical; /* Permite redimensionar verticalmente */
+        min-height: 90px;
+    }
+
+    /* Estilos específicos para las secciones de partidas presupuestarias */
+    .budget-part {
+        background-color: #f8f9fa; /* Un fondo ligeramente diferente para agrupar visualmente */
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 15px; /* Espacio entre partidas individuales */
+        position: relative; /* Necesario para posicionar el botón de eliminar */
+        transition: all 0.4s ease-out; /* Transición para efectos de hover, entrada y salida */
+    }
+
+        /* Animación de entrada para nuevas partidas */
+        .budget-part.entering {
+            opacity: 0;
+            max-height: 0;
+            overflow: hidden;
+            transform: translateY(20px);
+            margin-bottom: 0; /* Elimina el margen para la animación de colapso */
+        }
+
+        .budget-part.entered {
+            opacity: 1;
+            max-height: 500px; /* Un valor lo suficientemente grande para contener el contenido */
+            transform: translateY(0);
+            margin-bottom: 15px; /* Restaura el margen después de la entrada */
+        }
+
+        /* Animación de salida para partidas eliminadas */
+        .budget-part.leaving {
+            opacity: 0;
+            max-height: 0;
+            overflow: hidden;
+            transform: translateY(-20px);
+            margin-bottom: 0; /* Colapsa el margen */
+        }
+
+        /* Efecto de levantamiento sutil al pasar el ratón por una partida */
+        .budget-part:hover {
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* Sombra más pronunciada al pasar el ratón */
+            transform: translateY(-2px); /* Ligero movimiento hacia arriba */
+        }
+
+        .budget-part .form-label {
+            font-size: 0.9rem; /* Etiquetas más pequeñas dentro de la partida */
+            margin-bottom: 5px;
+        }
+
+        .budget-part .form-control {
+            margin-bottom: 15px; /* Espacio entre campos dentro de una partida */
+        }
+
+    /* Botón para agregar una nueva partida */
+    #addBudgetPart {
+        background-color: transparent;
+        color: var(--secondary-color);
+        border: 2px dashed var(--secondary-color); /* Borde punteado distintivo */
+        padding: 10px 20px;
+        border-radius: 8px;
+        width: 100%; /* Ocupa todo el ancho disponible */
+        transition: all 0.3s ease;
+        font-weight: 600;
+        margin-top: 15px;
+    }
+
+        #addBudgetPart:hover {
+            background-color: var(--secondary-color);
+            color: white;
+            border-color: var(--secondary-color);
+            box-shadow: 0 2px 8px rgba(39, 88, 73, 0.2); /* Sombra sutil al pasar el ratón */
+        }
+
+    /* Botón para eliminar una partida específica */
+    .remove-budget-part {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: var(--danger-color); /* Fondo rojo de peligro */
+        color: white;
+        border: none;
+        border-radius: 50%; /* Forma circular */
+        width: 30px;
+        height: 30px;
+        font-size: 1.2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        line-height: 1; /* Asegura que la 'x' esté centrada verticalmente */
+        padding-bottom: 2px; /* Pequeño ajuste para centrado visual de la 'x' */
+    }
+
+        .remove-budget-part:hover {
+            background-color: #c82333; /* Rojo más oscuro al pasar el mouse */
+            transform: scale(1.1); /* Ligeramente más grande al pasar el ratón */
+        }
+
+    /* Botón principal de envío (Crear Proyecto) */
+    .btn-primary {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        padding: 12px 30px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+
+        .btn-primary:hover {
+            background-color: #2e7183; /* Tono más oscuro de azul al pasar el mouse */
+            border-color: #2e7183;
+            transform: translateY(-2px); /* Ligero efecto de levantamiento */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* Sombra más pronunciada */
+        }
+
+    /* Mensajes de alerta de Bootstrap (aunque se usará SweetAlert2, estos son para fallback o estilos base) */
+    .alert {
+        border-radius: 8px;
+        margin-top: 20px;
+        font-size: 0.95rem;
+    }
+
+    .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+        border-color: #c3e6cb;
+    }
+
+    .alert-danger {
+        background-color: #f8d7da;
+        color: #721c24;
+        border-color: #f5c6cb;
+    }
+
+    .alert ul {
+        margin-bottom: 0;
+        padding-left: 20px;
+    }
+
+    .btn-close {
+        font-size: 0.9rem;
+    }
+
+    /* Estilos para el botón de retroceso */
+    .back-button {
+        margin-top: 20px;
+        margin-left: 20px;
+    }
+
+    .back-icon {
+        width: 24px;
+        height: 24px;
+        vertical-align: middle;
+        margin-right: 8px;
+    }
+
+    .btn-link {
+        color: var(--primary-color);
+        font-weight: 600;
+        transition: color 0.3s ease;
+    }
+
+        .btn-link:hover {
+            color: var(--secondary-color);
+            text-decoration: underline !important;
+        }
+
+    /* Estilos para los mensajes de error de validación de campos individuales (cliente y servidor) */
+    .form-group .text-danger {
+        font-size: 0.875em; /* Tamaño de fuente más pequeño */
+        color: var(--danger-color); /* Color rojo */
+        margin-top: 5px;
+        display: block; /* Asegura que el mensaje de error esté en su propia línea */
+    }
+
+    /* Resalta los inputs con errores de validación */
+    .form-control.input-validation-error {
+        border-color: var(--danger-color); /* Borde rojo */
+        box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25); /* Sombra roja sutil */
+    }
+</style>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.8/dist/sweetalert2.min.css">
+
 <div class="back-button">
     <a href="javascript:history.back()" class="btn btn-link" style="text-decoration: none;">
         <img src="~/images/icons/back.png" alt="Volver" class="back-icon"> Volver
@@ -14,71 +282,56 @@
 
 <h1 class="text-center">Crear Proyecto</h1>
 
-<!-- Mensaje de éxito (modal o card de notificación) -->
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        @TempData["SuccessMessage"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-}
-
-<!-- Errores generales -->
-@if (!ViewData.ModelState.IsValid)
-{
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <strong>Errores:</strong>
-        <ul>
-            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
-            {
-                <li>@error.ErrorMessage</li>
-            }
-        </ul>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-}
-
-<!-- Formulario de Registro de Proyecto -->
-<form method="post" class="form-container">
+<form method="post" class="form-container" id="createProjectForm">
     <div class="form-group">
         <label for="ProjectCode">Código del Proyecto</label>
         <input type="text" class="form-control" id="ProjectCode" name="ProjectCode" value="@Model.ProjectCode" required />
+        <span asp-validation-for="ProjectCode" class="text-danger"></span>
     </div>
 
     <div class="form-group">
         <label for="ProjectName">Nombre del Proyecto</label>
         <input type="text" class="form-control" id="ProjectName" name="ProjectName" value="@Model.ProjectName" required />
+        <span asp-validation-for="ProjectName" class="text-danger"></span>
     </div>
 
     <div class="form-group">
         <label for="Description">Descripción</label>
         <textarea class="form-control" id="Description" name="Description" placeholder="Descripción del proyecto" rows="4">@Model.Description</textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
     </div>
 
     <div class="form-group">
         <label for="Budget">Presupuesto</label>
-        <input type="number" class="form-control" id="Budget" name="Budget" value="@Model.Budget" required />
+        <input type="number" step="0.01" class="form-control" id="Budget" name="Budget" value="@Model.Budget" required />
+        <span asp-validation-for="Budget" class="text-danger"></span>
     </div>
 
     <div class="form-group">
         <label for="ManagerEmail">Correo del Gestor</label>
         <input type="email" class="form-control" id="ManagerEmail" name="ManagerEmail" value="@Model.ManagerEmail" required />
+        <span asp-validation-for="ManagerEmail" class="text-danger"></span>
     </div>
 
     <div class="form-group">
         <div id="budgetPartsContainer">
             <h3 class="h5 mb-3">Partidas Presupuestarias</h3>
             <div id="budgetParts">
-                @if (Model.BudgetParts != null && Model.BudgetParts.Count > 0)
+                @if (Model.BudgetParts != null)
                 {
-                    @foreach (var part in Model.BudgetParts)
+                    @for (int i = 0; i < Model.BudgetParts.Count; i++)
                     {
-                        <div class="budget-part mb-3">
-                            <label for="PartName" class="form-label">Nombre de la Partida</label>
-                            <input type="text" class="form-control" name="BudgetParts[@Model.BudgetParts.IndexOf(part)].PartName" value="@part.PartName" required />
+                        <div class="budget-part mb-3 entered">
+                            @* Añade 'entered' para las existentes *@
+                            <label for="@("BudgetParts_" + i + "__PartName")" class="form-label">Nombre de la Partida</label>
+                            <input type="text" class="form-control" name="BudgetParts[@i].PartName" id="@("BudgetParts_" + i + "__PartName")" value="@Model.BudgetParts[i].PartName" required />
+                            <span asp-validation-for="BudgetParts[i].PartName" class="text-danger"></span>
 
-                            <label for="AllocatedAmount" class="form-label">Monto Asignado</label>
-                            <input type="number" class="form-control" name="BudgetParts[@Model.BudgetParts.IndexOf(part)].AllocatedAmount" value="@part.AllocatedAmount" required />
+                            <label for="@("BudgetParts_" + i + "__AllocatedAmount")" class="form-label mt-2">Monto Asignado</label>
+                            <input type="number" step="0.01" class="form-control" name="BudgetParts[@i].AllocatedAmount" id="@("BudgetParts_" + i + "__AllocatedAmount")" value="@Model.BudgetParts[i].AllocatedAmount" required />
+                            <span asp-validation-for="BudgetParts[i].AllocatedAmount" class="text-danger"></span>
+
+                            <button type="button" class="remove-budget-part" aria-label="Eliminar Partida">&times;</button>
                         </div>
                     }
                 }
@@ -87,37 +340,206 @@
         </div>
     </div>
 
-    @if (ViewData.ModelState["BudgetParts"]?.Errors.Any() == true)
+    @if (ViewData.ModelState.ContainsKey("BudgetParts") && ViewData.ModelState["BudgetParts"]?.Errors.Any() == true)
     {
         <div class="text-danger">
             @ViewData.ModelState["BudgetParts"]?.Errors.FirstOrDefault()?.ErrorMessage
         </div>
     }
 
-    <!-- Botón para crear el proyecto -->
     <div class="form-group text-center mt-4">
         <button type="submit" class="btn btn-primary btn-lg">Crear Proyecto</button>
     </div>
 </form>
 
-<script>
-    let partIndex = @Model.BudgetParts.Count;
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation/1.19.3/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.8/dist/sweetalert2.all.min.js"></script>
 
-    document.getElementById('addBudgetPart').addEventListener('click', function() {
-        const budgetPartsContainer = document.getElementById('budgetParts');
+    <script>
+        let partIndex = @(Model.BudgetParts?.Count ?? 0);
 
-        const newPart = document.createElement('div');
-        newPart.classList.add('budget-part', 'mb-3');
+        document.addEventListener('DOMContentLoaded', function () {
+            const budgetPartsContainer = document.getElementById('budgetParts');
+            const addBudgetPartButton = document.getElementById('addBudgetPart');
+            const createProjectForm = document.getElementById('createProjectForm');
 
-        newPart.innerHTML = `
-            <label for="PartName" class="form-label">Nombre de la Partida</label>
-            <input type="text" class="form-control" name="BudgetParts[${partIndex}].PartName" required />
+            // Función para añadir una nueva partida presupuestaria dinámicamente
+            addBudgetPartButton.addEventListener('click', function () {
+                const newPartDiv = document.createElement('div');
+                newPartDiv.classList.add('budget-part', 'mb-3', 'entering'); // Añade 'entering' para la animación de entrada
 
-            <label for="AllocatedAmount" class="form-label">Monto Asignado</label>
-            <input type="number" class="form-control" name="BudgetParts[${partIndex}].AllocatedAmount" required />
-        `;
+                newPartDiv.innerHTML = `
+                    <label for="BudgetParts_${partIndex}__PartName" class="form-label">Nombre de la Partida</label>
+                    <input type="text" class="form-control"
+                           name="BudgetParts[${partIndex}].PartName"
+                           id="BudgetParts_${partIndex}__PartName" required
+                           data-val="true" data-val-required="El nombre de la partida es obligatorio."
+                           data-val-length-max="100" data-val-length="El nombre de la partida no puede exceder los 100 caracteres." />
+                    <span class="text-danger field-validation-valid" data-valmsg-for="BudgetParts[${partIndex}].PartName" data-valmsg-replace="true"></span>
 
-        budgetPartsContainer.appendChild(newPart);
-        partIndex++;
-    });
-</script>
+                    <label for="BudgetParts_${partIndex}__AllocatedAmount" class="form-label mt-2">Monto Asignado</label>
+                    <input type="number" step="0.01" class="form-control"
+                           name="BudgetParts[${partIndex}].AllocatedAmount"
+                           id="BudgetParts_${partIndex}__AllocatedAmount" required
+                           data-val="true" data-val-required="El monto asignado es obligatorio."
+                           data-val-range-min="0.01" data-val-range="El monto asignado debe ser un valor positivo y mayor a cero." />
+                    <span class="text-danger field-validation-valid" data-valmsg-for="BudgetParts[${partIndex}].AllocatedAmount" data-valmsg-replace="true"></span>
+
+                    <button type="button" class="remove-budget-part" aria-label="Eliminar Partida">&times;</button>
+                `;
+
+                budgetPartsContainer.appendChild(newPartDiv);
+
+                // Fuerza un reflow del navegador para que la transición 'entering' se aplique desde el estado inicial
+                newPartDiv.offsetWidth; // No remuevas esta línea, es intencional.
+
+                // Inicia la transición a 'entered' después del reflow
+                newPartDiv.classList.remove('entering');
+                newPartDiv.classList.add('entered');
+
+                partIndex++;
+
+                $(createProjectForm).removeData("validator");
+                $(createProjectForm).removeData("unobtrusiveValidation");
+                $.validator.unobtrusive.parse(createProjectForm);
+            });
+
+            // Función para eliminar una partida presupuestaria con animación
+            budgetPartsContainer.addEventListener('click', function (event) {
+                if (event.target.classList.contains('remove-budget-part')) {
+                    Swal.fire({
+                        title: '¿Estás seguro?',
+                        text: 'Esta acción eliminará la partida presupuestaria.',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Sí, eliminar',
+                        cancelButtonText: 'Cancelar',
+                        customClass: {
+                            popup: 'animate__animated animate__fadeIn'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            const partToRemove = event.target.closest('.budget-part');
+                            if (partToRemove) {
+                                partToRemove.classList.remove('entered'); // Asegura que no tenga la clase de entrada
+                                partToRemove.classList.add('leaving'); // Añade la clase para la animación de salida
+
+                                // Espera a que la transición CSS termine antes de eliminar el elemento del DOM
+                                partToRemove.addEventListener('transitionend', function handler() {
+                                    partToRemove.remove();
+                                    reindexBudgetParts(); // Reindexar después de la eliminación
+                                    partToRemove.removeEventListener('transitionend', handler); // Limpia el listener
+                                });
+                            }
+                        }
+                    });
+                }
+            });
+
+            // Función para reindexar los campos de las partidas después de una eliminación
+            function reindexBudgetParts() {
+                const parts = budgetPartsContainer.querySelectorAll('.budget-part');
+                partIndex = 0;
+
+                parts.forEach((part, index) => {
+                    part.querySelectorAll('input, textarea, select, span[data-valmsg-for]').forEach(element => {
+                        let currentName = element.getAttribute('name');
+                        let currentId = element.getAttribute('id');
+                        let currentValMsgFor = element.getAttribute('data-valmsg-for');
+
+                        if (currentName && currentName.startsWith('BudgetParts[')) {
+                            element.setAttribute('name', currentName.replace(/BudgetParts\[\d+\]/, `BudgetParts[${index}]`));
+                        }
+
+                        if (currentId && currentId.match(/^BudgetParts_\d+__/)) {
+                            element.setAttribute('id', currentId.replace(/^BudgetParts_\d+__/, `BudgetParts_${index}__`));
+                        }
+
+                        if (currentValMsgFor && currentValMsgFor.startsWith('BudgetParts[')) {
+                            element.setAttribute('data-valmsg-for', currentValMsgFor.replace(/BudgetParts\[\d+\]/, `BudgetParts[${index}]`));
+                        }
+                    });
+                    partIndex++;
+                });
+
+                $(createProjectForm).removeData("validator");
+                $(createProjectForm).removeData("unobtrusiveValidation");
+                $.validator.unobtrusive.parse(createProjectForm);
+            }
+
+            // Manejo de mensajes de éxito y error con SweetAlert2
+            const successMessage = '@(TempData["SuccessMessage"] as string)';
+            const errorMessage = '@(ViewBag.ErrorMessage as string)';
+
+            if (successMessage && successMessage.trim() !== '') {
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: successMessage,
+                    confirmButtonText: 'Aceptar',
+                    customClass: {
+                        popup: 'animate__animated animate__fadeInDown'
+                    }
+                });
+            }
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                    List<string> generalErrorsToShow = new List<string>();
+
+                    foreach (var modelStateKey in ViewData.ModelState.Keys)
+                    {
+                            foreach (var error in ViewData.ModelState[modelStateKey].Errors)
+                            {
+                                    if (string.IsNullOrEmpty(modelStateKey) ||
+                                            modelStateKey.StartsWith("BudgetParts") ||
+                                            (!new string[] { "ProjectCode", "ProjectName", "Description", "Budget", "ManagerEmail" }
+                                                    .Any(field => modelStateKey.Contains(field)) && !string.IsNullOrEmpty(error.ErrorMessage)))
+                                    {
+                                            if (!generalErrorsToShow.Contains(error.ErrorMessage))
+                                            {
+                                                    generalErrorsToShow.Add(error.ErrorMessage);
+                                            }
+                                    }
+                            }
+                    }
+
+                    if (generalErrorsToShow.Any())
+                    {
+                            <text>
+                                let generalErrorMessages = @Html.Raw(Json.Serialize(generalErrorsToShow));
+                                if (generalErrorMessages.length > 0) {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: '¡Error de Validación!',
+                                        html: '<ul>' + generalErrorMessages.map(msg => '<li>' + msg + '</li>').join('') + '</ul>',
+                                        confirmButtonText: 'Aceptar',
+                                        customClass: {
+                                            popup: 'animate__animated animate__shakeX'
+                                        }
+                                    });
+                                }
+                            </text>
+                    }
+            }
+
+            if (errorMessage && errorMessage.trim() !== '') {
+                Swal.fire({
+                    icon: 'error',
+                    title: '¡Error!',
+                    text: errorMessage,
+                    confirmButtonText: 'Aceptar',
+                    customClass: {
+                        popup: 'animate__animated animate__shakeX'
+                    }
+                });
+            }
+        });
+    </script>
+}

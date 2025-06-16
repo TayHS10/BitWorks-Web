@@ -1,12 +1,14 @@
 ﻿using GPP_Web.DTOs.Project;
+using GPP_Web.DTOs.RoleChangeRequest;
 using GPP_Web.Models;
 using GPP_Web.Services;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
-using TimeZoneConverter;
 using System.Linq;
+using System.Security.Claims;
+using TimeZoneConverter;
 
 namespace GPP_Web.Controllers
 {
@@ -24,6 +26,99 @@ namespace GPP_Web.Controllers
         {
             _apiClient = apiClient;
             _logger = logger;
+        }
+
+        /// <summary>
+        /// Muestra el formulario para que un usuario con rol "Manager" solicite un cambio de rol.
+        /// Pre-llena el email del usuario autenticado y presenta las opciones de rol limitadas a Contador y Gerente.
+        /// </summary>
+        /// <returns>La vista del formulario de solicitud de cambio de rol.</returns>
+        [HttpGet]
+        public IActionResult RequestRoleChange()
+        {
+            var model = new CreateRoleChangeRequestDTO();
+
+            model.EmailAddress = User.Identity.Name; // Asumiendo que el nombre de usuario es el email
+            model.FullName = null; // Se deja vacío para que el usuario lo introduzca
+
+            // Roles disponibles para la solicitud para un Manager
+            // Los valores son en inglés, los nombres a mostrar se mapean en la vista.
+            ViewBag.RequestedRoles = new List<string> { "Accountant", "Manager" }; // Solo Contador y Gerente
+
+            return View(model);
+        }
+
+        /// <summary>
+        /// Procesa la solicitud de cambio de rol enviada por un usuario con rol "Manager".
+        /// Valida los datos y envía la solicitud a la API, utilizando los datos de autenticación del servidor
+        /// para el email y nombre completo por seguridad.
+        /// </summary>
+        /// <param name="requestDto">DTO con los detalles de la solicitud de cambio de rol.</param>
+        /// <returns>Redirecciona al dashboard del Manager con un mensaje de éxito o error.</returns>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RequestRoleChange(CreateRoleChangeRequestDTO requestDto)
+        {
+            // Roles permitidos para la validación (se mantienen en inglés para la lógica interna)
+            var allowedRoles = new List<string> { "Accountant", "Admin" };
+            ViewBag.RequestedRoles = allowedRoles; // Vuelve a llenar para el dropdown si se regresa la vista
+
+            // ¡IMPORTANTE POR SEGURIDAD! Siempre obtener EmailAddress y FullName del usuario autenticado en el servidor
+            requestDto.EmailAddress = User.Identity.Name;
+            requestDto.FullName = User.FindFirst(ClaimTypes.GivenName)?.Value + " " + User.FindFirst(ClaimTypes.Surname)?.Value;
+            if (string.IsNullOrWhiteSpace(requestDto.FullName))
+            {
+                requestDto.FullName = User.Identity.Name;
+            }
+
+            if (!ModelState.IsValid)
+            {
+                TempData["ErrorMessage"] = "Por favor, corrige los errores en el formulario.";
+                return View(requestDto);
+            }
+
+            // Validar que el rol solicitado sea uno de los permitidos para un Manager
+            if (string.IsNullOrWhiteSpace(requestDto.RequestedRole) || !allowedRoles.Contains(requestDto.RequestedRole))
+            {
+                ModelState.AddModelError("RequestedRole", "El rol solicitado no es válido.");
+                TempData["ErrorMessage"] = "El rol solicitado no es válido. Solo se permiten Contador o Administrador.";
+                return View(requestDto);
+            }
+
+            try
+            {
+                var response = await _apiClient.PostAsync<CreateRoleChangeRequestDTO, object>("api/RoleChangeRequest", requestDto);
+
+                if (response.Success)
+                {
+                    TempData["SuccessMessage"] = "Tu solicitud de cambio de rol ha sido enviada exitosamente. Se te notificará una vez que sea revisada.";
+                    TempData["RedirectUrl"] = Url.Action("Dashboard", "Manager");
+                    return RedirectToAction("Dashboard", "Manager");
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = response.Message ?? "No se pudo enviar la solicitud de cambio de rol. Por favor, intenta de nuevo.";
+                    if (!string.IsNullOrWhiteSpace(response.Message) && response.Message.Contains("ya existe", StringComparison.OrdinalIgnoreCase))
+                    {
+                        ModelState.AddModelError("", "Ya tienes una solicitud de cambio de rol pendiente o reciente.");
+                    }
+                    return View(requestDto);
+                }
+            }
+            catch (HttpRequestException httpEx)
+            {
+                string apiErrorMessage = $"Error de conexión con el servicio: {httpEx.StatusCode} - {httpEx.Message}.";
+                TempData["ErrorMessage"] = apiErrorMessage;
+                ModelState.AddModelError("", apiErrorMessage);
+                return View(requestDto);
+            }
+            catch (Exception ex)
+            {
+                string genericErrorMessage = $"Ocurrió un error inesperado al enviar la solicitud: {ex.Message}";
+                TempData["ErrorMessage"] = genericErrorMessage;
+                ModelState.AddModelError("", genericErrorMessage);
+                return View(requestDto);
+            }
         }
 
         public async Task<IActionResult> Dashboard()

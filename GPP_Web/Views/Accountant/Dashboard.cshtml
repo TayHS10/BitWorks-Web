@@ -5,68 +5,530 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<link rel="stylesheet" href="~/css/accountant-dashboard.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+@* SweetAlert2 CSS *@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.8/dist/sweetalert2.min.css">
 
-<h1 class="text-center my-5">Dashboard del Contador: Proyectos Activos</h1>
+<style>
+    /* Estilos base (similar a otras vistas) */
+    :root {
+        --light-gray-bg: #eff1f3;
+        --primary-color: #3A889D; /* Dark Slate Gray */
+        --secondary-color: #275849; /* Charcoal Blue (para contrastes) */
+        --dark-text-color: #343a40; /* Texto oscuro general */
+        --border-color: #e9ecef; /* Color de borde suave */
+        --success-color: #28a745; /* Bootstrap green */
+        --danger-color: #dc3545; /* Bootstrap red */
+        --info-color: #17a2b8; /* Bootstrap info */
+        --card-bg: #ffffff;
+        --input-border: #ced4da;
+        --focus-ring-color: rgba(58, 136, 157, 0.25); /* Ligero Primary color para focus */
+    }
 
-<!-- Cards de acceso rápido -->
-<div class="row">
-    <!-- Card 1: Proyectos Activos -->
-    <div class="col-lg-4 col-md-6 mb-4">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Proyectos Activos</h5>
-                <p class="card-text">Visualiza los proyectos activos en curso actualmente.</p>
-                <a href="@Url.Action("Index", "Project")" class="btn btn-primary">Ver Proyectos</a>
-            </div>
-        </div>
-    </div>
+    body {
+        background-color: var(--light-gray-bg) !important;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        color: var(--dark-text-color);
+    }
 
-    <!-- Card 2: Resumen General -->
-    <div class="col-lg-4 col-md-6 mb-4">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Resumen General</h5>
-                <p class="card-text">Consulta los detalles generales de los proyectos activos.</p>
-                <a href="@Url.Action("Dashboard", "Accountant")" class="btn btn-primary">Ver Resumen</a>
-            </div>
-        </div>
-    </div>
+    .dashboard-container {
+        padding-top: 3rem;
+        padding-bottom: 3rem;
+        max-width: 1200px;
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 15px;
+        padding-right: 15px;
+    }
 
-    <!-- Card 3: Informes Financieros -->
-    <div class="col-lg-4 col-md-6 mb-4">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Informes Financieros</h5>
-                <p class="card-text">Accede a los informes financieros de los proyectos activos.</p>
-                <a href="@Url.Action("Index", "Expense")" class="btn btn-primary">Ver Informes</a>
-            </div>
-        </div>
-    </div>
-</div>
+    .dashboard-main-title {
+        font-size: 3.5rem;
+        font-weight: 800;
+        color: var(--dark-text-color);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 1rem;
+        position: relative;
+        padding-bottom: 15px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
 
-<!-- Tabla de Proyectos Activos -->
-<div class="table-responsive-container">
-    <h4>Últimos Proyectos Activos</h4>
-    <table class="table table-striped table-bordered">
-        <thead>
-            <tr>
-                <th>Código del Proyecto</th>
-                <th>Nombre del Proyecto</th>
-                <th>Presupuesto</th>
-                <th>Estado</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var project in Model)
-            {
-                <tr>
-                    <td>@project.ProjectCode</td>
-                    <td>@project.ProjectName</td>
-                    <td>₡@project.Budget</td>
-                    <td>@project.Status</td>
-                </tr>
+        .dashboard-main-title i {
+            font-size: 3rem;
+            margin-right: 15px;
+            color: var(--dark-text-color);
+        }
+
+        .dashboard-main-title::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 6px;
+            background-color: var(--secondary-color);
+            border-radius: 3px;
+        }
+
+    .dashboard-subtitle {
+        font-size: 1.75rem;
+        color: var(--dark-text-color);
+        margin-bottom: 2.5rem;
+        font-weight: 600;
+    }
+
+    /* Welcome message */
+    .welcome-message {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 3rem;
+        text-align: center;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        display: flex; /* Para alinear el icono con el texto */
+        align-items: center;
+        justify-content: center;
+        flex-direction: column; /* Cambiado a columna para el nombre debajo */
+    }
+
+        .welcome-message i {
+            font-size: 2.5rem; /* Tamaño del icono */
+            margin-right: 0px; /* Ya no hay texto al lado */
+            color: var(--primary-color);
+            margin-bottom: 10px; /* Espacio entre icono y mensaje */
+        }
+
+        .welcome-message .message-text {
+            display: flex;
+            align-items: center;
+            font-size: 2.5rem; /* Mantener el tamaño original del mensaje */
+            font-weight: 700;
+        }
+
+        .welcome-message .username-display {
+            font-size: 1.5rem; /* Tamaño más pequeño para el nombre */
+            font-weight: 500; /* Menos negrita */
+            color: var(--dark-text-color); /* Color de texto más estándar */
+            margin-top: 5px; /* Espacio entre mensaje y nombre */
+        }
+
+
+    /* Quick Access Cards */
+    .quick-access-card {
+        background-color: var(--card-bg);
+        border-radius: 1rem;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        height: 100%; /* Ensures cards in a row have equal height */
+        border: 1px solid var(--border-color);
+    }
+
+        .quick-access-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .quick-access-card .card-icon {
+            font-size: 3.5rem;
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+        }
+
+        .quick-access-card .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark-text-color);
+            margin-bottom: 0.75rem;
+        }
+
+        .quick-access-card .card-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .quick-access-card .card-description {
+            font-size: 0.95rem;
+            color: #6c757d;
+            margin-bottom: 1.5rem;
+            flex-grow: 1; /* Pushes button to bottom if text varies */
+        }
+
+        .quick-access-card .btn-view-details {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+            font-size: 1rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            transition: all 0.3s ease;
+            width: 100%; /* Make button full width of card */
+        }
+
+            .quick-access-card .btn-view-details:hover {
+                background-color: #2e7183;
+                border-color: #2e7183;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+                color: white;
             }
-        </tbody>
-    </table>
+
+            .quick-access-card .btn-view-details i {
+                margin-right: 0.5rem;
+            }
+
+    /* Table styles */
+    .table-container {
+        background-color: var(--card-bg);
+        border-radius: 1rem;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        padding: 2.5rem;
+        overflow-x: auto; /* Ensures table is responsive */
+        margin-top: 4rem; /* Spacing from cards */
+    }
+
+    .table-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--dark-text-color);
+        margin-bottom: 1.5rem;
+        border-bottom: 3px solid var(--primary-color);
+        padding-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+        .table-title i {
+            font-size: 2rem;
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+
+    .table {
+        width: 100%;
+        margin-bottom: 0;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+        .table thead th {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            border-bottom: none;
+            text-align: left;
+            font-weight: 700;
+            font-size: 1.05rem;
+        }
+
+        .table tbody tr:nth-of-type(odd) {
+            background-color: #f9f9f9;
+        }
+
+        .table tbody tr:hover {
+            background-color: #f0f0f0;
+        }
+
+        .table tbody td {
+            padding: 1rem;
+            vertical-align: middle;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* Specific styles for table headers corners */
+        .table thead th:first-child {
+            border-top-left-radius: 0.75rem;
+        }
+
+        .table thead th:last-child {
+            border-top-right-radius: 0.75rem;
+        }
+
+    /* No data message */
+    .no-data-message {
+        text-align: center;
+        padding: 2rem;
+        font-size: 1.2rem;
+        color: var(--dark-text-color);
+        background-color: var(--card-bg);
+        border-radius: 1rem;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        margin-top: 2rem;
+    }
+
+        .no-data-message i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+            display: block;
+        }
+
+
+    /* Responsive adjustments */
+    @@media (max-width: 991px) {
+        .dashboard-main-title {
+            font-size: 3rem;
+        }
+
+        .welcome-message {
+            font-size: 2rem;
+        }
+
+            .welcome-message .message-text {
+                font-size: 2rem;
+            }
+
+            .welcome-message .username-display {
+                font-size: 1.3rem;
+            }
+    }
+
+    @@media (max-width: 767px) {
+        .dashboard-main-title {
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+            .dashboard-main-title i {
+                font-size: 2.5rem;
+                margin-right: 10px;
+            }
+
+            .dashboard-main-title::after {
+                width: 80px;
+                height: 4px;
+            }
+
+        .dashboard-subtitle {
+            font-size: 1.4rem;
+        }
+
+        .welcome-message {
+            font-size: 1.8rem;
+        }
+
+            .welcome-message .message-text {
+                font-size: 1.8rem;
+            }
+
+            .welcome-message .username-display {
+                font-size: 1.1rem;
+            }
+
+        .quick-access-card {
+            padding: 1.5rem;
+        }
+
+            .quick-access-card .card-icon {
+                font-size: 3rem;
+            }
+
+            .quick-access-card .card-title {
+                font-size: 1.3rem;
+            }
+
+            .quick-access-card .card-value {
+                font-size: 2rem;
+            }
+
+        .table-container {
+            padding: 1.5rem;
+        }
+
+        .table-title {
+            font-size: 1.5rem;
+        }
+    }
+
+    @@media (max-width: 575px) {
+        .dashboard-main-title {
+            font-size: 2rem;
+        }
+
+            .dashboard-main-title i {
+                font-size: 2rem;
+            }
+
+        .dashboard-subtitle {
+            font-size: 1.2rem;
+        }
+
+        .welcome-message {
+            font-size: 1.5rem;
+        }
+
+            .welcome-message .message-text {
+                font-size: 1.5rem;
+            }
+
+            .welcome-message .username-display {
+                font-size: 1rem;
+            }
+
+        .quick-access-card .card-icon {
+            font-size: 2.5rem;
+        }
+
+        .quick-access-card .card-value {
+            font-size: 1.8rem;
+        }
+
+        .table thead th, .table tbody td {
+            font-size: 0.9rem;
+        }
+
+        .btn-view-details {
+            font-size: 0.9rem;
+            padding: 0.6rem 1rem;
+        }
+    }
+</style>
+
+<div class="container-fluid dashboard-container animate__animated animate__fadeIn">
+    <h1 class="text-center dashboard-main-title mb-3 animate__animated animate__bounceIn">
+        <i class="bi bi-wallet-fill"></i> Dashboard del Contador
+    </h1>
+    <p class="text-center dashboard-subtitle animate__animated animate__fadeInUp">
+        Una visión general y acceso rápido a la información financiera clave.
+    </p>
+
+    <h2 class="welcome-message animate__animated animate__fadeInDown">
+        <i class="@ViewBag.WelcomeIconClass"></i>
+        <span class="message-text">@ViewBag.WelcomeMessage</span>
+        @if (User.Identity.IsAuthenticated && !string.IsNullOrEmpty(User.Identity.Name))
+        {
+            <span class="username-display">@User.Identity.Name</span>
+        }
+    </h2>
+
+    <div class="row gx-4 gy-4 mb-5">
+        <div class="col-lg-4 col-md-6 animate__animated animate__fadeInUp">
+            <div class="quick-access-card">
+                <div class="card-icon"><i class="bi bi-cash-coin"></i></div>
+                <h5 class="card-title">Gastos Totales de Proyectos</h5>
+                <div class="card-value">₡@((ViewBag.TotalExpensesAllProjects ?? 0m).ToString("N0"))</div>
+                <p class="card-description">Monto total de gastos registrados en *todos* los proyectos del sistema.</p>
+                <a href="@Url.Action("Index", "Expense")" class="btn btn-view-details">
+                    <i class="bi bi-search"></i> Ver Gastos
+                </a>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6 animate__animated animate__fadeInUp animate__delay-0-2s">
+            <div class="quick-access-card">
+                <div class="card-icon"><i class="bi bi-folder-fill"></i></div>
+                <h5 class="card-title">Proyectos Registrados</h5>
+                <div class="card-value">@((ViewBag.TotalProjectsCount ?? 0).ToString("N0"))</div>
+                <p class="card-description">Número total de proyectos registrados en el sistema.</p>
+                <a href="@Url.Action("Index", "Project")" class="btn btn-view-details">
+                    <i class="bi bi-list-task"></i> Ver Proyectos
+                </a>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-12 animate__animated animate__fadeInUp animate__delay-0-4s">
+            <div class="quick-access-card">
+                <div class="card-icon"><i class="bi bi-people-fill"></i></div>
+                <h5 class="card-title">Gerentes Activos</h5>
+                <div class="card-value">@((ViewBag.TotalManagersCount ?? 0).ToString("N0"))</div>
+                <p class="card-description">Cantidad de gerentes de proyecto registrados en la plataforma.</p>
+                <a href="@Url.Action("ManagersList", "Accountant")" class="btn btn-view-details">
+                    <i class="bi bi-person-lines-fill"></i> Ver Gerentes
+                </a>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <div class="table-container animate__animated animate__fadeInUp">
+        <h4 class="table-title">
+            <i class="bi bi-lightbulb-fill"></i> Proyectos Activos Recientes
+        </h4>
+        @if (Model != null && Model.Any())
+        {
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Código del Proyecto</th>
+                        <th>Nombre del Proyecto</th>
+                        <th>Presupuesto Asignado</th>
+                        <th>Presupuesto Restante</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var project in Model)
+                    {
+                        <tr>
+                            <td>@project.ProjectCode</td>
+                            <td>@project.ProjectName</td>
+                            <td>₡@project.Budget.ToString("N0")</td>
+                            <td>₡@project.RemainingBudget.ToString("N0")</td>
+                            <td>@project.Status</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div class="no-data-message">
+                <i class="bi bi-info-circle-fill"></i>
+                <p>No se encontraron proyectos activos para mostrar.</p>
+            </div>
+        }
+    </div>
 </div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    @* SweetAlert2 JS *@
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.8/dist/sweetalert2.all.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            // Lógica para mostrar mensajes de éxito con SweetAlert2
+            var successMessage = '@(TempData["SuccessMessage"] as string ?? "")';
+            if (successMessage && successMessage.trim() !== '') {
+                setTimeout(function() {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Éxito!',
+                        text: successMessage,
+                        confirmButtonText: 'Aceptar',
+                        customClass: {
+                            popup: 'animate__animated animate__fadeInDown'
+                        }
+                    });
+                }, 100);
+            }
+
+            // Lógica para mostrar mensajes de error con SweetAlert2
+            var errorMessage = '@(ViewBag.ErrorMessage as string ?? "")';
+            if (errorMessage && errorMessage.trim() !== '') {
+                setTimeout(function() {
+                    Swal.fire({
+                        icon: 'error',
+                        title: '¡Error!',
+                        text: errorMessage,
+                        confirmButtonText: 'Aceptar',
+                        customClass: {
+                            popup: 'animate__animated animate__shakeX'
+                        }
+                    });
+                }, 100);
+            }
+        });
+    </script>
+}
