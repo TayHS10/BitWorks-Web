@@ -1,0 +1,343 @@
+﻿@model GPP_Web.ViewModels.UserManagementViewModel
+
+@{
+    ViewData["Title"] = "Gestión de Usuarios";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@* Enlaces a librerías externas de CSS *@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.8/dist/sweetalert2.min.css">
+
+
+<style>
+    /* Estilos generales y variables - Consistentes con otras vistas */
+    :root {
+        --primary-color: #3A889D; /* Azul oscuro */
+        --secondary-color: #275849; /* Verde oscuro/azulado para contrastes */
+        --light-gray-bg: #eff1f3; /* Fondo gris claro para el cuerpo */
+        --dark-text-color: #343a40; /* Color de texto oscuro general */
+        --border-color: #e9ecef; /* Color de borde suave */
+        --card-bg: #ffffff; /* Fondo blanco para tarjetas y formularios */
+        --input-border: #ced4da; /* Borde estándar para inputs */
+        --focus-ring-color: rgba(58, 136, 157, 0.25); /* Color de sombra para el focus del input */
+        --danger-color: #dc3545; /* Color rojo para errores */
+        --success-color: #28a745; /* Verde para éxito */
+        --info-color: #17a2b8; /* Azul claro para información */
+    }
+
+    body {
+        background-color: var(--light-gray-bg) !important;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        color: var(--dark-text-color);
+        padding: 20px; /* Padding general para el cuerpo */
+    }
+
+    .container-main {
+        padding: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .view-title {
+        color: var(--primary-color);
+        font-weight: 700;
+        font-size: 2.8rem; /* Tamaño de título más grande */
+        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    /* Estilos de la tabla */
+    .table-container {
+        background-color: var(--card-bg);
+        border-radius: 1rem;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        padding: 2.5rem;
+        overflow-x: auto; /* Asegura que la tabla sea responsive en pantallas pequeñas */
+        margin-bottom: 30px; /* Espacio debajo de la tabla antes de la paginación */
+    }
+
+    .table {
+        width: 100%;
+        margin-bottom: 0;
+        border-collapse: separate; /* Permite border-radius en las celdas */
+        border-spacing: 0;
+    }
+
+        .table thead th {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            border-bottom: none;
+            text-align: left;
+            font-weight: 700;
+            font-size: 1.05rem;
+        }
+
+        .table tbody tr:nth-of-type(odd) {
+            background-color: #f9f9f9; /* Raya más clara */
+        }
+
+        .table tbody tr:hover {
+            background-color: #f0f0f0;
+            cursor: default;
+        }
+
+        .table tbody td {
+            padding: 1rem;
+            vertical-align: middle;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .table thead th:first-child {
+            border-top-left-radius: 0.75rem;
+        }
+
+        .table thead th:last-child {
+            border-top-right-radius: 0.75rem;
+        }
+
+    /* Mensaje "sin datos" para la tabla */
+    .no-data-message {
+        text-align: center;
+        padding: 2rem;
+        font-size: 1.2rem;
+        color: var(--dark-text-color);
+        background-color: var(--card-bg);
+        border-radius: 1rem;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        margin-top: 2rem;
+    }
+
+        .no-data-message i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+            display: block;
+        }
+
+    /* Estilos para la paginación */
+    .pagination-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 30px;
+        padding: 10px;
+        background-color: var(--card-bg);
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        max-width: 1000px; /* Para centrar con el ancho de la tabla */
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .pagination-btn {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 10px 15px;
+        border-radius: 5px;
+        text-decoration: none;
+        margin: 0 5px;
+        transition: background-color 0.3s ease, color 0.3s ease;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+        .pagination-btn:hover:not(.disabled) {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .pagination-btn.disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+    .pagination-info {
+        margin: 0 20px;
+        font-size: 1.1rem;
+        color: var(--dark-text-color);
+    }
+
+    /* Estilos para el botón de desactivar */
+    .btn-deactivate {
+        background-color: var(--danger-color);
+        color: white;
+        padding: 8px 15px;
+        border: none;
+        border-radius: 5px;
+        font-weight: 600;
+        transition: background-color 0.3s ease;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+        .btn-deactivate:hover {
+            background-color: #c82333; /* Tono más oscuro de rojo */
+        }
+
+    /* Estilos para el botón de retroceso (similar a otras vistas) */
+    .dashboard-back-link {
+        display: inline-flex;
+        align-items: center;
+        margin-bottom: 2rem; /* Espacio debajo del botón */
+        color: var(--primary-color);
+        font-size: 1.1rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        margin-left: 20px; /* Alineación con el padding general */
+    }
+
+        .dashboard-back-link:hover {
+            color: var(--secondary-color);
+            transform: translateX(-5px); /* Efecto de deslizamiento al volver */
+        }
+
+        .dashboard-back-link i {
+            font-size: 1.5rem; /* Tamaño del icono */
+            margin-right: 0.5rem; /* Espacio entre icono y texto */
+        }
+</style>
+
+<div class="container-main animate__animated animate__fadeIn">
+
+    @* Botón de retroceso para volver al Dashboard del Admin *@
+    <a href="@Url.Action("Dashboard", "Admin")" class="dashboard-back-link animate__animated animate__fadeInLeft">
+        <i class="bi bi-arrow-left"></i> Volver al Dashboard
+    </a>
+
+    <h1 class="view-title">Gestión de Usuarios</h1>
+
+    @if (!string.IsNullOrWhiteSpace(Model.InfoMessage))
+    {
+        <div class="no-data-message animate__animated animate__fadeInUp">
+            <i class="bi bi-info-circle"></i>
+            <p>@Model.InfoMessage</p>
+        </div>
+    }
+    else if (Model.Users == null || !Model.Users.Any())
+    {
+        <div class="no-data-message animate__animated animate__fadeInUp">
+            <i class="bi bi-info-circle"></i>
+            <p>No hay usuarios registrados para mostrar en este momento.</p>
+        </div>
+    }
+    else
+    {
+        <div class="table-container animate__animated animate__fadeInUp">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre Completo</th>
+                        <th>Email</th>
+                        <th>Rol</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model.Users)
+                    {
+                        <tr>
+                            <td>@user.UserId</td>
+                            <td>@user.FullName</td>
+                            <td>@user.Email</td>
+                            <td>@user.Role</td>
+                            <td>
+                                @* Botón de Desactivar Usuario *@
+                                <form asp-action="DeactivateUser" asp-controller="Admin" method="post" class="d-inline">
+                                    <input type="hidden" name="userId" value="@user.UserId" />
+                                    <button type="submit" class="btn-deactivate"
+                                            onclick="return confirm('¿Estás seguro de que quieres DESACTIVAR a este usuario? Esta acción es irreversible.');">
+                                        <i class="bi bi-person-x-fill"></i> Desactivar
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div> @* Cierre de .table-container *@
+
+        @* Controles de paginación para la tabla de usuarios *@
+        <div class="pagination-container">
+            <a href="@Url.Action("ManageUsers", new { pageNumber = Model.CurrentPage - 1, pageSize = Model.PageSize })"
+               class="pagination-btn @(Model.HasPreviousPage ? "" : "disabled")">
+                Anterior
+            </a>
+
+            <span class="pagination-info">Página @Model.CurrentPage de @Model.TotalPages</span>
+
+            <a href="@Url.Action("ManageUsers", new { pageNumber = Model.CurrentPage + 1, pageSize = Model.PageSize })"
+               class="pagination-btn @(Model.HasNextPage ? "" : "disabled")">
+                Siguiente
+            </a>
+        </div>
+    }
+
+    @* --- Manejo de mensajes con SweetAlert2 --- *@
+    @if (ViewBag.SuccessMessage is string successMessage && !string.IsNullOrWhiteSpace(successMessage))
+    {
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: '@Html.Raw(successMessage)',
+                    confirmButtonText: 'Aceptar',
+                    customClass: {
+                        popup: 'animate__animated animate__fadeInDown'
+                    }
+                });
+            });
+        </script>
+    }
+
+    @if (ViewBag.ErrorMessage is string errorMessage && !string.IsNullOrWhiteSpace(errorMessage))
+    {
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                Swal.fire({
+                    icon: 'error',
+                    title: '¡Error!',
+                    html: '@Html.Raw(errorMessage.Replace("\n", "<br>"))',
+                    confirmButtonText: 'Aceptar',
+                    customClass: {
+                        popup: 'animate__animated animate__shakeX'
+                    }
+                });
+            });
+        </script>
+    }
+
+    @if (ViewBag.InfoMessage is string infoMessage && !string.IsNullOrWhiteSpace(infoMessage))
+    {
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Información',
+                    text: '@Html.Raw(infoMessage)',
+                    confirmButtonText: 'Aceptar',
+                    customClass: {
+                        popup: 'animate__animated animate__fadeInDown'
+                    }
+                });
+            });
+        </script>
+    }
+
+</div>
+
+@section Scripts {
+    @* Enlaces a librerías externas de JavaScript *@
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.8/dist/sweetalert2.all.min.js"></script>
+}

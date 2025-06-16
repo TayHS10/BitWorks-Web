@@ -1,0 +1,147 @@
+﻿/* Estilos para el formulario de Crear Proyecto */
+.form-container {
+    max-width: 900px; /* Aumentar el ancho del formulario */
+    margin: 0 auto;
+    padding: 30px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin-top: 30px;
+    padding-left: 40px;
+    padding-right: 40px;
+}
+
+.form-group {
+    margin-bottom: 25px; /* Mayor espaciado entre campos */
+}
+
+    .form-group label {
+        font-weight: bold;
+        color: #333;
+    }
+
+    .form-group .form-control {
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        padding: 12px;
+        font-size: 1rem;
+    }
+
+/* Mejores efectos visuales en los campos */
+.form-control:focus {
+    border-color: #3A889D; /* Cambia el borde cuando se enfoca */
+    box-shadow: 0 0 5px rgba(58, 137, 157, 0.5); /* Añadir sombra para efecto */
+}
+
+.form-group .input-group {
+    display: flex;
+    align-items: center;
+}
+
+.form-group .input-group-prepend {
+    background-color: #3A889D;
+    color: white;
+    border-radius: 8px 0 0 8px;
+    padding: 0 10px;
+}
+
+.form-group .input-group .form-control {
+    border-radius: 0 8px 8px 0;
+}
+
+/* Asegurando que los botones sean más grandes */
+.form-group input[type="file"] {
+    font-size: 1rem;
+    padding: 12px;
+}
+
+/* Campo de número (Monto) */
+#Budget {
+    font-size: 1.1rem;
+    padding: 12px;
+}
+
+/* Los mensajes de error ahora tienen un margen más grande */
+.text-danger {
+    font-size: 0.9rem;
+    color: #dc3545;
+    margin-top: 5px;
+}
+
+/* Diseño del botón de envío */
+.btn-primary {
+    background-color: #3A889D;
+    border-color: #3A889D;
+    padding: 12px;
+    border-radius: 8px;
+    width: 100%;
+    font-size: 1.2rem;
+}
+
+    .btn-primary:hover {
+        background-color: #2b7a8f;
+        border-color: #2b7a8f;
+    }
+
+/* Estilo para el mensaje de éxito */
+.alert-success, .alert-danger {
+    margin-top: 20px;
+    background-color: #28a745;
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 1rem;
+    text-align: center;
+}
+
+/* Estilos para el botón de retroceso */
+.back-button {
+    margin-bottom: 20px;
+    padding-left: 20px;
+}
+
+    .back-button .btn-link {
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        color: #3A889D;
+    }
+
+    .back-button .back-icon {
+        width: 20px;
+        height: 20px;
+        margin-right: 8px;
+    }
+
+    .back-button .btn-link:hover {
+        color: #3A889D;
+        text-decoration: underline;
+    }
+
+/* Espaciado entre los botones */
+.form-group .btn {
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+/* Estilo para el botón de retroceso */
+.form-group .btn-link {
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+    /* Estilo para el botón de retroceso */
+    .form-group .btn-link:hover {
+        color: #2b7a8f;
+    }
+
+/* Responsive */
+@media (max-width: 767px) {
+    .form-container {
+        padding: 20px;
+    }
+
+    .btn-primary {
+        padding: 10px;
+    }
+}

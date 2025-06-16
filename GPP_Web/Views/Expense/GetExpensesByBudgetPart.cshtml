@@ -1,0 +1,314 @@
+﻿@model IEnumerable<GPP_Web.DTOs.Expense.ExpenseResponseDTO>
+
+@{
+    ViewData["Title"] = "Gastos de la Partida";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    // Si necesitas el BudgetPartId o ProjectId para el botón de volver, podrías pasarlo a través de ViewData o ViewBag
+    // Por ejemplo, si en tu controlador pasas ViewBag.BudgetPartId = id;
+    int budgetPartId = ViewBag.BudgetPartId ?? 0; // Asegúrate de que tu controlador pasa este ID
+    int projectId = ViewBag.ProjectId ?? 0; // Y este ProjectId si lo necesitas para el Index de BudgetPart
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+@* SweetAlert2 CSS *@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.8/dist/sweetalert2.min.css">
+
+<style>
+    /* Estilos ya definidos en _Layout.cshtml o site.css (replicados aquí para referencia) */
+    :root {
+        --light-gray-bg: #eff1f3;
+        --primary-color: #3A889D; /* Dark Slate Gray */
+        --secondary-color: #275849; /* Charcoal Blue (para contrastes) */
+        --dark-text-color: #343a40; /* Texto oscuro general */
+        --border-color: #e9ecef; /* Color de borde suave */
+        --success-color: #28a745; /* Bootstrap green */
+        --danger-color: #dc3545; /* Bootstrap red */
+        --info-color: #17a2b8; /* Bootstrap info */
+        --card-bg: #ffffff;
+        --input-border: #ced4da;
+        --focus-ring-color: rgba(58, 136, 157, 0.25); /* Ligero Primary color para focus */
+    }
+
+    body {
+        background-color: var(--light-gray-bg) !important;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        color: var(--dark-text-color);
+    }
+
+    /* Contenedor principal para consistencia con el dashboard */
+    .dashboard-container {
+        padding-top: 3rem;
+        padding-bottom: 3rem;
+        max-width: 1200px; /* Ancho para la tabla */
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    /* Título principal */
+    .dashboard-main-title {
+        font-size: 3.5rem;
+        font-weight: 800;
+        color: var(--dark-text-color);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 1rem;
+        position: relative;
+        padding-bottom: 15px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+        .dashboard-main-title i {
+            font-size: 3rem;
+            margin-right: 15px;
+            color: var(--dark-text-color);
+        }
+
+        .dashboard-main-title::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 6px;
+            background-color: var(--secondary-color);
+            border-radius: 3px;
+        }
+
+    /* Subtítulo */
+    .dashboard-subtitle {
+        font-size: 1.75rem;
+        color: var(--dark-text-color);
+        margin-bottom: 2rem;
+        font-weight: 600;
+    }
+
+    /* Back Link Style */
+    .dashboard-back-link {
+        display: inline-flex;
+        align-items: center;
+        margin-bottom: 2rem;
+        color: var(--primary-color);
+        font-size: 1.1rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+        .dashboard-back-link:hover {
+            color: var(--secondary-color);
+            transform: translateX(-5px);
+        }
+
+        .dashboard-back-link i {
+            font-size: 1.5rem;
+            margin-right: 0.5rem;
+        }
+
+    /* Table styles */
+    .table-container {
+        background-color: var(--card-bg);
+        border-radius: 1rem;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        padding: 2.5rem;
+        overflow-x: auto; /* Ensures table is responsive */
+    }
+
+    .table {
+        width: 100%;
+        margin-bottom: 0;
+        border-collapse: separate; /* Allow border-radius on cells */
+        border-spacing: 0;
+    }
+
+        .table thead th {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            border-bottom: none; /* Remove default bootstrap border */
+            text-align: left;
+            font-weight: 700;
+            font-size: 1.05rem;
+        }
+
+        .table tbody tr:nth-of-type(odd) {
+            background-color: #f9f9f9; /* Lighter stripe */
+        }
+
+        .table tbody tr:hover {
+            background-color: #f0f0f0;
+            cursor: pointer;
+        }
+
+        .table tbody td {
+            padding: 1rem;
+            vertical-align: middle;
+            border-top: 1px solid var(--border-color); /* Light border between rows */
+        }
+
+        /* Specific styles for table headers corners */
+        .table thead th:first-child {
+            border-top-left-radius: 0.75rem;
+        }
+
+        .table thead th:last-child {
+            border-top-right-radius: 0.75rem;
+        }
+
+        /* Button within table */
+        .table .btn-sm {
+            padding: 0.3rem 0.75rem;
+            font-size: 0.875rem;
+            border-radius: 0.5rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .table .btn-secondary {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+            color: white;
+        }
+
+            .table .btn-secondary:hover {
+                background-color: #1e4539; /* Darker secondary on hover */
+                border-color: #1e4539;
+            }
+
+            .table .btn-secondary i {
+                margin-right: 0.3rem;
+            }
+
+    /* No data message */
+    .no-data-message {
+        text-align: center;
+        padding: 2rem;
+        font-size: 1.2rem;
+        color: var(--dark-text-color);
+        background-color: var(--card-bg);
+        border-radius: 1rem;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        margin-top: 2rem;
+    }
+
+        .no-data-message i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+            display: block;
+        }
+</style>
+
+<div class="container-fluid dashboard-container animate__animated animate__fadeIn">
+    @* Si tu controlador pasa BudgetPartId o ProjectId, úsalos para volver al Index correcto de partidas * @
+    @* Por ejemplo, si el enlace anterior viene de BudgetPart/Index, podrías hacer: *@
+    @* <a href="@Url.Action("Index", "BudgetPart", new { projectId = projectId })" class="dashboard-back-link animate__animated animate__fadeInLeft"> *@
+    @* Si solo quieres volver a la página anterior en el historial (menos robusto pero simple): *@
+    <a href="javascript:history.back()" class="dashboard-back-link animate__animated animate__fadeInLeft">
+        <i class="bi bi-arrow-left"></i> Volver
+    </a>
+
+    <h1 class="text-center dashboard-main-title mb-3 animate__animated animate__bounceIn">
+        <i class="bi bi-cash-coin"></i> Gastos de la Partida
+    </h1>
+    <p class="text-center dashboard-subtitle animate__animated animate__fadeInUp">
+        Listado detallado de los gastos registrados para esta partida presupuestaria.
+    </p>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="table-container animate__animated animate__fadeInUp">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Monto del Gasto</th>
+                        <th>Fecha del Gasto</th>
+                        <th>Estado</th>
+                        <th>Adjunto</th>
+                        <th>Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var expense in Model)
+                    {
+                        <tr>
+                            <td>₡@expense.ExpenseAmount.ToString("N0")</td> @* Formato de moneda para Costa Rica *@
+                            <td>@expense.ExpenseDate.ToShortDateString()</td> @* Formato de fecha corta *@
+                            <td>@expense.Status</td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(expense.DocumentReference))
+                                {
+                                    <button type="button" class="btn btn-secondary btn-sm" onclick="window.open('@Url.Content("~/images/documents/" + expense.DocumentReference)', '_blank')">
+                                        <i class="bi bi-file-earmark-arrow-down"></i> Ver Adjunto
+                                    </button>
+                                }
+                                else
+                                {
+                                    <span>No disponible</span>
+                                }
+                            </td>
+                            <td>@expense.Description</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="no-data-message animate__animated animate__fadeInUp">
+            <i class="bi bi-info-circle"></i>
+            <p>No hay gastos registrados para esta partida presupuestaria.</p>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    @* SweetAlert2 JS *@
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.8/dist/sweetalert2.all.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            // Lógica para mostrar mensajes de éxito (si tu controlador los envía)
+            var successMessage = '@(TempData["SuccessMessage"] as string ?? "")';
+            if (successMessage && successMessage.trim() !== '') {
+                setTimeout(function() {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Éxito!',
+                        text: successMessage,
+                        confirmButtonText: 'Aceptar',
+                        customClass: {
+                            popup: 'animate__animated animate__fadeInDown'
+                        }
+                    });
+                }, 100);
+            }
+
+            // Lógica para mostrar mensajes de error con SweetAlert2
+            var errorMessage = '@(ViewBag.ErrorMessage as string ?? "")'; // Usa ViewBag.ErrorMessage como antes
+            if (errorMessage && errorMessage.trim() !== '') {
+                setTimeout(function() {
+                    Swal.fire({
+                        icon: 'error',
+                        title: '¡Error!',
+                        text: errorMessage,
+                        confirmButtonText: 'Aceptar',
+                        customClass: {
+                            popup: 'animate__animated animate__shakeX'
+                        }
+                    });
+                }, 100);
+            }
+        });
+    </script>
+}

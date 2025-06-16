@@ -1,0 +1,197 @@
+﻿/* Colores y fuentes base */
+:root {
+    --light-gray-bg: #eff1f3;
+    --primary-color: #3A889D; /* Dark Slate Gray */
+    --secondary-color: #275849; /* Charcoal Blue (para contrastes) */
+    --dark-text-color: #343a40; /* Texto oscuro general */
+    --border-color: #e9ecef; /* Color de borde suave */
+}
+
+body {
+    background-color: var(--light-gray-bg) !important;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: var(--dark-text-color);
+}
+
+/* Contenedor principal del Dashboard */
+.dashboard-container {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Título principal del Dashboard */
+.dashboard-main-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: var(--primary-color);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 1rem;
+    position: relative;
+    padding-bottom: 15px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+    .dashboard-main-title::after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        bottom: 0;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 6px;
+        background-color: var(--secondary-color);
+        border-radius: 3px;
+    }
+
+/* Subtítulo de bienvenida */
+.dashboard-subtitle {
+    font-size: 1.75rem;
+    color: var(--dark-text-color);
+    margin-bottom: 4rem;
+    font-weight: 600;
+}
+
+/* Contenedor de la imagen del dashboard */
+.dashboard-image-container {
+    /* Eliminamos text-align: center de aquí, ya que la imagen será un bloque con margen auto */
+    margin-bottom: 3rem;
+    max-width: 900px; /* Establece el ancho máximo del contenedor de la imagen a 900px */
+    margin-left: auto; /* Centra el contenedor horizontalmente */
+    margin-right: auto; /* Centra el contenedor horizontalmente */
+    /* Aseguramos que el div actúe como un bloque para que margin auto funcione */
+    display: block;
+}
+
+.dashboard-hero-image {
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    max-width: 100%; /* Asegura que la imagen no desborde su contenedor (que ahora es de 900px) */
+    height: auto; /* Mantiene la proporción de la imagen */
+    display: block; /* La imagen debe ser un elemento de bloque para que margin: auto funcione */
+    margin-left: auto; /* Centra la imagen dentro de su contenedor de 900px */
+    margin-right: auto; /* Centra la imagen dentro de su contenedor de 900px */
+}
+
+
+/* Títulos de sección */
+.section-title {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: var(--dark-text-color);
+    margin-bottom: 3rem;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+    .section-title::after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        bottom: 0;
+        transform: translateX(-50%);
+        width: 70px;
+        height: 5px;
+        background-color: var(--primary-color);
+        border-radius: 2.5px;
+    }
+
+/* SECCIÓN DE LA TABLA DE PROYECTOS */
+.projects-summary-section {
+    padding: 2rem;
+    background-color: #ffffff;
+    border-radius: 1rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    margin-bottom: 3rem;
+}
+
+.table-responsive-wrapper {
+    overflow-x: auto;
+    border-radius: 0.75rem;
+    border: 1px solid var(--border-color);
+}
+
+.project-table {
+    width: 100%;
+    margin-bottom: 0;
+    border-collapse: collapse;
+}
+
+    .project-table thead th {
+        background-color: var(--primary-color);
+        color: white;
+        font-weight: 600;
+        padding: 15px 20px;
+        border-bottom: none;
+        vertical-align: middle;
+        white-space: nowrap;
+    }
+
+    .project-table tbody td {
+        padding: 12px 20px;
+        vertical-align: middle;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .project-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .project-table tbody tr:nth-child(even) {
+        background-color: #f6f9fc;
+    }
+
+    .project-table tbody tr:hover {
+        background-color: #e9f5fd;
+        cursor: pointer;
+    }
+
+.project-options-btn {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    font-size: 0.9rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+    color: white;
+}
+
+    .project-options-btn:hover {
+        background-color: var(--secondary-color);
+        border-color: var(--secondary-color);
+    }
+
+.dropdown-menu {
+    min-width: 180px;
+    border-radius: 0.5rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--border-color);
+}
+
+.dropdown-item {
+    font-size: 0.95rem;
+    padding: 0.6rem 1rem;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    display: flex;
+    align-items: center;
+}
+
+    .dropdown-item i {
+        margin-right: 0.75rem;
+        font-size: 1.1rem;
+        color: #6c757d;
+    }
+
+    .dropdown-item:hover {
+        background-color: var(--primary-color);
+        color: white;
+    }
+
+        .dropdown-item:hover i {
+            color: white;
+        }

@@ -1,0 +1,192 @@
+﻿@{
+    ViewData["Title"] = "Términos y Condiciones";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Enlaces a librerías externas de CSS (asegúrate de que estén en _Layout o aquí) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+<style>
+    /* Estilos generales y variables - Consistentes con otras vistas */
+    :root {
+        --primary-color: #3A889D; /* Azul oscuro */
+        --secondary-color: #275849; /* Verde oscuro/azulado para contrastes */
+        /* Fondo completamente blanco */
+        --light-gray-bg: #FFFFFF;
+        --dark-text-color: #343a40; /* Color de texto oscuro general */
+        --border-color: #e9ecef; /* Color de borde suave */
+        --card-bg: #ffffff; /* Fondo blanco para tarjetas y formularios */
+        --heading-color: #2c3e50; /* Un color oscuro para los encabezados */
+        --text-paragraph-color: #555; /* Color para los párrafos de texto */
+        --link-color: #007bff; /* Color estándar para enlaces */
+    }
+
+    body {
+        background-color: var(--light-gray-bg) !important; /* Fondo blanco total */
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        color: var(--dark-text-color);
+        padding: 20px;
+    }
+
+    .container-main {
+        padding: 20px;
+        max-width: 960px; /* Ancho cómodo para texto largo */
+        margin: 0 auto;
+    }
+
+    .view-title {
+        color: var(--primary-color);
+        font-weight: 700;
+        font-size: 2.8rem;
+        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .content-section {
+        background-color: var(--card-bg);
+        border-radius: 1rem;
+        /* Sombra más sutil */
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+        padding: 2.5rem;
+        margin-bottom: 30px;
+    }
+
+        .content-section h2 {
+            color: var(--heading-color);
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .content-section h3 {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .content-section p {
+            font-size: 1rem;
+            line-height: 1.7;
+            color: var(--text-paragraph-color);
+            margin-bottom: 1rem;
+        }
+
+        .content-section ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+            .content-section ul li {
+                margin-bottom: 0.8rem;
+                position: relative;
+                padding-left: 25px;
+                color: var(--text-paragraph-color);
+            }
+
+                .content-section ul li::before {
+                    content: "\f26a"; /* Icono de círculo relleno de Bootstrap Icons */
+                    font-family: "bootstrap-icons" !important;
+                    font-size: 0.8rem;
+                    color: var(--primary-color);
+                    position: absolute;
+                    left: 0;
+                    top: 5px;
+                }
+
+    .info-box {
+        background-color: #e6f3f8; /* Un azul muy claro */
+        border-left: 5px solid var(--primary-color);
+        border-radius: 0.5rem;
+        /* Sombra sutil para la caja de información */
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.07);
+        padding: 1.5rem;
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+        color: #333;
+        font-style: italic;
+    }
+
+    .contact-info {
+        text-align: center;
+        margin-top: 3rem;
+        border-top: 1px solid var(--border-color);
+        padding-top: 2rem;
+    }
+
+        .contact-info p {
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-info a {
+            color: var(--link-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+            .contact-info a:hover {
+                text-decoration: underline;
+            }
+
+    .hero-image {
+        max-width: 100%;
+        height: auto;
+        border-radius: 1rem;
+        margin-bottom: 30px;
+        /* Sombra más sutil para la imagen principal */
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+    }
+</style>
+
+<div class="container-main animate__animated animate__fadeIn">
+
+    <h1 class="view-title">Términos y Condiciones</h1>
+
+    <img src="https://placehold.co/960x300/3A889D/ffffff?text=Reglas+y+Legalidad" alt="Reglas y Legalidad" class="hero-image animate__animated animate__fadeInDown">
+
+    <div class="content-section animate__animated animate__fadeInUp">
+        <h2><i class="bi bi-file-text-fill"></i> Introducción a los Términos de Uso</h2>
+        <p>El presente documento establece los términos y condiciones que rigen el uso del <strong>Sistema de Gestión Presupuestaria de Proyectos UCR</strong>, desarrollado por el <strong>Grupo #3</strong> del curso IF7100 - Ingeniería de Software de la Universidad de Costa Rica, bajo la guía de la MGT. Raquel Porras Soto. Al acceder y utilizar este sistema, usted acepta plenamente los siguientes términos y condiciones.</p>
+
+        <h3><i class="bi bi-person-check"></i> Aceptación y Alcance</h3>
+        <p>Al utilizar este sistema, usted reconoce haber leído, entendido y aceptado los presentes Términos y Condiciones. Este proyecto, identificado como "BitWorks" en su contexto de desarrollo, no cuenta con una garantía formal de implementación en un entorno real, al ser un proyecto académico. Sin embargo, en caso de futura implementación, se deberá respetar el aviso legal detallado a continuación.</p>
+
+        <h2><i class="bi bi-shield-fill"></i> Aviso Legal y Propiedad Intelectual de BitWorks</h2>
+        <p>El equipo de BitWorks, conformado por Gabriel Alvarado Rizo, Elinse Cardenas Loaiza, Guadalupe Monge Calderón, Paola Vargas Corrales, Jefferson Moraga Loria, Taylor Hernández Soto, Emmanuel Barboza Mora, Katherine Chaves Xatruch y Jose David Ramírez Castro, informa lo siguiente:</p>
+        <ul>
+            <li>Al hacer mención de BitWorks, se hace referencia únicamente a los miembros del equipo antes mencionados.</li>
+            <li>BitWorks se reserva el derecho de rechazar la prestación del servicio a cualquier persona, empresa o entidad, por cualquier motivo y en cualquier momento, siempre y cuando el equipo no esté de acuerdo en prestar los servicios o ceder la propiedad intelectual asociada al proyecto.</li>
+            <li>El usuario, ya sea ajeno o perteneciente al equipo BitWorks, que tenga acceso a este documento o al sistema, acepta no reproducir, duplicar, copiar, vender, revender o explotar cualquier parte del sistema BitWorks para fines personales o comerciales sin el permiso expreso y por escrito de todos los miembros del equipo.</li>
+        </ul>
+        <div class="info-box">
+            <p><strong>Advertencia:</strong> El incumplimiento de este apartado será considerado como robo de propiedad intelectual, y se tomarán las medidas legales correspondientes contra el infractor.</p>
+        </div>
+
+        <h2><i class="bi bi-gear-fill"></i> Términos y Condiciones del Mantenimiento</h2>
+        <p>Si el Sistema de Gestión Presupuestaria de Proyectos UCR, conocido como BitWorks, llega a ser implementado en un entorno real, se establecen las siguientes condiciones respecto a su garantía y mantenimiento:</p>
+        <ul>
+            <li><strong>Mantenimiento:</strong> Únicamente los miembros originales del equipo BitWorks (o aquellos autorizados por consenso del equipo) podrán realizar mantenimiento correctivo o preventivo, modificaciones, actualizaciones o implementación de nuevas funcionalidades.</li>
+            <li><strong>Autorización de Cambios:</strong> Cualquier cambio o evolución del sistema fuera de este marco requerirá autorización formal del equipo BitWorks.</li>
+            <li><strong>Ausencia de Garantía Formal:</strong> Dada la naturaleza académica del proyecto, no se cuenta con una garantía formal de soporte más allá de lo estipulado para una eventual implementación.</li>
+        </ul>
+
+        <h2><i class="bi bi-question-circle-fill"></i> Contacto y Soporte</h2>
+        <p>Para cualquier pregunta relacionada con estos Términos y Condiciones, o en caso de una futura implementación, se puede contactar a los miembros del equipo a través de los canales que se establecerían para tal fin. Se recomienda un programa de capacitación y un equipo de soporte técnico para una integración exitosa y solución de problemas.</p>
+        <div class="contact-info">
+            <p>Email de Soporte General: <a href="mailto:soporte@ucr.ac.cr">soporte@ucr.ac.cr</a></p>
+            <p>Universidad de Costa Rica</p>
+            <p>Sede Arnoldo Ferreto Segura</p>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,349 @@
+﻿@{
+    ViewData["Title"] = "Acerca de Nosotros";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Enlaces a librerías externas de CSS (asegúrate de que estén en _Layout o aquí) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+<style>
+    /* Estilos generales y variables - Consistentes con otras vistas */
+    :root {
+        --primary-color: #3A889D; /* Azul oscuro */
+        --secondary-color: #275849; /* Verde oscuro/azulado para contrastes */
+        /* Fondo completamente blanco */
+        --light-gray-bg: #FFFFFF;
+        --dark-text-color: #343a40; /* Color de texto oscuro general */
+        --border-color: #e9ecef; /* Color de borde suave */
+        --card-bg: #ffffff; /* Fondo blanco para tarjetas y formularios */
+        --heading-color: #2c3e50; /* Un color oscuro para los encabezados */
+        --text-paragraph-color: #555; /* Color para los párrafos de texto */
+        --accent-color-light: #f0f8ff; /* Un azul muy claro para fondos de cajas */
+    }
+
+    body {
+        background-color: var(--light-gray-bg) !important; /* Fondo blanco total */
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        color: var(--dark-text-color);
+        padding: 20px;
+    }
+
+    .container-main {
+        padding: 20px;
+        max-width: 960px;
+        margin: 0 auto;
+    }
+
+    .view-title {
+        color: var(--primary-color);
+        font-weight: 700;
+        font-size: 2.8rem;
+        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .hero-section {
+        background-color: var(--card-bg);
+        border-radius: 1rem;
+        /* Sombra más sutil */
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+        padding: 2.5rem;
+        margin-bottom: 30px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+        .hero-section img {
+            max-width: 250px; /* Tamaño del logo */
+            height: auto;
+            margin-bottom: 1.5rem;
+            filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.1));
+        }
+
+        .hero-section h2 {
+            font-size: 2.5rem;
+            color: var(--heading-color);
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .hero-section p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--text-paragraph-color);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+    .mission-vision-section {
+        display: flex;
+        gap: 30px;
+        margin-bottom: 30px;
+        flex-wrap: wrap; /* Permite que los elementos se envuelvan en pantallas pequeñas */
+        justify-content: center;
+    }
+
+    .mission-vision-card {
+        flex: 1; /* Permite que las tarjetas crezcan y se encojan */
+        min-width: 300px; /* Ancho mínimo para evitar que se aplasten */
+        background-color: var(--card-bg);
+        border-radius: 1rem;
+        /* Sombra más sutil */
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.07);
+        padding: 2rem;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+        .mission-vision-card i {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .mission-vision-card h3 {
+            font-size: 1.8rem;
+            color: var(--heading-color);
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .mission-vision-card p {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--text-paragraph-color);
+        }
+
+    .values-section {
+        background-color: var(--card-bg);
+        border-radius: 1rem;
+        /* Sombra más sutil */
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+        padding: 2.5rem;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+        .values-section h2 {
+            color: var(--heading-color);
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+    .values-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* 2 o 3 columnas */
+        gap: 20px;
+    }
+
+    .value-item {
+        background-color: var(--accent-color-light); /* Fondo más claro para los ítems */
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        /* Sombra más sutil */
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.07);
+        text-align: left;
+    }
+
+        .value-item h4 {
+            font-size: 1.3rem;
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .value-item p {
+            font-size: 0.95rem;
+            color: var(--text-paragraph-color);
+            line-height: 1.5;
+        }
+
+    .team-section {
+        background-color: var(--card-bg);
+        border-radius: 1rem;
+        /* Sombra más sutil */
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+        padding: 2.5rem;
+        text-align: center;
+    }
+
+        .team-section h2 {
+            color: var(--heading-color);
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+    .team-grid {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 25px;
+    }
+
+    .team-member-card {
+        text-align: center;
+        width: 180px; /* Ancho fijo para las tarjetas de miembro */
+        padding: 1rem;
+        background-color: var(--accent-color-light);
+        border-radius: 1rem;
+        /* Sombra más sutil */
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.07);
+        transition: transform 0.2s ease;
+    }
+
+        .team-member-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .team-member-card img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .team-member-card h4 {
+            font-size: 1.1rem;
+            color: var(--heading-color);
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+
+        .team-member-card p {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+    
+
+    .mission-vision-card {
+        width: 90%;
+        min-width: unset;
+    }
+
+    .values-grid {
+        grid-template-columns: 1fr; /* Una columna en móviles */
+    }
+
+    }
+</style>
+
+<div class="container-main animate__animated animate__fadeIn">
+
+    <h1 class="view-title">Acerca de Nosotros</h1>
+
+    <div class="hero-section animate__animated animate__fadeInDown">
+        <img src="https://yt3.googleusercontent.com/Y0W-QE06HpWdWn3FCekFZ6GGcyzaF3kI-ZY0Ed8Cj6-pFX1YkH4Sp9_KeMjEiI2NZ0hw2APgeg=s900-c-k-c0x00ffffff-no-rj" alt="">
+        <h2>Sistema de Gestión Presupuestaria de Proyectos UCR</h2>
+        <p>Este sistema surge como un proyecto final del curso IF7100 - Ingeniería de Software, impartido por la MGT. Raquel Porras Soto, durante el I semestre del 2025 en la Universidad de Costa Rica, Sede Arnoldo Ferreto Segura.</p>
+        <p>Nuestro objetivo es transformar la manera en que la Universidad de Costa Rica gestiona sus proyectos en curso, proporcionando control sobre los egresos e ingresos, la asignación de partidas presupuestarias y facilitando la toma de decisiones. Buscamos solucionar la falta de una herramienta centralizada que ha provocado problemas de transparencia, errores en registros y una gestión ineficiente de fondos.</p>
+    </div>
+
+    <div class="mission-vision-section">
+        <div class="mission-vision-card animate__animated animate__fadeInLeft">
+            <i class="bi bi-bullseye"></i>
+            <h3>Nuestra Meta</h3>
+            <p>Desarrollar un sistema completo para la gestión presupuestaria que permita a la UCR administrar los presupuestos de los proyectos institucionales de manera eficiente, precisa y accesible, asegurando transparencia y control financiero.</p>
+        </div>
+        <div class="mission-vision-card animate__animated animate__fadeInRight">
+            <i class="bi bi-lightbulb"></i>
+            <h3>Nuestro Objetivo General</h3>
+            <p>Desarrollar e implementar un sistema de gestión presupuestaria de proyectos que permita a la UCR gestionar de forma centralizada los presupuestos, asegurando un seguimiento adecuado, control de gastos y eficiencia en la asignación de recursos.</p>
+        </div>
+    </div>
+
+    <div class="values-section animate__animated animate__fadeInUp">
+        <h2><i class="bi bi-gem"></i> Nuestros Objetivos Específicos</h2>
+        <div class="values-grid">
+            <div class="value-item">
+                <h4><i class="bi bi-ui-checks"></i> Diseño Intuitivo</h4>
+                <p>Diseñar una interfaz de usuario intuitiva y accesible para los administradores y responsables de proyectos.</p>
+            </div>
+            <div class="value-item">
+                <h4><i class="bi bi-bricks"></i> Implementación Modular</h4>
+                <p>Implementar módulos para la asignación y seguimiento de presupuestos, la gestión de gastos, la generación de informes financieros, y la creación de alertas y notificaciones.</p>
+            </div>
+            <div class="value-item">
+                <h4><i class="bi bi-shield-check"></i> Pruebas Rigurosas</h4>
+                <p>Realizar pruebas exhaustivas para garantizar la precisión, funcionalidad y confiabilidad del sistema en su totalidad.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="team-section animate__animated animate__fadeInUp">
+        <h2><i class="bi bi-people-fill"></i> Nuestro Equipo (Grupo #3 BitWorks)</h2>
+        <p>Este proyecto fue elaborado por el equipo interno <strong>BitWorks</strong> en colaboración con Software de Inteligencia Empresarial (S.I.E), conformado por los siguientes estudiantes de Ingeniería de Software:</p>
+        <div class="team-grid">
+            <div class="team-member-card">
+                <img src="https://placehold.co/100x100/A8DADC/275849?text=GA" alt="">
+                <h4>Gabriel Alvarado Rizo</h4>
+                <p>Colaborador</p>
+            </div>
+            <div class="team-member-card">
+                <img src="https://placehold.co/100x100/D0E6A5/275849?text=EC" alt="">
+                <h4>Elinse Cardenas Loaiza</h4>
+                <p>Colaborador</p>
+            </div>
+            <div class="team-member-card">
+                <img src="https://placehold.co/100x100/FEE1C0/275849?text=GM" alt="">
+                <h4>Guadalupe Monge Calderón</h4>
+                <p>Colaborador</p>
+            </div>
+            <div class="team-member-card">
+                <img src="https://placehold.co/100x100/B2D7D0/275849?text=PV" alt="">
+                <h4>Paola Vargas Corrales</h4>
+                <p>Colaborador</p>
+            </div>
+            <div class="team-member-card">
+                <img src="https://placehold.co/100x100/A8DADC/275849?text=JM" alt="">
+                <h4>Jefferson Moraga Loria</h4>
+                <p>Colaborador</p>
+            </div>
+            <div class="team-member-card">
+                <img src="https://placehold.co/100x100/D0E6A5/275849?text=TH" alt="">
+                <h4>Taylor Hernández Soto</h4>
+                <p>Colaborador</p>
+            </div>
+            <div class="team-member-card">
+                <img src="https://placehold.co/100x100/FEE1C0/275849?text=EB" alt="">
+                <h4>Emmanuel Barboza Mora</h4>
+                <p>Colaborador</p>
+            </div>
+            <div class="team-member-card">
+                <img src="https://placehold.co/100x100/B2D7D0/275849?text=KC" alt="">
+                <h4>Katherine Chaves Xatruch</h4>
+                <p>Colaborador</p>
+            </div>
+            <div class="team-member-card">
+                <img src="https://placehold.co/100x100/A8DADC/275849?text=JR" alt="">
+                <h4>Jose David Ramírez Castro</h4>
+                <p>Colaborador</p>
+            </div>
+        </div>
+    </div>
+</div>

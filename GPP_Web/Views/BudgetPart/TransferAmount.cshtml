@@ -1,0 +1,323 @@
+﻿@model GPP_Web.DTOs.BudgetPart.TransferFundsDTO
+
+@{
+    ViewData["Title"] = "Transferir Fondos";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@* Enlaces a estilos externos, según tu plantilla *@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+@* SweetAlert2 CSS *@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.8/dist/sweetalert2.min.css">
+
+
+@* Estilos CSS específicos y generales incluidos directamente para consistencia *@
+<style>
+    /* Colores y fuentes base (deben estar definidos en _Layout.cshtml o site.css para consistencia global) */
+    :root {
+        --light-gray-bg: #eff1f3;
+        --primary-color: #3A889D; /* Dark Slate Gray */
+        --secondary-color: #275849; /* Charcoal Blue (para contrastes) */
+        --dark-text-color: #343a40; /* Texto oscuro general */
+        --border-color: #e9ecef; /* Color de borde suave */
+        --success-color: #28a745; /* Bootstrap green */
+        --info-color: #17a2b8; /* Bootstrap info */
+        --table-header-bg: #f8f9fa; /* Light grey for table header */
+        --table-row-hover: #e9ecef; /* Lighter grey on row hover */
+        --dropdown-bg: #ffffff;
+        --dropdown-border: #ced4da;
+    }
+
+    body {
+        background-color: var(--light-gray-bg) !important;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        color: var(--dark-text-color);
+    }
+
+    /* Contenedor principal para consistencia con el dashboard */
+    .dashboard-container {
+        padding-top: 3rem;
+        padding-bottom: 3rem;
+        max-width: 800px; /* Ajustado para formularios más compactos */
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    /* Título principal del Dashboard */
+    .dashboard-main-title {
+        font-size: 2.5rem; /* Un poco más pequeño para formularios */
+        font-weight: 800;
+        color: var(--dark-text-color);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 1rem;
+        position: relative;
+        padding-bottom: 15px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+        .dashboard-main-title i {
+            font-size: 2.2rem; /* Tamaño del icono ajustado */
+            margin-right: 15px;
+            color: var(--dark-text-color);
+        }
+
+        .dashboard-main-title::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            transform: translateX(-50%);
+            width: 80px; /* Ancho de la línea ajustado */
+            height: 6px;
+            background-color: var(--secondary-color);
+            border-radius: 3px;
+        }
+
+    /* Subtítulo de bienvenida */
+    .dashboard-subtitle {
+        font-size: 1.25rem; /* Un poco más pequeño */
+        color: var(--dark-text-color);
+        margin-bottom: 2rem;
+        font-weight: 600;
+        text-align: center; /* Centrar el subtítulo */
+    }
+
+    /* Back Link Style */
+    .dashboard-back-link {
+        display: inline-flex;
+        align-items: center;
+        margin-bottom: 2rem;
+        color: var(--primary-color);
+        font-size: 1.1rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+        .dashboard-back-link:hover {
+            color: var(--secondary-color);
+            transform: translateX(-5px);
+        }
+
+        .dashboard-back-link i {
+            font-size: 1.5rem;
+            margin-right: 0.5rem;
+        }
+
+    /* Card para el formulario */
+    .form-card {
+        background-color: #ffffff;
+        border-radius: 1rem;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        padding: 2rem; /* Inner padding for the card content */
+        margin-top: 2rem;
+    }
+
+    /* Estilos específicos para campos de formulario */
+    .form-control, .form-select {
+        border-radius: 0.5rem;
+        padding: 0.75rem 1rem;
+        border: 1px solid var(--border-color);
+        box-shadow: none;
+        transition: border-color 0.3s ease;
+    }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(58, 136, 157, 0.25); /* Sombra de enfoque con primary-color */
+        }
+
+    /* Botón de Submit */
+    .btn-submit {
+        background-color: var(--secondary-color);
+        border-color: var(--secondary-color);
+        color: white;
+        font-size: 1.1rem;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.75rem;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%; /* Ocupa todo el ancho */
+    }
+
+        .btn-submit:hover {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            color: white;
+        }
+
+        .btn-submit i {
+            margin-right: 0.8rem;
+            font-size: 1.2rem;
+        }
+
+    /* Mensajes de alerta - Estos serán manejados por SweetAlert */
+    /* .alert {
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        } */
+</style>
+
+<div class="container-fluid dashboard-container animate__animated animate__fadeIn">
+    <a href="javascript:history.back()" class="dashboard-back-link animate__animated animate__fadeInLeft">
+        <i class="bi bi-arrow-left"></i> Volver
+    </a>
+
+    <h1 class="dashboard-main-title mb-3 animate__animated animate__bounceIn">
+        <i class="bi bi-arrow-left-right"></i> Transferir Fondos
+    </h1>
+    <p class="dashboard-subtitle animate__animated animate__fadeInUp">Mueve montos entre tus partidas presupuestarias.</p>
+
+    <div class="form-card animate__animated animate__fadeInUp">
+        @if (Model == null)
+        {
+            <div class="alert alert-danger" role="alert">
+                <strong>Error grave:</strong> No se pudo cargar la información de la transferencia. El modelo de datos es nulo. Por favor, intente de nuevo o contacte a soporte.
+            </div>
+        }
+        else
+        {
+            @* Los mensajes de éxito/error ahora se manejarán con SweetAlert en el script *@
+            @* <div asp-validation-summary="ModelOnly" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div> *@
+
+            <form method="post">
+                <input type="hidden" asp-for="SourceBudgetPartId" />
+
+                <div class="mb-3">
+                    <label for="SourceBudgetPartDisplay" class="form-label">Partida de Origen</label>
+                    @if (ViewBag.SourceBudgetPart != null)
+                    {
+                        <input type="text" class="form-control" id="SourceBudgetPartDisplay" value="@ViewBag.SourceBudgetPart.PartName" readonly />
+                        <small class="form-text text-muted">Monto disponible: ₡@ViewBag.SourceBudgetPart.RemainingAmount.ToString("N0")</small>
+                    }
+                    else
+                    {
+                        <span class="text-danger">No se pudo cargar la partida origen.</span>
+                    }
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="DestinationBudgetPartId" class="form-label">Partida de Destino</label>
+                    @if (ViewBag.AllBudgetParts != null && ViewBag.AllBudgetParts.Count > 0)
+                    {
+                        <select asp-for="DestinationBudgetPartId" class="form-select">
+                            <option value="">Seleccione una partida de destino</option>
+                            @foreach (var part in ViewBag.AllBudgetParts)
+                            {
+                                <option value="@part.BudgetPartId" selected="@(Model.DestinationBudgetPartId == part.BudgetPartId)">
+                                    @part.PartName (@part.RemainingAmount.ToString("N0") disponibles)
+                                </option>
+                            }
+                        </select>
+                        <span asp-validation-for="DestinationBudgetPartId" class="text-danger"></span>
+                    }
+                    else
+                    {
+                        <span class="text-danger">No se pudieron cargar las partidas de destino o no hay disponibles.</span>
+                    }
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="Amount" class="form-label">Monto a Transferir</label>
+                    <input type="number" asp-for="Amount" class="form-control" placeholder="Ingrese el monto a transferir" />
+                    <span asp-validation-for="Amount" class="text-danger"></span>
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-submit">
+                        <i class="bi bi-send-fill"></i> Transferir Fondos
+                    </button>
+                </div>
+            </form>
+        }
+    </div> @* Fin form-card *@
+</div> @* Fin dashboard-container *@
+
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+
+    @* SweetAlert2 JS *@
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.8/dist/sweetalert2.all.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            // Manejar mensajes de éxito desde TempData
+            var successMessage = '@TempData["SuccessMessage"]';
+            if (successMessage && successMessage.trim() !== '') {
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: successMessage,
+                    confirmButtonText: 'Aceptar',
+                    customClass: {
+                        popup: 'animate__animated animate__fadeInDown'
+                    }
+                });
+            }
+
+            // Manejar errores de validación del modelo
+            // Recopilar todos los mensajes de error del ModelState
+            var errorMessages = [];
+            @if (!ViewData.ModelState.IsValid)
+            {
+                    foreach (var modelState in ViewData.ModelState.Values)
+                    {
+                            foreach (var error in modelState.Errors)
+                            {
+                                    if (!string.IsNullOrEmpty(error.ErrorMessage))
+                                    {
+                                            @:errorMessages.push('@Html.Raw(error.ErrorMessage.Replace("'", "\\'"))');
+                                    }
+                            }
+                    }
+            }
+
+            // Mostrar los errores si existen
+            if (errorMessages.length > 0) {
+                var errorMessageHtml = errorMessages.join('<br>');
+                Swal.fire({
+                    icon: 'error',
+                    title: '¡Error de Validación!',
+                    html: errorMessageHtml, // Usamos html para permitir <br>
+                    confirmButtonText: 'Entendido',
+                    customClass: {
+                        popup: 'animate__animated animate__shakeX'
+                    }
+                });
+            }
+
+            // Manejar errores generales desde ViewBag.ErrorMessage
+            var generalErrorMessage = '@ViewBag.ErrorMessage';
+            if (generalErrorMessage && generalErrorMessage.trim() !== '') {
+                 Swal.fire({
+                    icon: 'error',
+                    title: '¡Error!',
+                    text: generalErrorMessage,
+                    confirmButtonText: 'Aceptar',
+                    customClass: {
+                        popup: 'animate__animated animate__shakeX'
+                    }
+                });
+            }
+        });
+    </script>
+}

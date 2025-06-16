@@ -1,0 +1,97 @@
+﻿/* Estilos para los Cards dentro del Carousel */
+.card {
+    width: 100%; /* Ancho total del card */
+    height: auto;
+    border-radius: 20px;
+    background: #f5f5f5;
+    position: relative;
+    padding: 1.8rem;
+    border: 2px solid #c3c6ce;
+    transition: 0.5s ease-out;
+    overflow: visible;
+}
+
+.card-details {
+    color: black;
+    height: 100%;
+    gap: .5em;
+    display: grid;
+    place-content: center;
+}
+
+.card-button {
+    transform: translate(-50%, 125%);
+    width: 60%;
+    border-radius: 1rem;
+    border: none;
+    background-color: #008bf8;
+    color: #fff;
+    font-size: 1rem;
+    padding: .5rem 1rem;
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    opacity: 0;
+    transition: 0.3s ease-out;
+}
+
+.card:hover {
+    border-color: #008bf8;
+    box-shadow: 0 4px 18px 0 rgba(0, 0, 0, 0.25);
+}
+
+    .card:hover .card-button {
+        transform: translate(-50%, 50%);
+        opacity: 1;
+    }
+
+/* Estilos para el carrusel */
+.carousel-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Animación de desplazamiento del carrusel */
+.carousel-inner {
+    display: flex;
+    flex-wrap: nowrap;
+    animation: slide 10s linear infinite; /* Animación de movimiento automático */
+}
+
+/* Estilos para los botones del carrusel */
+.carousel-control-prev,
+.carousel-control-next {
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    padding: 10px;
+    width: 5%;
+    margin-left: 2%; /* Separación desde el borde izquierdo */
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    filter: invert(1);
+}
+
+/* Ajustes de tamaño para los cards dentro del carrusel */
+.carousel-item .card {
+    width: 260px;
+    height: auto;
+}
+
+@keyframes slide {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-100%); /* Mueve todos los items hacia la izquierda */
+    }
+}
+
+/* Asegura que el carrusel no se vea apretado */
+#proyectosCarousel {
+    width: 80%;
+    margin: 0 auto;
+}

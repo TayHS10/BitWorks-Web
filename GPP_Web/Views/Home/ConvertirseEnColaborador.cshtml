@@ -1,0 +1,121 @@
+﻿@model GPP_Web.DTOs.RoleChangeRequest.CreateRoleChangeRequestDTO
+
+@{
+    ViewData["Title"] = "Convertirse en Colaborador";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Link a los archivos CSS externos -->
+<link rel="stylesheet" href="~/css/rolerequest.css">
+
+<div class="form-container">
+    <div class="form-card">
+        <!-- Título y Imagen -->
+        <div class="header-section">
+            <h3 class="title">¿Deseas convertirte en colaborador?</h3>
+            <p class="text-muted">Únete a nuestro equipo, completa el formulario para registrar su cuenta.</p>
+            <img src="~/images/imgs/undraw_access-account_aydp.png" alt="Colaborador" class="img-fluid" />
+        </div>
+
+        <!-- Mostrar mensaje de error -->
+        @if (ViewBag.ErrorMessage != null)
+        {
+            <div class="alert alert-danger text-center mb-4" role="alert">
+                @ViewBag.ErrorMessage
+            </div>
+        }
+
+        <!-- Formulario -->
+        <form method="post">
+            @Html.AntiForgeryToken()
+
+            <div class="form-group">
+                <label for="RequestedRole" class="form-label">Participar como:</label>
+                <select id="RequestedRole" name="RequestedRole" class="input" required>
+                    <option value="Manager">Gestor</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="Justification" class="form-label">Mensaje:</label>
+                <textarea id="Justification" name="Justification" class="input" rows="4" placeholder="Escribe tu mensaje aquí" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="EmailAddress" class="form-label">Correo electrónico:</label>
+                <input type="email" id="EmailAddress" name="EmailAddress" class="input" placeholder="Introduce tu correo electrónico" required />
+            </div>
+
+            <div class="form-group">
+                <label for="FullName" class="form-label">Nombre completo:</label>
+                <input type="text" id="FullName" name="FullName" class="input" placeholder="Introduce tu nombre completo" required />
+            </div>
+
+            <button type="submit" class="button-submit">Enviar solicitud</button>
+        </form>
+    </div>
+</div>
+
+<!-- Modal de Éxito -->
+<div class="modal" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="successModalLabel">¡Éxito!</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Tu solicitud ha sido enviada correctamente. ¡Gracias por tu interés en unirte a nuestro equipo!
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Error -->
+<div class="modal" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="errorModalLabel">¡Error!</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Algo salió mal al procesar tu solicitud. Por favor, intenta de nuevo más tarde.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        // Mostrar modal de éxito si el mensaje de éxito está presente
+        @if (ViewBag.SuccessMessage != null)
+        {
+                <text>
+                    $(document).ready(function() {
+                        $('#successModal').modal('show');
+                    });
+                </text>
+        }
+
+        // Mostrar modal de error si el mensaje de error está presente
+        @if (ViewBag.ErrorMessage != null)
+        {
+                <text>
+                    $(document).ready(function() {
+                        $('#errorModal').modal('show');
+                    });
+                </text>
+        }
+    </script>
+}

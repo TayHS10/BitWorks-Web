@@ -1,0 +1,191 @@
+﻿@model GPP_Web.DTOs.User.LoginUserDTO
+
+@{
+    ViewData["Title"] = "Login";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    /* Estilos generales del formulario */
+    .form-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background-color: #f0f2f5; /* Fondo gris claro */
+        padding: 10px; /* Agregar espacio adicional para pantallas pequeñas */
+    }
+
+    .form-card {
+        background-color: #ffffff;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+        width: 100%; /* Asegura que el formulario ocupe el 100% del ancho disponible */
+        max-width: 450px; /* Limitar el tamaño máximo en pantallas grandes */
+    }
+
+        .form-card h3 {
+            text-align: center;
+            color: #151717;
+            font-weight: 600;
+        }
+
+        .form-card .form-label {
+            color: #151717;
+            font-weight: 600;
+        }
+
+    .inputForm {
+        border: 1.5px solid #ecedec;
+        border-radius: 10px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        padding-left: 10px;
+        transition: 0.2s ease-in-out;
+    }
+
+    .input {
+        margin-left: 10px;
+        border-radius: 10px;
+        border: none;
+        width: 100%;
+        height: 100%;
+        background: transparent; /* Sin fondo */
+        color: #151717; /* Color de texto */
+    }
+
+        .input::placeholder {
+            color: #8c8c8c; /* Color de texto en el placeholder */
+        }
+
+        .input:focus {
+            outline: none;
+        }
+
+    .inputForm:focus-within {
+        border: 1.5px solid #2d79f3;
+    }
+
+    .button-submit {
+        margin: 20px 0 10px 0;
+        background-color: #151717;
+        border: none;
+        color: white;
+        font-size: 15px;
+        font-weight: 500;
+        border-radius: 10px;
+        height: 50px;
+        width: 100%;
+        cursor: pointer;
+    }
+
+    .span {
+        font-size: 14px;
+        color: #2d79f3;
+        font-weight: 500;
+        cursor: pointer;
+    }
+
+    .flex-row {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+        justify-content: space-between;
+    }
+
+    .alert {
+        border-radius: 0.5rem;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .p {
+        text-align: center;
+        color: black;
+        font-size: 14px;
+        margin: 5px 0;
+    }
+
+    .reset-password-link {
+        display: block;
+        text-align: center;
+        margin-top: 15px;
+        font-size: 14px;
+    }
+
+        .reset-password-link a {
+            color: #2d79f3;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+            .reset-password-link a:hover {
+                text-decoration: underline;
+            }
+</style>
+
+<div class="form-container">
+    <div class="form-card">
+        <h3>Bienvenido</h3>
+        <p class="text-center text-muted">Inicia sesión en tu cuenta</p>
+
+        <!-- Mostrar el mensaje de error solo si existe -->
+        @if (ViewBag.ErrorMessage != null)
+        {
+            <div class="alert alert-danger text-center mb-4" role="alert">
+                @ViewBag.ErrorMessage
+            </div>
+        }
+
+        <form asp-action="Login" method="post">
+            @Html.AntiForgeryToken()
+
+            <!-- Aquí hemos eliminado el @Html.ValidationSummary() para evitar que aparezca un segundo mensaje -->
+            <div class="flex-column">
+                <label asp-for="Email" class="form-label fs-6">Correo electrónico</label>
+                <div class="inputForm">
+                    <input asp-for="Email" class="input" autocomplete="username" placeholder="Introduce tu correo electrónico" />
+                </div>
+                <span asp-validation-for="Email" class="text-danger mt-1 d-block"></span>
+            </div>
+
+            <div class="flex-column">
+                <label asp-for="Password" class="form-label fs-6">Contraseña</label>
+                <div class="inputForm">
+                    <input asp-for="Password" class="input" type="password" autocomplete="current-password" placeholder="Introduce tu contraseña" />
+                </div>
+                <span asp-validation-for="Password" class="text-danger mt-1 d-block"></span>
+            </div>
+
+            <button type="submit" class="button-submit">Iniciar sesión</button>
+        </form>
+
+        <!-- Enlace para restablecer la contraseña -->
+        <div class="reset-password-link">
+            <a href="@Url.Action("ForgotPassword", "Auth")">Restablecer contraseña</a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        // Función para mostrar u ocultar la contraseña
+        function togglePasswordVisibility() {
+            var passwordInput = document.querySelector('input[type="password"]');
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+            } else {
+                passwordInput.type = "password";
+            }
+        }
+    </script>
+}

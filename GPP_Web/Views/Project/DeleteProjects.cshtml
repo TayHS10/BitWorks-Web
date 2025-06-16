@@ -1,0 +1,438 @@
+﻿@model IEnumerable<GPP_Web.DTOs.Project.ProjectResponseDTO>
+
+@{
+    ViewData["Title"] = "Desactivar Proyectos";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    /* Estilos generales y variables - Consistentes con otras vistas */
+    :root {
+        --primary-color: #3A889D; /* Azul oscuro */
+        --secondary-color: #275849; /* Verde oscuro/azulado para contrastes */
+        --light-gray-bg: #eff1f3; /* Fondo gris claro para el cuerpo */
+        --dark-text-color: #343a40; /* Color de texto oscuro general */
+        --border-color: #e9ecef; /* Color de borde suave */
+        --card-bg: #ffffff; /* Fondo blanco para tarjetas y formularios */
+        --input-border: #ced4da; /* Borde estándar para inputs */
+        --focus-ring-color: rgba(58, 136, 157, 0.25); /* Color de sombra para el focus del input */
+        --danger-color: #dc3545; /* Color rojo para errores */
+        --success-color: #28a745; /* Verde para éxito */
+        --info-color: #17a2b8; /* Azul claro para información */
+    }
+
+    body {
+        background-color: var(--light-gray-bg) !important;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        color: var(--dark-text-color);
+        padding: 20px; /* Padding general para el cuerpo */
+    }
+
+    /* Contenedor para el título y el botón de regresar */
+    .header-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* Centra el título */
+        margin-bottom: 40px;
+        position: relative; /* Para posicionar el botón de regresar */
+    }
+
+    .dashboard-title {
+        color: var(--primary-color);
+        font-weight: 700;
+        font-size: 3rem; /* Tamaño de título más grande */
+        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        padding-top: 20px;
+        margin-bottom: 0; /* Elimina el margen inferior si el div ya tiene uno */
+    }
+
+    /* Estilos del botón de regresar - CORREGIDO */
+    .btn-back {
+        position: absolute;
+        left: 20px; /* Alineado a la izquierda */
+        top: 30px; /* Un poco más abajo que el top del header-section */
+        background-color: var(--primary-color);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        text-decoration: none; /* Quita el subrayado predeterminado */
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-flex; /* Para alinear el icono y el texto */
+        align-items: center;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra para el botón */
+    }
+
+        .btn-back:hover {
+            background-color: var(--secondary-color); /* Cambia a un color secundario al hover */
+            color: white; /* Asegura que el texto permanezca blanco */
+            transform: translateY(-2px); /* Ligero efecto de levantamiento */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Sombra más pronunciada al hover */
+        }
+
+        .btn-back i {
+            margin-right: 8px; /* Espacio entre el icono y el texto del botón */
+        }
+
+
+    /* Contenedor de la lista de proyectos (Grid para flexibilidad) */
+    .project-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Columnas responsivas */
+        gap: 30px; /* Espacio entre tarjetas */
+        max-width: 1200px; /* Ancho máximo para centrar las tarjetas */
+        margin: 0 auto; /* Centrar el grid */
+    }
+
+    /* Estilos para cada tarjeta de proyecto */
+    .project-card {
+        background-color: var(--card-bg);
+        border-radius: 15px; /* Bordes más redondeados */
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08); /* Sombra más pronunciada */
+        transition: all 0.3s ease-in-out; /* Transición para efectos de hover */
+        overflow: hidden; /* Asegura que el contenido no se salga de los bordes redondeados */
+        display: flex; /* Usar flexbox para el diseño interno de la tarjeta */
+        flex-direction: column; /* Contenido en columna */
+        justify-content: space-between; /* Espacio entre header, body y footer */
+        height: 100%; /* Asegura que todas las tarjetas tengan la misma altura en el grid */
+    }
+
+        .project-card:hover {
+            transform: translateY(-5px); /* Efecto de levantamiento al pasar el ratón */
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); /* Sombra más intensa al pasar el ratón */
+        }
+
+    .card-header {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 20px 25px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 15px 15px 0 0; /* Bordes redondeados solo arriba */
+    }
+
+        .card-header h2 {
+            margin-top: 0;
+            margin-bottom: 5px;
+            font-size: 1.8rem; /* Tamaño de título de tarjeta */
+            font-weight: 600;
+        }
+
+        .card-header .card-code {
+            font-size: 0.95rem;
+            opacity: 0.8; /* Ligeramente transparente */
+        }
+
+    .card-body {
+        padding: 25px;
+        flex-grow: 1; /* Permite que el cuerpo ocupe el espacio disponible */
+    }
+
+        .card-body p {
+            margin-bottom: 10px;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        .card-body strong {
+            color: var(--secondary-color);
+            font-weight: 700;
+        }
+
+        /* Estilo para iconos dentro del card-body */
+        .card-body p i {
+            margin-right: 8px; /* Espacio entre el icono y el texto */
+            color: var(--primary-color); /* Color de los iconos */
+            font-size: 1.1em; /* Ligeramente más grande que el texto */
+            vertical-align: middle; /* Alineación vertical */
+        }
+
+
+    .card-footer {
+        padding: 20px 25px;
+        background-color: #f8f9fa; /* Fondo ligeramente gris para el footer */
+        border-top: 1px solid var(--border-color);
+        border-radius: 0 0 15px 15px; /* Bordes redondeados solo abajo */
+        text-align: center; /* ¡CORREGIDO! Centra el contenido horizontalmente */
+    }
+
+    /* Botón de desactivar */
+    .btn-danger {
+        background-color: var(--danger-color);
+        border-color: var(--danger-color);
+        padding: 10px 25px;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-transform: uppercase; /* Texto en mayúsculas */
+        letter-spacing: 0.5px; /* Espaciado entre letras */
+        display: inline-flex; /* Para alinear el icono y el texto dentro del botón */
+        align-items: center;
+        justify-content: center; /* ¡CORREGIDO! Centra el contenido dentro del botón */
+    }
+
+        .btn-danger i {
+            margin-right: 8px; /* Espacio entre el icono y el texto del botón */
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333; /* Rojo más oscuro */
+            border-color: #bd2130;
+            transform: translateY(-1px); /* Ligero levantamiento */
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3); /* Sombra al hover */
+        }
+
+    /* Estilos para SweetAlert2 personalizados (popups de animación) */
+    .animate__animated {
+        -webkit-animation-duration: 0.5s;
+        animation-duration: 0.5s;
+        -webkit-animation-fill-mode: both;
+        animation-fill-mode: both;
+    }
+
+    .animate__fadeIn {
+        -webkit-animation-name: fadeIn;
+        animation-name: fadeIn;
+    }
+
+    .animate__fadeOut {
+        -webkit-animation-name: fadeOut;
+        animation-name: fadeOut;
+    }
+
+    .animate__bounceIn {
+        -webkit-animation-name: bounceIn;
+        animation-name: bounceIn;
+    }
+
+    /* Keyframes para SweetAlert2 si no se usa Animate.css directamente */
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    @@keyframes fadeOut {
+        from {
+            opacity: 1;
+        }
+
+        to {
+            opacity: 0;
+        }
+    }
+
+    @@keyframes bounceIn {
+        from, 20%, 40%, 60%, 80%, to {
+            -webkit-animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+            animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+        }
+
+        0% {
+            opacity: 0;
+            -webkit-transform: scale3d(0.3, 0.3, 0.3);
+            transform: scale3d(0.3, 0.3, 0.3);
+        }
+
+        20% {
+            -webkit-transform: scale3d(1.1, 1.1, 1.1);
+            transform: scale3d(1.1, 1.1, 1.1);
+        }
+
+        40% {
+            -webkit-transform: scale3d(0.9, 0.9, 0.9);
+            transform: scale3d(0.9, 0.9, 0.9);
+        }
+
+        60% {
+            opacity: 1;
+            -webkit-transform: scale3d(1.03, 1.03, 1.03);
+            transform: scale3d(1.03, 1.03, 1.03);
+        }
+
+        80% {
+            -webkit-transform: scale3d(0.97, 0.97, 0.97);
+            transform: scale3d(0.97, 0.97, 0.97);
+        }
+
+        to {
+            opacity: 1;
+            -webkit-transform: scale3d(1, 1, 1);
+            transform: scale3d(1, 1, 1);
+        }
+    }
+
+
+    /* Animación para eliminar tarjeta de proyecto */
+    .project-card.fade-out {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.5s ease-out, transform 0.5s ease-out, max-height 0.5s ease-out;
+        max-height: 0; /* Colapsa la altura para una desaparición suave */
+        margin-bottom: 0; /* Elimina el margen mientras se colapsa */
+        pointer-events: none; /* Deshabilita interacciones durante la transición */
+    }
+
+    /* Mensaje si no hay proyectos */
+    .no-projects-message {
+        text-align: center;
+        color: var(--dark-text-color);
+        font-size: 1.2rem;
+        margin-top: 50px;
+        padding: 20px;
+        background-color: var(--card-bg);
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+</style>
+
+<!-- Font Awesome para iconos -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" xintegrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<!-- Se añade SweetAlert2 CSS para estilos de modales (si no está ya en _Layout) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.8/dist/sweetalert2.min.css">
+<!-- Se añade Animate.css si se desea usar sus animaciones completas para SweetAlert2 -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+<div class="header-section">
+    <!-- Botón de retroceso para volver a la página anterior -->
+    <a href="javascript:history.back()" class="btn-back">
+        <i class="fa-solid fa-arrow-left"></i> Volver
+    </a>
+    <h1 class="dashboard-title">Proyectos Activos</h1>
+</div>
+
+
+@* Los mensajes de error o éxito de ViewBag/TempData ahora serán manejados por SweetAlert2 *@
+
+<div class="project-list">
+    @if (Model != null && Model.Any())
+    {
+        @foreach (var project in Model)
+        {
+            <div class="project-card" id="project-@project.ProjectId">
+                <div class="card-header">
+                    <h2>@project.ProjectName</h2>
+                    <p class="card-code">Código: @project.ProjectCode</p>
+                </div>
+                <div class="card-body">
+                    <p><strong><i class="fa-solid fa-money-bill-wave"></i> Presupuesto Asignado:</strong> ₡@project.Budget.ToString("N2")</p>
+                    <p><strong><i class="fa-solid fa-wallet"></i> Presupuesto Restante:</strong> ₡@project.RemainingBudget.ToString("N2")</p>
+                    <p><strong><i class="fa-solid fa-info-circle"></i> Estado:</strong> @project.Status</p>
+                    <p><strong><i class="fa-solid fa-envelope"></i> Correo del Encargado:</strong> @project.ManagerEmail</p>
+                    <p><strong><i class="fa-solid fa-calendar-alt"></i> Fecha de Creación:</strong> @project.CreatedAt?.ToString("dd MMM khắp")</p>
+                </div>
+                <div class="card-footer">
+                    <!-- Botón para desactivar el proyecto -->
+                    <button type="button" class="btn btn-danger deactivate-btn" data-project-id="@project.ProjectId">
+                        <i class="fa-solid fa-ban"></i> Desactivar
+                    </button>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="no-projects-message">
+            <p>No hay proyectos activos para mostrar en este momento.</p>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.8/dist/sweetalert2.all.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Manejo de mensajes de éxito y error con SweetAlert2
+            const successMessage = '@(TempData["SuccessMessage"] as string)';
+            const errorMessage = '@(ViewBag.ErrorMessage as string)';
+
+            if (successMessage && successMessage.trim() !== '') {
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: successMessage,
+                    confirmButtonText: 'Aceptar',
+                    customClass: {
+                        popup: 'animate__animated animate__fadeInDown'
+                    }
+                });
+            }
+
+            if (errorMessage && errorMessage.trim() !== '') {
+                Swal.fire({
+                    icon: 'error',
+                    title: '¡Error!',
+                    text: errorMessage,
+                    confirmButtonText: 'Aceptar',
+                    customClass: {
+                        popup: 'animate__animated animate__shakeX'
+                    }
+                });
+            }
+
+            // Manejar clics en los botones de desactivar con SweetAlert2
+            document.querySelectorAll('.deactivate-btn').forEach(button => {
+                button.addEventListener('click', function () {
+                    const projectId = this.dataset.projectId; // Obtiene el ID del proyecto del atributo data-
+                    const projectCard = document.getElementById(`project-${projectId}`);
+
+                    Swal.fire({
+                        title: '¿Estás seguro?',
+                        text: "¡No podrás revertir esto! El proyecto se desactivará.",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Sí, ¡desactivar!',
+                        cancelButtonText: 'Cancelar',
+                        customClass: {
+                            popup: 'animate__animated animate__bounceIn' // Animación de entrada para el modal
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Crear un formulario dinámico para enviar la solicitud POST
+                            const form = document.createElement('form');
+                            form.method = 'post';
+                            form.action = '@Url.Action("DeactivateProject", "Project")';
+
+                            const hiddenInput = document.createElement('input');
+                            hiddenInput.type = 'hidden';
+                            hiddenInput.name = 'projectId';
+                            hiddenInput.value = projectId;
+                            form.appendChild(hiddenInput);
+
+                            // Añadir el token de antiforja. CRÍTICO para seguridad.
+                            const antiForgeryToken = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+                            if (antiForgeryToken) {
+                                const tokenInput = document.createElement('input');
+                                tokenInput.type = 'hidden';
+                                tokenInput.name = '__RequestVerificationToken';
+                                tokenInput.value = antiForgeryToken;
+                                form.appendChild(tokenInput);
+                            } else {
+                                console.warn("Token de antiforja no encontrado. La solicitud podría fallar.");
+                            }
+
+                            document.body.appendChild(form); // Se debe añadir el formulario al DOM antes de enviarlo
+                            form.submit(); // Envía el formulario POST
+
+                            // Añade la animación de fade-out a la tarjeta antes de la redirección
+                            if (projectCard) {
+                                projectCard.classList.add('fade-out');
+                                // Opcional: Remover la tarjeta del DOM después de la animación si no hay redirección
+                                // projectCard.addEventListener('transitionend', () => projectCard.remove());
+                            }
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+}

@@ -1,0 +1,109 @@
+﻿/* Estilos generales del formulario */
+.form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f0f2f5; /* Fondo gris claro */
+    padding: 20px;
+}
+
+.form-card {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 2rem 4rem rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px;
+}
+
+.header-section {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+    .header-section .title {
+        font-size: 2rem;
+        color: #151717;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+    .header-section p {
+        color: #888;
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
+
+    .header-section img {
+        width: 100%;
+        max-width: 350px;
+        border-radius: 10px;
+    }
+
+/* Estilo de los campos de entrada */
+.form-group {
+    margin-bottom: 20px;
+}
+
+    .form-group label {
+        color: #151717;
+        font-weight: 600;
+    }
+
+.input {
+    width: 100%;
+    padding: 15px;
+    border: 1.5px solid #ecedec;
+    border-radius: 10px;
+    background-color: transparent;
+    color: #151717;
+    font-size: 14px;
+    transition: 0.3s ease;
+}
+
+    .input:focus {
+        outline: none;
+        border-color: #2d79f3;
+    }
+
+    .input::placeholder {
+        color: #8c8c8c;
+    }
+
+.button-submit {
+    margin-top: 20px;
+    background-color: #151717;
+    border: none;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 10px;
+    padding: 15px;
+    width: 100%;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+    .button-submit:hover {
+        background-color: #2d79f3;
+    }
+
+/* Estilo de los mensajes de error */
+.alert {
+    border-radius: 0.5rem;
+    margin-bottom: 20px;
+}
+
+/* Estilo para la validación y flexbox */
+.flex-column {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+.img-fluid{
+    max-width: 200px;
+    max-height: auto;
+}
+

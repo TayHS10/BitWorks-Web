@@ -1,0 +1,422 @@
+﻿@model GPP_Web.ViewModels.AdminDashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard Administrador";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    // Accede al nombre del usuario autenticado. User.Identity.Name es un string.
+    var authenticatedUserName = User.Identity.IsAuthenticated ? User.Identity.Name : "Administrador";
+}
+
+@* Enlaces a librerías externas de CSS *@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.8/dist/sweetalert2.min.css">
+
+
+<style>
+    /* Estilos generales y variables - Consistentes con otras vistas */
+    :root {
+        --primary-color: #3A889D; /* Azul oscuro */
+        --secondary-color: #275849; /* Verde oscuro/azulado para contrastes */
+        --light-gray-bg: #eff1f3; /* Fondo gris claro para el cuerpo */
+        --dark-text-color: #343a40; /* Color de texto oscuro general */
+        --border-color: #e9ecef; /* Color de borde suave */
+        --card-bg: #ffffff; /* Fondo blanco para tarjetas y formularios */
+        --input-border: #ced4da; /* Borde estándar para inputs */
+        --focus-ring-color: rgba(58, 136, 157, 0.25); /* Color de sombra para el focus del input */
+        --danger-color: #dc3545; /* Color rojo para errores */
+        --success-color: #28a745; /* Verde para éxito */
+        --info-color: #17a2b8; /* Azul claro para información */
+    }
+
+    body {
+        background-color: var(--light-gray-bg) !important;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        color: var(--dark-text-color);
+        padding: 20px; /* Padding general para el cuerpo */
+    }
+
+    .dashboard-container {
+        padding: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .dashboard-title {
+        color: var(--primary-color);
+        font-weight: 700;
+        font-size: 3rem; /* Tamaño de título más grande */
+        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    /* Sección de Bienvenida */
+    .welcome-section {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 40px;
+        padding-top: 20px;
+        flex-direction: column; /* Para apilar el mensaje principal y el nombre */
+    }
+
+    .welcome-message {
+        color: var(--primary-color);
+        font-weight: 700;
+        font-size: 2.8rem; /* Tamaño de título más grande */
+        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        display: flex; /* Para alinear el icono y el texto */
+        align-items: center;
+        gap: 15px; /* Espacio entre el icono y el texto */
+        margin-bottom: 10px; /* Espacio debajo del mensaje principal */
+    }
+
+        .welcome-message i {
+            font-size: 3rem; /* Tamaño del icono de bienvenida */
+            color: var(--secondary-color); /* Color del icono de bienvenida */
+        }
+
+    .user-name-display {
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: var(--dark-text-color);
+        text-align: center;
+        margin-top: -15px; /* Ajusta la posición para que quede más cerca del mensaje */
+    }
+
+
+    /* Contenedor de las tarjetas - Usamos Flexbox para una disposición flexible */
+    .cards-container {
+        display: flex;
+        flex-wrap: wrap; /* Permite que las tarjetas salten de línea */
+        gap: 25px; /* Espacio entre las tarjetas */
+        justify-content: center; /* Centra las tarjetas horizontalmente */
+        margin-bottom: 40px;
+    }
+
+    /* Estilo para cada tarjeta individual */
+    .dashboard-card {
+        background-color: var(--card-bg);
+        border-radius: 15px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* Sombra más pronunciada */
+        padding: 30px;
+        text-align: center;
+        flex: 1; /* Permite que las tarjetas se expandan */
+        min-width: 280px; /* Ancho mínimo para cada tarjeta */
+        max-width: 350px; /* Ancho máximo para cada tarjeta */
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+        .dashboard-card:hover {
+            transform: translateY(-8px); /* Efecto de levantamiento al pasar el ratón */
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15); /* Sombra más intensa al hover */
+        }
+
+    .card-icon {
+        font-size: 3.5rem; /* Icono grande */
+        color: var(--primary-color);
+        margin-bottom: 15px;
+        transition: color 0.3s ease;
+    }
+
+    .dashboard-card:hover .card-icon {
+        color: var(--secondary-color); /* Cambia el color del icono al hover */
+    }
+
+    .card-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--dark-text-color);
+        margin-bottom: 10px;
+    }
+
+    .card-value {
+        font-size: 3rem; /* Número grande */
+        font-weight: 700;
+        color: var(--primary-color);
+    }
+
+    /* Estilos de la tabla para la lista de usuarios */
+    .table-section-title {
+        color: var(--primary-color);
+        font-weight: 700;
+        font-size: 2.2rem;
+        text-align: center;
+        margin-bottom: 30px;
+        padding-top: 20px;
+        border-top: 2px solid var(--border-color); /* Separador visual */
+        padding-top: 40px; /* Más espacio arriba */
+        margin-top: 40px; /* Más espacio arriba */
+    }
+
+    .table-container {
+        background-color: var(--card-bg);
+        border-radius: 1rem;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        padding: 2.5rem;
+        overflow-x: auto; /* Asegura que la tabla sea responsive en pantallas pequeñas */
+        margin-bottom: 30px; /* Espacio debajo de la tabla antes de la paginación */
+    }
+
+    .table {
+        width: 100%;
+        margin-bottom: 0;
+        border-collapse: separate; /* Permite border-radius en las celdas */
+        border-spacing: 0;
+    }
+
+        .table thead th {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            border-bottom: none;
+            text-align: left;
+            font-weight: 700;
+            font-size: 1.05rem;
+        }
+
+        .table tbody tr:nth-of-type(odd) {
+            background-color: #f9f9f9; /* Raya más clara */
+        }
+
+        .table tbody tr:hover {
+            background-color: #f0f0f0;
+            cursor: default;
+        }
+
+        .table tbody td {
+            padding: 1rem;
+            vertical-align: middle;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .table thead th:first-child {
+            border-top-left-radius: 0.75rem;
+        }
+
+        .table thead th:last-child {
+            border-top-right-radius: 0.75rem;
+        }
+
+    /* Mensaje "sin datos" para la tabla */
+    .no-data-message {
+        text-align: center;
+        padding: 2rem;
+        font-size: 1.2rem;
+        color: var(--dark-text-color);
+        background-color: var(--card-bg);
+        border-radius: 1rem;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        margin-top: 2rem;
+    }
+
+        .no-data-message i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+            display: block;
+        }
+
+    /* Estilos para la paginación */
+    .pagination-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 30px;
+        padding: 10px;
+        background-color: var(--card-bg);
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        max-width: 1000px; /* Para centrar con el ancho de la tabla */
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .pagination-btn {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 10px 15px;
+        border-radius: 5px;
+        text-decoration: none;
+        margin: 0 5px;
+        transition: background-color 0.3s ease;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+        .pagination-btn:hover:not(.disabled) {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .pagination-btn.disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+    .pagination-info {
+        margin: 0 20px;
+        font-size: 1.1rem;
+        color: var(--dark-text-color);
+    }
+</style>
+
+<div class="dashboard-container animate__animated animate__fadeIn">
+
+    @* Sección de Bienvenida *@
+    <div class="welcome-section">
+        <h1 class="welcome-message">
+            <i class="@ViewBag.WelcomeIconClass"></i> @ViewBag.WelcomeMessage
+        </h1>
+        <p class="user-name-display">@authenticatedUserName</p> @* Muestra el nombre del usuario autenticado *@
+    </div>
+
+    <div class="cards-container">
+        @* Tarjeta 1: Cantidad de Usuarios Registrados *@
+        <div class="dashboard-card">
+            <i class="bi bi-people-fill card-icon"></i>
+            <h2 class="card-title">Usuarios Registrados</h2>
+            <p class="card-value">@Model.TotalUsers</p>
+        </div>
+
+        @* Tarjeta 2: Solicitudes de Cambio de Rol Activas *@
+        <div class="dashboard-card">
+            <i class="bi bi-person-fill-gear card-icon"></i>
+            <h2 class="card-title">Solicitudes de Rol Activas</h2>
+            <p class="card-value">@Model.TotalActiveRoleChangeRequests</p>
+        </div>
+
+        @* Tarjeta 3: Cantidad de Proyectos Activos *@
+        <div class="dashboard-card">
+            <i class="bi bi-folder-fill card-icon"></i>
+            <h2 class="card-title">Proyectos Activos</h2>
+            <p class="card-value">@Model.TotalActiveProjects</p>
+        </div>
+    </div>
+
+    ---
+
+    @* --- Sección de la Tabla de Usuarios --- *@
+    <h2 class="table-section-title">Listado de Usuarios del Sistema</h2>
+
+    @if (Model.PaginatedUsers != null && Model.PaginatedUsers.Any())
+    {
+        <div class="table-container animate__animated animate__fadeInUp">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre Completo</th>
+                        <th>Email</th>
+                        <th>Rol</th>
+                        @* Agrega más columnas si es necesario (ej. Acciones) *@
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model.PaginatedUsers)
+                    {
+                        <tr>
+                            <td>@user.UserId</td>
+                            <td>@user.FullName</td>
+                            <td>@user.Email</td>
+                            <td>@user.Role</td>
+                            @* Aquí podrías agregar botones de acción como "Desactivar" *@
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div> @* Cierre de .table-container *@
+
+        @* Controles de paginación para la tabla de usuarios *@
+        <div class="pagination-container">
+            <a href="@Url.Action("Dashboard", new { pageNumber = Model.CurrentPage - 1, pageSize = Model.PageSize })"
+               class="pagination-btn @(Model.HasPreviousPage ? "" : "disabled")">
+                Anterior
+            </a>
+
+            <span class="pagination-info">Página @Model.CurrentPage de @Model.TotalPages</span>
+
+            <a href="@Url.Action("Dashboard", new { pageNumber = Model.CurrentPage + 1, pageSize = Model.PageSize })"
+               class="pagination-btn @(Model.HasNextPage ? "" : "disabled")">
+                Siguiente
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="no-data-message animate__animated animate__fadeInUp">
+            <i class="bi bi-info-circle"></i>
+            <p>@(!string.IsNullOrWhiteSpace(Model.InfoMessage) ? Model.InfoMessage : "No hay usuarios registrados para mostrar en este momento.")</p>
+        </div> @* Cierre de .no-data-message *@
+    }
+
+    ---
+
+    @* --- Manejo de mensajes con SweetAlert2 (usando ViewBag para mensajes de TempData o de errores generales) --- *@
+    @* Los mensajes ahora se acceden directamente desde ViewBag, donde se asignan desde TempData o el ViewModel *@
+    @if (ViewBag.SuccessMessage is string successMessage && !string.IsNullOrWhiteSpace(successMessage))
+    {
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: '@Html.Raw(successMessage)',
+                    confirmButtonText: 'Aceptar',
+                    customClass: {
+                        popup: 'animate__animated animate__fadeInDown'
+                    }
+                });
+            });
+        </script>
+    }
+
+    @if (ViewBag.ErrorMessage is string errorMessage && !string.IsNullOrWhiteSpace(errorMessage))
+    {
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                Swal.fire({
+                    icon: 'error',
+                    title: '¡Error!',
+                    html: '@Html.Raw(errorMessage.Replace("\n", "<br>"))', @* Reemplaza saltos de línea por <br> para HTML *@
+                    confirmButtonText: 'Aceptar',
+                    customClass: {
+                        popup: 'animate__animated animate__shakeX'
+                    }
+                });
+            });
+        </script>
+    }
+
+    @if (ViewBag.InfoMessage is string infoMessage && !string.IsNullOrWhiteSpace(infoMessage))
+    {
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Información',
+                    text: '@Html.Raw(infoMessage)',
+                    confirmButtonText: 'Aceptar',
+                    customClass: {
+                        popup: 'animate__animated animate__fadeInDown'
+                    }
+                });
+            });
+        </script>
+    }
+
+</div>
+
+@section Scripts {
+    @* Enlaces a librerías externas de JavaScript *@
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.8/dist/sweetalert2.all.min.js"></script>
+}

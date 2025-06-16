@@ -1,0 +1,97 @@
+﻿@model List<GPP_Web.DTOs.Project.ProjectResponseDTO>
+
+@{
+    ViewData["Title"] = "Inicio";
+}
+
+<header class="py-5">
+    <div class="container px-5 pb-5">
+        <div class="row gx-5 align-items-center justify-content-center">
+            <div class="col-xxl-5 text-center text-xxl-start">
+                <div class="fs-3 fw-light text-muted">Sistema Online</div>
+                <h1 class="display-3 fw-bolder mb-5"><span style="color: #3A889D;">Gestión Presupuestaria Proyectos</span></h1>
+                <div class="d-grid gap-3 d-sm-flex justify-content-sm-center justify-content-xxl-start mb-3">
+                    <a class="btn btn-primary btn-lg px-5 py-3 me-sm-3 fs-6 fw-bolder" href="#proyectos-activos">Ver Proyectos</a>
+                    <a class="btn btn-outline-dark btn-lg px-5 py-3 fs-6 fw-bolder" href="#porque-elegirnos">Conoce Más</a>
+                </div>
+            </div>
+            <div class="col-xxl-7 d-flex justify-content-center mt-5 mt-xxl-0">
+                <div class="profile bg-gradient-primary-to-secondary">
+                    <img class="profile-img" src="https://images.pexels.com/photos/3182812/pexels-photo-3182812.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Imagen de perfil" />
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<hr class="mb-5" />
+
+<section class="py-5" id="proyectos-activos">
+    <div class="container px-5">
+        <h2 class="section-title text-center mb-5">Nuestros Proyectos Activos</h2>
+
+        @if (ViewBag.ErrorMessage != null)
+        {
+            <div class="alert alert-danger" role="alert">
+                @ViewBag.ErrorMessage
+            </div>
+        }
+
+        @if (Model != null && Model.Any())
+        {
+            <!-- Nuevo Carrusel -->
+            <div class="carousel" mask>
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    var project = Model[i];
+                    <article>
+                        <img src="https://yt3.googleusercontent.com/ytc/AIdro_lWm9gUNnRzycFD_WeEyUEDvVN3xnnbdStZjuelt8ubE8c=s900-c-k-c0x00ffffff-no-rj" alt="Imagen del proyecto @project.ProjectName">
+                        <b><h2>@project.ProjectName</h2></b>
+                        <div>
+                            <p>Encargado: <span class="name">@project.Manager?.FullName</span></p>
+                        </div>
+                    </article>
+                }
+            </div>
+        }
+        else
+        {
+            <p class="text-center">No hay proyectos activos para mostrar en este momento.</p>
+        }
+    </div>
+</section>
+
+<hr class="mb-5" />
+
+<section class="bg-light py-5" id="porque-elegirnos">
+    <div class="container px-5">
+        <h2 class="section-title text-center mb-5">¿Por qué elegirnos?</h2>
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            <div class="col">
+                <div class="custom-card text-center">
+                    <i class="bi bi-currency-dollar icon-feature"></i>
+                    <h4>Registro de Gastos</h4>
+                    <p>Registra tus gastos de forma eficiente y recibe notificaciones cuando una partida presupuestaria tenga poco presupuesto restante..</p>
+                </div>
+            </div>
+            <div class="col">
+                <div class="custom-card text-center">
+                    <i class="bi bi-hand-thumbs-up icon-feature"></i>
+                    <h4>Partidas presupuestarias</h4>
+                    <p>Organiza el presupuesto de tu proyecto en diversas partidas presupuestarias a tu gusto.</p>
+                </div>
+            </div>
+            <div class="col">
+                <div class="custom-card text-center">
+                    <i class="bi bi-graph-up icon-feature"></i>
+                    <h4>Gestión de Proyectos</h4>
+                    <p>Gestiona tus proyectos de forma activa y en tiempo real.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Link a los archivos CSS externos -->
+<link rel="stylesheet" href="~/css/styles.css">
+<link rel="stylesheet" href="~/css//indexguest.css">

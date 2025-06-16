@@ -1,0 +1,359 @@
+﻿@model IEnumerable<GPP_Web.DTOs.Project.ProjectResponseDTO>
+
+@{
+    ViewData["Title"] = "Mis Proyectos Asignados"; // Título más descriptivo para la pestaña del navegador
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+@* SweetAlert2 CSS *@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.8/dist/sweetalert2.min.css">
+
+<style>
+    /* Estilos ya definidos en _Layout.cshtml o site.css (replicados aquí para referencia) */
+    :root {
+        --light-gray-bg: #eff1f3;
+        --primary-color: #3A889D; /* Dark Slate Gray */
+        --secondary-color: #275849; /* Charcoal Blue (para contrastes) */
+        --dark-text-color: #343a40; /* Texto oscuro general */
+        --border-color: #e9ecef; /* Color de borde suave */
+        --success-color: #28a745; /* Bootstrap green */
+        --danger-color: #dc3545; /* Bootstrap red */
+        --info-color: #17a2b8; /* Bootstrap info */
+        --card-bg: #ffffff;
+        --input-border: #ced4da;
+        --focus-ring-color: rgba(58, 136, 157, 0.25); /* Ligero Primary color para focus */
+    }
+
+    body {
+        background-color: var(--light-gray-bg) !important;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        color: var(--dark-text-color);
+    }
+
+    /* Contenedor principal para consistencia con el dashboard */
+    .dashboard-container {
+        padding-top: 3rem;
+        padding-bottom: 3rem;
+        max-width: 1200px; /* Ancho para las tarjetas de proyecto */
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    /* Título principal */
+    .dashboard-main-title {
+        font-size: 3.5rem;
+        font-weight: 800;
+        color: var(--dark-text-color);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 1rem;
+        position: relative;
+        padding-bottom: 15px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+        .dashboard-main-title i {
+            font-size: 3rem;
+            margin-right: 15px;
+            color: var(--dark-text-color);
+        }
+
+        .dashboard-main-title::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 6px;
+            background-color: var(--secondary-color);
+            border-radius: 3px;
+        }
+
+    /* Subtítulo */
+    .dashboard-subtitle {
+        font-size: 1.75rem;
+        color: var(--dark-text-color);
+        margin-bottom: 2rem;
+        font-weight: 600;
+    }
+
+    /* Project List (Grid) */
+    .project-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsive grid */
+        gap: 2.5rem; /* Espacio entre tarjetas */
+        padding: 1.5rem; /* Padding alrededor de la cuadrícula */
+        background-color: var(--light-gray-bg); /* Fondo sutil para la cuadrícula */
+        border-radius: 1rem;
+    }
+
+    /* Project Card */
+    .project-card {
+        background-color: var(--card-bg);
+        border-radius: 1rem;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); /* Sombra más pronunciada */
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: 1px solid var(--border-color); /* Borde sutil */
+    }
+
+        .project-card:hover {
+            transform: translateY(-8px); /* Efecto flotante al pasar el mouse */
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15); /* Sombra más fuerte al flotar */
+        }
+
+    .card-header {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 1.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        text-align: center;
+        position: relative;
+    }
+
+        .card-header h2 {
+            margin-bottom: 0.5rem;
+            font-size: 1.8rem;
+            font-weight: 700;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-header .card-code {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+    .card-body {
+        padding: 2rem;
+        flex-grow: 1; /* Permite que el cuerpo crezca */
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between; /* Espacia el contenido */
+    }
+
+        .card-body p {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            font-size: 1.05rem;
+            color: var(--dark-text-color);
+        }
+
+            .card-body p:last-child {
+                margin-bottom: 0;
+            }
+
+            .card-body p strong {
+                margin-right: 0.5rem;
+                color: var(--secondary-color);
+            }
+
+            .card-body p i {
+                font-size: 1.25rem;
+                margin-right: 0.75rem;
+                color: var(--primary-color);
+            }
+
+    .card-footer {
+        padding: 1.5rem;
+        background-color: #f8f9fa; /* Fondo ligeramente gris */
+        border-top: 1px solid var(--border-color);
+        text-align: center;
+    }
+
+    .btn-details {
+        background-color: var(--secondary-color);
+        border-color: var(--secondary-color);
+        color: white;
+        font-size: 1.1rem;
+        padding: 0.8rem 2rem;
+        border-radius: 0.75rem;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .btn-details:hover {
+            background-color: #1e4539; /* Darker secondary on hover */
+            border-color: #1e4539;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            color: white; /* Asegurarse que el texto sea blanco al pasar el ratón */
+        }
+
+        .btn-details i {
+            margin-right: 0.8rem;
+            font-size: 1.2rem;
+        }
+
+    /* No data message */
+    .no-data-message {
+        text-align: center;
+        padding: 4rem 2rem; /* Más padding para que se vea bien centrado */
+        font-size: 1.4rem;
+        color: var(--dark-text-color);
+        background-color: var(--card-bg);
+        border-radius: 1rem;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        margin-top: 2rem;
+    }
+
+        .no-data-message i {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+            display: block;
+        }
+
+    /* Responsive adjustments */
+    @@media (max-width: 768px) {
+        .dashboard-main-title {
+            font-size: 2.5rem;
+        }
+
+        .dashboard-subtitle {
+            font-size: 1.4rem;
+        }
+
+        .project-grid {
+            grid-template-columns: 1fr; /* Single column on small screens */
+            gap: 2rem;
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .dashboard-container {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+
+        .dashboard-main-title {
+            font-size: 2rem;
+        }
+
+            .dashboard-main-title i {
+                font-size: 2rem;
+                margin-right: 10px;
+            }
+
+            .dashboard-main-title::after {
+                width: 80px;
+                height: 4px;
+            }
+
+        .dashboard-subtitle {
+            font-size: 1.2rem;
+        }
+
+        .card-header h2 {
+            font-size: 1.5rem;
+        }
+
+        .card-body p {
+            font-size: 0.95rem;
+        }
+
+        .btn-details {
+            font-size: 1rem;
+            padding: 0.6rem 1.5rem;
+        }
+    }
+
+</style>
+
+<div class="container-fluid dashboard-container animate__animated animate__fadeIn">
+    <h1 class="text-center dashboard-main-title mb-3 animate__animated animate__bounceIn">
+        <i class="bi bi-folder-fill"></i> Mis Proyectos Asignados
+    </h1>
+    <p class="text-center dashboard-subtitle animate__animated animate__fadeInUp">
+        Aquí puedes ver un resumen de los proyectos que tienes a tu cargo.
+    </p>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="project-grid animate__animated animate__fadeInUp">
+            @foreach (var project in Model)
+            {
+                <div class="project-card">
+                    <div class="card-header">
+                        <h2>@project.ProjectName</h2>
+                        <p class="card-code">Código: @project.ProjectCode</p>
+                    </div>
+                    <div class="card-body">
+                        <p><i class="bi bi-wallet-fill"></i> <strong>Presupuesto Asignado:</strong> ₡@project.Budget.ToString("N0")</p>
+                        <p><i class="bi bi-cash-stack"></i> <strong>Presupuesto Restante:</strong> ₡@project.RemainingBudget.ToString("N0")</p>
+                        <p><i class="bi bi-info-circle-fill"></i> <strong>Estado:</strong> @project.Status</p>
+                        <p><i class="bi bi-person-fill"></i> <strong>Correo del Encargado:</strong> @project.ManagerEmail</p>
+                        <p><i class="bi bi-calendar-fill"></i> <strong>Fecha de Creación:</strong> @project.CreatedAt?.ToString("dd/MM/yyyy")</p> @* Formato de fecha consistente *@
+                    </div>
+                    <div class="card-footer">
+                        <a href="@Url.Action("Index", "BudgetPart", new { projectId = project.ProjectId })" class="btn btn-details">
+                            <i class="bi bi-eye-fill"></i> Ver Partidas
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="no-data-message animate__animated animate__fadeInUp">
+            <i class="bi bi-x-circle-fill"></i>
+            <p>No tienes proyectos asignados en este momento.</p>
+            <p>Ponte en contacto con el administrador para la asignación de proyectos.</p>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    @* SweetAlert2 JS *@
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.8/dist/sweetalert2.all.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            // Lógica para mostrar mensajes de éxito con SweetAlert2 (si tu controlador los envía)
+            var successMessage = '@(TempData["SuccessMessage"] as string ?? "")';
+            if (successMessage && successMessage.trim() !== '') {
+                setTimeout(function() {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Éxito!',
+                        text: successMessage,
+                        confirmButtonText: 'Aceptar',
+                        customClass: {
+                            popup: 'animate__animated animate__fadeInDown'
+                        }
+                    });
+                }, 100);
+            }
+
+            // Lógica para mostrar mensajes de error con SweetAlert2 (si tu controlador los envía)
+            var errorMessage = '@(ViewBag.ErrorMessage as string ?? "")';
+            if (errorMessage && errorMessage.trim() !== '') {
+                setTimeout(function() {
+                    Swal.fire({
+                        icon: 'error',
+                        title: '¡Error!',
+                        text: errorMessage,
+                        confirmButtonText: 'Aceptar',
+                        customClass: {
+                            popup: 'animate__animated animate__shakeX'
+                        }
+                    });
+                }, 100);
+            }
+        });
+    </script>
+}
