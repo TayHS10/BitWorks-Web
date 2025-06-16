@@ -5,52 +5,315 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<link rel="stylesheet" href="~/css/budgetpart.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-<!-- Botón de retroceso con imagen pequeña -->
-<div class="back-button">
-    <a href="javascript:history.back()" class="btn btn-link">
-        <img src="~/images/icons/back.png" alt="Volver" class="back-icon"> Volver
-    </a>
-</div>
+<style>
+    /* Colores y fuentes base (deben estar definidos en _Layout.cshtml o site.css para consistencia global) */
+    :root {
+        --light-gray-bg: #eff1f3;
+        --primary-color: #3A889D; /* Dark Slate Gray */
+        --secondary-color: #275849; /* Charcoal Blue (para contrastes) */
+        --dark-text-color: #343a40; /* Texto oscuro general */
+        --border-color: #e9ecef; /* Color de borde suave */
+        --success-color: #28a745; /* Bootstrap green */
+        --info-color: #17a2b8; /* Bootstrap info */
+        --table-header-bg: #f8f9fa; /* Light grey for table header */
+        --table-row-hover: #e9ecef; /* Lighter grey on row hover */
+        --dropdown-bg: #ffffff;
+        --dropdown-border: #ced4da;
+    }
 
-<!-- Título de la página -->
-<h1 class="text-center dashboard-title">Partidas Presupuestarias</h1>
+    body {
+        background-color: var(--light-gray-bg) !important;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        color: var(--dark-text-color);
+    }
 
-<!-- Tabla de partidas presupuestarias -->
-<div class="table-responsive-container">
-    <table class="table table-striped table-responsive">
-        <thead>
-            <tr>
-                <th>Nombre de Partida</th>
-                <th>Presupuesto Asignado</th>
-                <th>Presupuesto Restante</th>
-                <th>Opciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>@Html.DisplayFor(modelItem => item.PartName)</td>
-                    <td>₡@Html.DisplayFor(modelItem => item.AllocatedAmount)</td>
-                    <td>₡@Html.DisplayFor(modelItem => item.RemainingAmount)</td>
-                    <td>
-                        <div class="dropdown">
-                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton_@item.BudgetPartId" data-bs-toggle="dropdown" aria-expanded="false">
-                                Opciones
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton_@item.BudgetPartId">
-                                <li><a class="dropdown-item" href="@Url.Action("Create", "Expense", new { budgetPartId = item.BudgetPartId })">Agregar Gasto</a></li>
-                                <li><a class="dropdown-item" href="@Url.Action("GetExpensesByBudgetPart", "Expense", new { budgetPartId = item.BudgetPartId })">Ver Registro</a></li>
-                                <li><a class="dropdown-item" href="@Url.Action("TransferAmount", "BudgetPart", new { budgetPartId = item.BudgetPartId })">Transferir Montos</a></li>
-                            </ul>
-                        </div>
-                    </td>
-                </tr>
+    /* Contenedor principal para consistencia con el dashboard */
+    .dashboard-container {
+        padding-top: 3rem;
+        padding-bottom: 3rem;
+        max-width: 1100px; /* Un poco más ancho para la tabla */
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    /* Título principal del Dashboard */
+    .dashboard-main-title {
+        font-size: 3.5rem;
+        font-weight: 800;
+        color: var(--dark-text-color);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 1rem;
+        position: relative;
+        padding-bottom: 15px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+        .dashboard-main-title i {
+            font-size: 3rem;
+            margin-right: 15px;
+            color: var(--dark-text-color);
+        }
+
+        .dashboard-main-title::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 6px;
+            background-color: var(--secondary-color);
+            border-radius: 3px;
+        }
+
+    /* Subtítulo de bienvenida */
+    .dashboard-subtitle {
+        font-size: 1.75rem;
+        color: var(--dark-text-color);
+        margin-bottom: 2rem;
+        font-weight: 600;
+    }
+
+    /* Back Link Style */
+    .dashboard-back-link {
+        display: inline-flex;
+        align-items: center;
+        margin-bottom: 2rem;
+        color: var(--primary-color);
+        font-size: 1.1rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+        .dashboard-back-link:hover {
+            color: var(--secondary-color);
+            transform: translateX(-5px);
+        }
+
+        .dashboard-back-link i {
+            font-size: 1.5rem;
+            margin-right: 0.5rem;
+        }
+
+    /* Add New Button Style (this style block is now unused but kept in case you add the button back) */
+    .btn-create-new {
+        background-color: var(--secondary-color);
+        border-color: var(--secondary-color);
+        color: white;
+        font-size: 1.1rem;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.75rem;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 2rem;
+    }
+
+        .btn-create-new:hover {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            color: white;
+        }
+
+        .btn-create-new i {
+            margin-right: 0.8rem;
+            font-size: 1.2rem;
+        }
+
+    /* Table Container as a Card */
+    .table-card {
+        background-color: #ffffff;
+        border-radius: 1rem;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        overflow: hidden; /* Ensures border-radius applies */
+        padding: 2rem; /* Inner padding for the card content */
+        margin-top: 2rem;
+    }
+
+    /* Table Styling */
+    .table-budget-parts {
+        width: 100%;
+        margin-bottom: 0; /* Remove default table margin */
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+        .table-budget-parts thead th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 700;
+            padding: 1rem 1.2rem;
+            border-bottom: none; /* Remove default border */
+            text-align: left;
+            font-size: 1.05rem;
+        }
+
+        .table-budget-parts tbody tr {
+            border-bottom: 1px solid var(--border-color); /* Light border between rows */
+            transition: background-color 0.3s ease;
+        }
+
+            .table-budget-parts tbody tr:last-child {
+                border-bottom: none; /* No border for the last row */
             }
-        </tbody>
-    </table>
+
+            .table-budget-parts tbody tr:hover {
+                background-color: var(--table-row-hover);
+            }
+
+        .table-budget-parts tbody td {
+            padding: 1rem 1.2rem;
+            vertical-align: middle;
+            color: var(--dark-text-color);
+            font-size: 1rem;
+        }
+
+        /* Dropdown Button Styling */
+        .table-budget-parts .dropdown .btn {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+            .table-budget-parts .dropdown .btn:hover {
+                background-color: var(--secondary-color);
+                border-color: var(--secondary-color);
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            }
+
+        .table-budget-parts .dropdown-menu {
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            border: 1px solid var(--dropdown-border);
+            padding: 0.5rem 0;
+            min-width: 200px;
+            background-color: var(--dropdown-bg);
+        }
+
+        .table-budget-parts .dropdown-item {
+            color: var(--dark-text-color);
+            padding: 0.75rem 1.5rem;
+            transition: background-color 0.2s ease, color 0.2s ease;
+            display: flex;
+            align-items: center;
+            font-size: 1rem;
+        }
+
+            .table-budget-parts .dropdown-item:hover {
+                background-color: var(--light-gray-bg);
+                color: var(--primary-color);
+            }
+
+            .table-budget-parts .dropdown-item i {
+                margin-right: 0.8rem;
+                font-size: 1.1rem;
+            }
+
+    /* No responsive design queries are included in this inline style block to avoid Razor parsing issues. */
+    .table-responsive-wrapper {
+        overflow-x: auto; /* Hace que la tabla tenga scroll horizontal en pantallas pequeñas si es necesario */
+    }
+</style>
+
+<div class="container-fluid dashboard-container animate__animated animate__fadeIn">
+    <a href="javascript:history.back()" class="dashboard-back-link animate__animated animate__fadeInLeft">
+        <i class="bi bi-arrow-left"></i> Volver
+    </a>
+
+    <h1 class="text-center dashboard-main-title mb-3 animate__animated animate__bounceIn">
+        <i class="bi bi-cash-stack"></i> Partidas Presupuestarias
+    </h1>
+    <p class="text-center dashboard-subtitle animate__animated animate__fadeInUp">Gestión de las partidas de tu proyecto.</p>
+
+    @* El botón "Crear Nueva Partida" ha sido eliminado según tu solicitud. *@
+
+    <div class="table-card animate__animated animate__fadeInUp">
+        <div class="table-responsive-wrapper">
+            <table class="table table-striped table-budget-parts">
+                <thead>
+                    <tr>
+                        <th>Nombre de Partida</th>
+                        <th>Presupuesto Asignado</th>
+                        <th>Presupuesto Restante</th>
+                        <th>Opciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@Html.DisplayFor(modelItem => item.PartName)</td>
+                                <td>₡@item.AllocatedAmount.ToString("N0")</td>
+                                <td>₡@item.RemainingAmount.ToString("N0")</td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton_@item.BudgetPartId" data-bs-toggle="dropdown" aria-expanded="false">
+                                            Opciones
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton_@item.BudgetPartId">
+                                            <li>
+                                                <a class="dropdown-item" href="@Url.Action("Create", "Expense", new { budgetPartId = item.BudgetPartId })">
+                                                    <i class="bi bi-cash-coin"></i> Agregar Gasto
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="@Url.Action("Index", "Expense", new { budgetPartId = item.BudgetPartId })">
+                                                    <i class="bi bi-clipboard-data"></i> Ver Registro de Gastos
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="@Url.Action("TransferAmount", "BudgetPart", new { budgetPartId = item.BudgetPartId })">
+                                                    @* Corregido: 'new teorias' a 'new' *@
+                                                    <i class="bi bi-arrow-left-right"></i> Transferir Montos
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item text-warning" href="@Url.Action("Edit", "BudgetPart", new { id = item.BudgetPartId })">
+                                                    <i class="bi bi-pencil-square"></i> Editar Partida
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item text-danger" href="@Url.Action("Delete", "BudgetPart", new { id = item.BudgetPartId })">
+                                                    <i class="bi bi-trash"></i> Eliminar Partida
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4" class="text-center py-4">No hay partidas presupuestarias para mostrar.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+}

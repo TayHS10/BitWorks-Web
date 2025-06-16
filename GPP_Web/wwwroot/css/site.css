@@ -8,6 +8,14 @@
     --background-gradient-end: #00bf8c;
     --dark-text: #343a40; /* Un gris oscuro para texto general */
     --light-text: #EEEEEE; /* Un gris claro para texto en fondos oscuros */
+    --sidebar-bg-dark: #343a40;
+    --sidebar-text-dark: #FFFFFF;
+    --sidebar-active-bg-dark: var(--bs-primary);
+    --sidebar-bg-light: #FFFFFF;
+    --sidebar-text-light: #343a40;
+    --sidebar-active-bg-light: #F0F0F0; /* Un gris claro para el activo en modo claro */
+    --sidebar-active-text-light: var(--bs-primary); /* Color principal para el texto activo en modo claro */
+    --sidebar-box-shadow-light: 2px 0 5px rgba(0, 0, 0, 0.05); /* Sombra muy suave para el sidebar en modo claro */
 }
 
 /* Estilos generales */
@@ -53,14 +61,17 @@ body {
     width: 250px; /* Ancho fijo del sidebar */
     z-index: 1000; /* Asegura que el sidebar esté encima de otros elementos */
     padding-top: 1rem; /* Espacio para el logo/título */
-    background-color: #343a40; /* Fondo oscuro para el sidebar */
+    background-color: var(--sidebar-bg-dark); /* Fondo oscuro por defecto */
+    color: var(--sidebar-text-dark); /* Color de texto por defecto */
     overflow-y: auto; /* Permite que se desplace el contenido si es necesario */
+    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease; /* Transición suave para el cambio de modo y sombra */
 }
 
 /* El contenedor principal se ajustará cuando el sidebar esté visible */
 .content-shifted-left {
     margin-left: 250px; /* Empuja el contenido principal hacia la derecha cuando el sidebar está visible */
     padding-top: 2rem;
+    transition: margin-left 0.3s ease; /* Transición para el margen al ocultar/mostrar sidebar */
 }
 
 /* Estilos para el texto del sidebar */
@@ -69,6 +80,7 @@ body {
     padding: 0.75rem 1rem;
     border-radius: 0.5rem;
     transition: background-color 0.2s ease, color 0.2s ease;
+    color: var(--sidebar-text-dark); /* Color de texto inicial para enlaces */
 }
 
     #sidebarMenu .nav-link:hover {
@@ -77,9 +89,42 @@ body {
     }
 
     #sidebarMenu .nav-link.active {
-        background-color: var(--bs-primary);
+        background-color: var(--sidebar-active-bg-dark);
         color: white;
     }
+
+/* --- Estilos para el modo oscuro (que en realidad es el "modo claro" para el sidebar) --- */
+#sidebarMenu.dark-mode-sidebar {
+    background-color: var(--sidebar-bg-light) !important;
+    color: var(--sidebar-text-light) !important;
+    box-shadow: var(--sidebar-box-shadow-light); /* Aplicar la sombra sutil aquí */
+}
+
+    #sidebarMenu.dark-mode-sidebar .nav-link {
+        color: var(--sidebar-text-light) !important;
+    }
+
+        #sidebarMenu.dark-mode-sidebar .nav-link:hover {
+            background-color: #e9ecef; /* Un gris más claro para el hover en modo claro */
+            color: var(--bs-primary) !important; /* Color principal para el hover */
+        }
+
+        #sidebarMenu.dark-mode-sidebar .nav-link.active {
+            background-color: var(--sidebar-active-bg-light) !important;
+            color: var(--sidebar-active-text-light) !important;
+        }
+
+    /* Ajustes para el botón de logout en modo oscuro */
+    #sidebarMenu.dark-mode-sidebar .btn-outline-dark {
+        border-color: #6c757d !important; /* Color de borde para el botón en modo claro */
+        color: #6c757d !important; /* Color de texto para el botón en modo claro */
+    }
+
+        #sidebarMenu.dark-mode-sidebar .btn-outline-dark:hover {
+            background-color: #6c757d !important;
+            color: #FFFFFF !important;
+        }
+
 
 /* --- Estilos para el botón de logout --- */
 .dropdown-menu {
@@ -97,6 +142,7 @@ body {
         left: 0;
         height: auto; /* Ajusta la altura para que no se recorte */
         width: 100%;
+        box-shadow: none; /* Asegura que no tenga sombra en móviles si no se desea */
     }
 
     /* Asegura que el contenido se muestre correctamente en dispositivos pequeños */
@@ -119,9 +165,11 @@ body {
         bottom: 1rem;
         width: 100%;
     }
+
     html {
         font-size: 16px;
     }
+
     .form-card {
         padding: 20px;
     }
@@ -129,9 +177,31 @@ body {
     .header-section img {
         max-width: 100%;
     }
+
+    /* Estilos para el offcanvas móvil en modo oscuro */
+    .offcanvas {
+        background-color: var(--sidebar-bg-dark); /* Fondo oscuro por defecto */
+        color: var(--sidebar-text-dark); /* Color de texto por defecto */
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+        .offcanvas.dark-mode-sidebar { /* Añade esta clase al offcanvas cuando esté en modo oscuro */
+            background-color: var(--sidebar-bg-light) !important;
+            color: var(--sidebar-text-light) !important;
+            box-shadow: var(--sidebar-box-shadow-light); /* Aplicar la sombra también al offcanvas en modo claro */
+        }
+
+            .offcanvas.dark-mode-sidebar .nav-link {
+                color: var(--sidebar-text-light) !important;
+            }
+
+                .offcanvas.dark-mode-sidebar .nav-link:hover {
+                    background-color: #e9ecef;
+                    color: var(--bs-primary) !important;
+                }
 }
 
-/* --- Estilos adicionales para el carrusel --- */
+/* Estilos adicionales para el carrusel */
 .carousel .card {
     flex: 1 0 300px;
     max-width: 100%;
@@ -208,7 +278,17 @@ body {
             background-color: #3A889D;
             transform: translateX(-50%) scaleY(1.3) scaleX(0.8);
         }
+/* Estilo para el botón de logout móvil en modo claro */
+.btn-logout-mobile.btn-dark-mode-logout {
+    background-color: #f8f9fa; /* Un fondo muy claro */
+    color: var(--bs-primary); /* Texto con el color principal */
+    border: 1px solid #ced4da; /* Un borde sutil */
+}
 
+    .btn-logout-mobile.btn-dark-mode-logout:hover {
+        background-color: #e2e6ea; /* Fondo un poco más oscuro al pasar el ratón */
+        color: var(--bs-primary);
+    }
 
 /* Estilo personalizado para el botón de Cerrar Sesión en el menú móvil */
 .btn-logout-mobile {
@@ -240,3 +320,119 @@ body {
     height: auto; /* Mantiene la proporción de la imagen */
 }
 
+/* Estilos del botón de switch (checkbox-wrapper-35) */
+.checkbox-wrapper-35 .switch {
+    display: none;
+}
+
+    .checkbox-wrapper-35 .switch + label {
+        -webkit-box-align: center;
+        -webkit-align-items: center;
+        -ms-flex-align: center;
+        align-items: center;
+        color: #78768d;
+        cursor: pointer;
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        font-size: 12px;
+        line-height: 15px;
+        position: relative;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
+        .checkbox-wrapper-35 .switch + label::before,
+        .checkbox-wrapper-35 .switch + label::after {
+            content: '';
+            display: block;
+        }
+
+        .checkbox-wrapper-35 .switch + label::before {
+            background-color: #05012c;
+            border-radius: 500px;
+            height: 15px;
+            margin-right: 8px;
+            -webkit-transition: background-color 0.125s ease-out;
+            transition: background-color 0.125s ease-out;
+            width: 25px;
+        }
+
+        .checkbox-wrapper-35 .switch + label::after {
+            background-color: #fff;
+            border-radius: 13px;
+            box-shadow: 0 3px 1px 0 rgba(37, 34, 71, 0.05), 0 2px 2px 0 rgba(37, 34, 71, 0.1), 0 3px 3px 0 rgba(37, 34, 71, 0.05);
+            height: 13px;
+            left: 1px;
+            position: absolute;
+            top: 1px;
+            -webkit-transition: -webkit-transform 0.125s ease-out;
+            transition: -webkit-transform 0.125s ease-out;
+            transition: transform 0.125s ease-out;
+            transition: transform 0.125s ease-out, -webkit-transform 0.125s ease-out;
+            width: 13px;
+        }
+
+        .checkbox-wrapper-35 .switch + label .switch-x-text {
+            display: block;
+            margin-right: .3em;
+        }
+
+        .checkbox-wrapper-35 .switch + label .switch-x-toggletext {
+            display: block;
+            font-weight: bold;
+            height: 15px;
+            overflow: hidden;
+            position: relative;
+            width: 45px;
+        }
+
+        .checkbox-wrapper-35 .switch + label .switch-x-unchecked,
+        .checkbox-wrapper-35 .switch + label .switch-x-checked {
+            left: 0;
+            position: absolute;
+            top: 0;
+            -webkit-transition: opacity 0.125s ease-out, -webkit-transform 0.125s ease-out;
+            transition: opacity 0.125s ease-out, -webkit-transform 0.125s ease-out;
+            transition: transform 0.125s ease-out, opacity 0.125s ease-out;
+            transition: transform 0.125s ease-out, opacity 0.125s ease-out, -webkit-transform 0.125s ease-out;
+            opacity: 1;
+            -webkit-transform: none;
+            transform: none;
+        }
+
+        .checkbox-wrapper-35 .switch + label .switch-x-checked {
+            opacity: 0;
+            -webkit-transform: translate3d(0, 100%, 0);
+            transform: translate3d(0, 100%, 0);
+        }
+
+        .checkbox-wrapper-35 .switch + label .switch-x-hiddenlabel {
+            position: absolute;
+            visibility: hidden;
+        }
+
+    .checkbox-wrapper-35 .switch:checked + label::before {
+        background-color: #ffb500;
+    }
+
+    .checkbox-wrapper-35 .switch:checked + label::after {
+        -webkit-transform: translate3d(10px, 0, 0);
+        transform: translate3d(10px, 0, 0);
+    }
+
+    .checkbox-wrapper-35 .switch:checked + label .switch-x-unchecked {
+        opacity: 0;
+        -webkit-transform: translate3d(0, -100%, 0);
+        transform: translate3d(0, -100%, 0);
+    }
+
+    .checkbox-wrapper-35 .switch:checked + label .switch-x-checked {
+        opacity: 1;
+        -webkit-transform: none;
+        transform: none;
+    }

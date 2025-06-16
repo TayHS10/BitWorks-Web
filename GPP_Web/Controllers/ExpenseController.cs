@@ -1,4 +1,5 @@
-﻿using GPP_Web.DTOs.Expense;
+﻿using GPP_Web.DTOs.BudgetPart;
+using GPP_Web.DTOs.Expense;
 using GPP_Web.Models;
 using GPP_Web.Services;
 using Microsoft.AspNetCore.Http;
@@ -17,70 +18,111 @@ namespace GPP_Web.Controllers
             _apiClient = apiClient;
         }
 
-        // Acción para mostrar el formulario de registro de gasto
-        public IActionResult Create(int budgetPartId)
+        // Acción GET para mostrar el formulario
+        [HttpGet]
+        public async Task<IActionResult> Create(int budgetPartId) // Recibe el ID de la partida presupuestaria
         {
+            // Asegúrate de que budgetPartId se reciba correctamente (ej: desde la URL)
             ViewBag.BudgetPartId = budgetPartId;
-            return View();
+
+            decimal remainingAmount = 0;
+            string budgetPartName = $"ID de Partida: {budgetPartId}"; // Valor por defecto
+
+            try
+            {
+                // Obtener los detalles de la partida para mostrar el nombre y el monto restante
+                var responseBudgetPart = await _apiClient.GetAsync<BudgetPartResponseDTO>($"api/BudgetPart/{budgetPartId}");
+
+                if (responseBudgetPart.Success && responseBudgetPart.Data != null)
+                {
+                    budgetPartName = responseBudgetPart.Data.PartName;
+                    remainingAmount = responseBudgetPart.Data.RemainingAmount; // Obtener el monto restante
+                }
+                else
+                {
+                    // Manejo de error si no se puede obtener la partida
+                    ViewBag.ErrorMessage = responseBudgetPart.Message ?? "No se pudo cargar la información de la partida presupuestaria.";
+                }
+            }
+            catch (Exception ex)
+            {
+                // Loggear el error (en un entorno de producción)
+                // _logger.LogError(ex, "Error al cargar la información de la partida presupuestaria.");
+                ViewBag.ErrorMessage = $"Ocurrió un error inesperado al cargar la partida: {ex.Message}";
+            }
+
+            ViewBag.BudgetPartName = budgetPartName;
+            ViewBag.RemainingAmount = remainingAmount; // Pasa el monto restante a la vista
+
+            return View(new CreateExpenseDTO { BudgetPartId = budgetPartId, ExpenseDate = DateOnly.FromDateTime(DateTime.Today) });
         }
 
-        // Acción para registrar un gasto
         [HttpPost]
+        // [ValidateAntiForgeryToken] // Considera añadir esto para protección CSRF
         public async Task<IActionResult> Create(CreateExpenseDTO expenseDto, IFormFile? DocumentFile)
         {
+            // ... (Tu código para cargar BudgetPartName, RemainingAmount y manejar la subida de archivos) ...
+            ViewBag.BudgetPartId = expenseDto.BudgetPartId;
+            string budgetPartName = $"ID de Partida: {expenseDto.BudgetPartId}";
+            decimal remainingAmount = 0;
+
+            try
+            {
+                var responseBudgetPart = await _apiClient.GetAsync<BudgetPartResponseDTO>($"api/BudgetPart/{expenseDto.BudgetPartId}");
+                if (responseBudgetPart.Success && responseBudgetPart.Data != null)
+                {
+                    budgetPartName = responseBudgetPart.Data.PartName;
+                    remainingAmount = responseBudgetPart.Data.RemainingAmount;
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, responseBudgetPart.Message ?? "No se pudo cargar la partida presupuestaria para validación.");
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, $"Error al obtener datos de la partida: {ex.Message}");
+            }
+
+            ViewBag.BudgetPartName = budgetPartName;
+            ViewBag.RemainingAmount = remainingAmount;
+
+            if (DocumentFile != null)
+            {
+                // ... (Tu lógica de validación y subida de archivos) ...
+            }
+
+            // VALIDACIÓN: Gasto vs Monto Restante
+            if (ModelState.IsValid && expenseDto.ExpenseAmount > remainingAmount)
+            {
+                ModelState.AddModelError("ExpenseAmount", $"El monto del gasto (₡{expenseDto.ExpenseAmount:N0}) sobrepasa el monto restante disponible en la partida (₡{remainingAmount:N0}).");
+            }
+
             if (ModelState.IsValid)
             {
                 try
                 {
-                    // Verificamos que se haya subido un archivo
-                    if (DocumentFile != null)
-                    {
-                        // Validar que el archivo sea una imagen
-                        if (DocumentFile.ContentType.StartsWith("image/"))
-                        {
-                            // Generar nombre único para el archivo y guardarlo
-                            var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(DocumentFile.FileName);
-                            var fileExtension = Path.GetExtension(DocumentFile.FileName);
-                            var newFileName = $"{fileNameWithoutExtension}_{Guid.NewGuid()}{fileExtension}";
-                            var filePath = Path.Combine("wwwroot/images/documents", newFileName);
-
-                            // Guardamos el archivo en el servidor
-                            using (var stream = new FileStream(filePath, FileMode.Create))
-                            {
-                                await DocumentFile.CopyToAsync(stream);
-                            }
-
-                            expenseDto.DocumentReference = newFileName;  // Guardamos solo el nombre o la ruta del archivo
-                        }
-                        else
-                        {
-                            ModelState.AddModelError("DocumentFile", "Solo se permiten archivos de imagen.");
-                            return View(expenseDto); // Si el archivo no es válido, mostramos el formulario de nuevo con el error.
-                        }
-                    }
-
-                    // Realizamos la solicitud a la API para registrar el gasto
                     var response = await _apiClient.PostAsync<CreateExpenseDTO, ApiResponse<object>>("api/Expense", expenseDto);
 
                     if (response.Success)
                     {
+                        // **CAMBIO CLAVE AQUÍ:**
+                        // Establece el mensaje de éxito y la URL de redirección en TempData.
                         TempData["SuccessMessage"] = "El gasto se ha registrado correctamente.";
-                        return RedirectToAction("Dashboard", "Manager"); // Redirige a la lista de partidas presupuestarias
+                        TempData["RedirectUrl"] = Url.Action("Create", "Expense", new { budgetPartId = expenseDto.BudgetPartId });
+                        return RedirectToAction("Create", "Expense", new { budgetPartId = expenseDto.BudgetPartId });
                     }
                     else
                     {
-                        // Si la API no responde correctamente, mostramos un mensaje de error
-                        ModelState.AddModelError(string.Empty, response.Message ?? "No se pudo registrar el gasto.");
+                        ModelState.AddModelError(string.Empty, response.Message ?? "No se pudo registrar el gasto en el sistema externo.");
                     }
                 }
                 catch (Exception ex)
                 {
-                    // Manejo de errores generales
-                    ModelState.AddModelError(string.Empty, $"Ocurrió un error al registrar el gasto: {ex.Message}");
+                    ModelState.AddModelError(string.Empty, $"Ocurrió un error inesperado al registrar el gasto. Por favor, inténtalo de nuevo. ({ex.Message})");
                 }
             }
 
-            // Si el modelo no es válido o hay errores, mostramos el formulario nuevamente con los errores
             return View(expenseDto);
         }
 

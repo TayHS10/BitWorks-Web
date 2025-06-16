@@ -1,72 +1,226 @@
-﻿/* Estilos para la Vista General del Proyecto */
+﻿/* --- General View Specific Styles --- */
 
-/* Card de proyecto */
-.project-card {
-    width: 100%;
-    max-width: 800px;
-    margin: 40px auto;
-    padding: 20px;
-    background-color: #ffffff;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
+/* Contenedor principal para mantener la consistencia con el dashboard */
+.dashboard-container {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+    max-width: 900px; /* Un poco más estrecho que el dashboard para enfocar el contenido */
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 15px;
+    padding-right: 15px;
 }
 
-.card-header {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.card-title {
-    font-size: 2rem;
-    color: var(--bs-primary);
-    font-weight: bold;
+/* Título principal del Dashboard */
+.dashboard-main-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: var(--dark-text-color);
     text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 1rem;
+    position: relative;
+    padding-bottom: 15px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.card-code {
-    font-size: 1.2rem;
-    color: #888;
-}
-
-.card-body {
-    font-size: 1rem;
-    color: #333;
-}
-
-    .card-body p {
-        margin: 10px 0;
+    .dashboard-main-title i {
+        font-size: 3rem;
+        margin-right: 15px;
+        color: var(--dark-text-color);
     }
 
-.card-footer {
-    text-align: center;
-    margin-top: 20px;
+    .dashboard-main-title::after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        bottom: 0;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 6px;
+        background-color: var(--secondary-color);
+        border-radius: 3px;
+    }
+
+/* Subtítulo de bienvenida */
+.dashboard-subtitle {
+    font-size: 1.75rem;
+    color: var(--dark-text-color);
+    margin-bottom: 4rem;
+    font-weight: 600;
 }
 
-    .card-footer .btn {
+
+/* --- Estilos de la Tarjeta de Detalles del Proyecto --- */
+.project-details-section {
+    margin-bottom: 3rem;
+}
+
+.project-card-view {
+    background-color: #ffffff;
+    border-radius: 1rem;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    overflow: hidden; /* Asegura que el border-radius se aplique a los hijos */
+}
+
+    .project-card-view .card-header-view {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 1.5rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .project-card-view .card-title-view {
+        margin: 0;
+        font-size: 2rem;
+        font-weight: 700;
+    }
+
+    /* Estilo para los badges de estado */
+    .project-card-view .badge {
         font-size: 1rem;
-        padding: 10px 20px;
+        padding: 0.5em 0.8em;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        /* Colores Bootstrap 5, asegúrate de que tus variables CSS los cubran */
+        /* background-color: var(--success-color); /* o bg-primary, bg-warning, etc. */
     }
 
-/* Estilos responsivos */
-@media (max-width: 767px) {
-    .project-card {
-        padding: 15px;
+    .project-card-view .card-body-view {
+        padding: 2rem;
     }
 
-    .card-title {
-        font-size: 1.5rem;
+    .project-card-view .detail-item {
+        font-size: 1.1rem;
+        margin-bottom: 1rem; /* Espacio entre líneas de detalle */
+        color: var(--dark-text-color);
+        display: flex; /* Para alinear ícono y texto */
+        align-items: flex-start; /* Alinea el ícono y el texto en la parte superior */
     }
 
-    .card-code {
+        .project-card-view .detail-item strong {
+            font-weight: 700;
+            margin-right: 0.5rem;
+            color: var(--primary-color); /* Para enfatizar las etiquetas */
+        }
+
+        .project-card-view .detail-item i {
+            font-size: 1.3rem;
+            margin-right: 0.8rem;
+            color: var(--secondary-color); /* Color del ícono */
+            flex-shrink: 0; /* Evita que el ícono se encoja */
+            width: 25px; /* Ancho consistente para los íconos */
+            text-align: center;
+        }
+
+    .project-card-view .card-footer-view {
+        background-color: var(--light-gray-bg); /* Un fondo claro para el pie de la tarjeta */
+        padding: 1.5rem 2rem;
+        border-top: 1px solid var(--border-color);
+        text-align: right; /* Alinea el botón a la derecha */
+    }
+
+/* Estilo para el botón primario personalizado (ej. Volver al Dashboard) */
+.btn-primary-custom {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+    font-size: 1.1rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    transition: all 0.3s ease;
+    display: inline-flex; /* Para alinear ícono y texto */
+    align-items: center;
+    justify-content: center;
+}
+
+    .btn-primary-custom:hover {
+        background-color: var(--secondary-color);
+        border-color: var(--secondary-color);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        color: white;
+    }
+
+    .btn-primary-custom i {
+        margin-right: 0.8rem;
+        font-size: 1.2rem;
+    }
+
+/* Estilo para un botón secundario personalizado (ej. Ver Partidas) */
+.btn-secondary-custom {
+    background-color: #6c757d; /* Gris de Bootstrap */
+    border-color: #6c757d;
+    color: white;
+    font-size: 1.1rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .btn-secondary-custom:hover {
+        background-color: #5a6268;
+        border-color: #545b62;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        color: white;
+    }
+
+    .btn-secondary-custom i {
+        margin-right: 0.8rem;
+        font-size: 1.2rem;
+    }
+
+
+/* Ajustes Responsivos */
+@media (max-width: 768px) {
+    .dashboard-main-title {
+        font-size: 2.5rem;
+    }
+
+        .dashboard-main-title i {
+            font-size: 2rem;
+        }
+
+    .dashboard-subtitle {
+        font-size: 1.25rem;
+    }
+
+    .project-card-view .card-header-view {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .project-card-view .card-title-view {
+        font-size: 1.75rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .project-card-view .detail-item {
         font-size: 1rem;
     }
 
-    .card-body p {
-        font-size: 0.9rem;
-    }
+        .project-card-view .detail-item i {
+            font-size: 1.1rem;
+            margin-right: 0.5rem;
+        }
 
-    .card-footer .btn {
+    .btn-primary-custom, .btn-secondary-custom {
         width: 100%;
-        padding: 12px 0;
+        margin-left: 0 !important; /* Resetea el margen para botones apilados */
+        margin-bottom: 1rem; /* Espacio entre botones apilados */
+    }
+
+    .project-card-view .card-footer-view {
+        text-align: center; /* Centra los botones en pantallas pequeñas */
     }
 }

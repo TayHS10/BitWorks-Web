@@ -5,90 +5,366 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<link rel="stylesheet" href="~/css/createexpense.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+@* SweetAlert2 CSS *@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.8/dist/sweetalert2.min.css">
 
-<!-- Botón de retroceso con imagen pequeña -->
-<div class="back-button">
-    <a href="javascript:history.back()" class="btn btn-link" style="text-decoration: none;">
-        <img src="~/images/icons/back.png" alt="Volver" class="back-icon"> Volver
+<style>
+    /* Colores y fuentes base (deben estar definidos en _Layout.cshtml o site.css para consistencia global) */
+    :root {
+        --light-gray-bg: #eff1f3;
+        --primary-color: #3A889D; /* Dark Slate Gray */
+        --secondary-color: #275849; /* Charcoal Blue (para contrastes) */
+        --dark-text-color: #343a40; /* Texto oscuro general */
+        --border-color: #e9ecef; /* Color de borde suave */
+        --success-color: #28a745; /* Bootstrap green */
+        --danger-color: #dc3545; /* Bootstrap red */
+        --info-color: #17a2b8; /* Bootstrap info */
+        --card-bg: #ffffff;
+        --input-border: #ced4da;
+        --focus-ring-color: rgba(58, 136, 157, 0.25); /* Ligero Primary color para focus */
+    }
+
+    body {
+        background-color: var(--light-gray-bg) !important;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        color: var(--dark-text-color);
+    }
+
+    /* Contenedor principal para consistencia con el dashboard */
+    .dashboard-container {
+        padding-top: 3rem;
+        padding-bottom: 3rem;
+        max-width: 800px; /* Un poco más estrecho para el formulario */
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    /* Título principal */
+    .dashboard-main-title {
+        font-size: 3.5rem;
+        font-weight: 800;
+        color: var(--dark-text-color);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 1rem;
+        position: relative;
+        padding-bottom: 15px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+        .dashboard-main-title i {
+            font-size: 3rem;
+            margin-right: 15px;
+            color: var(--dark-text-color);
+        }
+
+        .dashboard-main-title::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 6px;
+            background-color: var(--secondary-color);
+            border-radius: 3px;
+        }
+
+    /* Subtítulo */
+    .dashboard-subtitle {
+        font-size: 1.75rem;
+        color: var(--dark-text-color);
+        margin-bottom: 2rem;
+        font-weight: 600;
+    }
+
+    /* Back Link Style */
+    .dashboard-back-link {
+        display: inline-flex;
+        align-items: center;
+        margin-bottom: 2rem;
+        color: var(--primary-color);
+        font-size: 1.1rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+        .dashboard-back-link:hover {
+            color: var(--secondary-color);
+            transform: translateX(-5px);
+        }
+
+        .dashboard-back-link i {
+            font-size: 1.5rem;
+            margin-right: 0.5rem;
+        }
+
+    /* Form Card Container */
+    .form-card {
+        background-color: var(--card-bg);
+        border-radius: 1rem;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        padding: 2.5rem;
+        margin-top: 2rem;
+    }
+
+    /* Form Group Styling */
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--dark-text-color);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+    .form-control {
+        border-radius: 0.5rem;
+        border: 1px solid var(--input-border);
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem var(--focus-ring-color);
+            outline: none;
+        }
+
+    /* Textarea specific height */
+    textarea.form-control {
+        min-height: 100px;
+        resize: vertical; /* Allow vertical resizing */
+    }
+
+    /* Submit Button Styling */
+    .btn-submit {
+        background-color: var(--secondary-color);
+        border-color: var(--secondary-color);
+        color: white;
+        font-size: 1.2rem;
+        padding: 0.8rem 2rem;
+        border-radius: 0.75rem;
+        transition: all 0.3s ease;
+        display: flex; /* Usar flexbox para centrar contenido */
+        justify-content: center;
+        align-items: center;
+        width: 100%; /* Ocupar todo el ancho disponible */
+        margin-top: 1.5rem;
+    }
+
+        .btn-submit:hover {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            color: white; /* Asegurar color blanco al hacer hover */
+        }
+
+        .btn-submit i {
+            margin-right: 0.8rem;
+            font-size: 1.3rem;
+        }
+
+    /* Validation and Alert Styling (will be mostly handled by SweetAlert) */
+    .text-danger {
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+        display: block; /* Asegura que cada error ocupe su propia línea */
+    }
+
+    /* Existing alert classes can be removed or kept for other purposes if needed */
+    .alert {
+        border-radius: 0.75rem;
+        padding: 1rem 1.5rem;
+        font-weight: 500;
+        margin-bottom: 1.5rem;
+    }
+
+    .alert-success {
+        background-color: rgba(40, 167, 69, 0.1);
+        color: var(--success-color);
+        border-color: rgba(40, 167, 69, 0.2);
+    }
+
+    .alert-danger {
+        background-color: rgba(220, 53, 69, 0.1);
+        color: var(--danger-color);
+        border-color: rgba(220, 53, 69, 0.2);
+    }
+
+        .alert-danger ul {
+            margin-bottom: 0;
+            padding-left: 20px;
+        }
+
+    .alert .btn-close {
+        font-size: 0.9rem;
+    }
+
+    /* Estilo para el input de tipo file */
+    input[type="file"] {
+        padding-top: 0.65rem;
+        padding-bottom: 0.65rem;
+    }
+
+</style>
+
+<div class="container-fluid dashboard-container animate__animated animate__fadeIn">
+    <a href="javascript:history.back()" class="dashboard-back-link animate__animated animate__fadeInLeft">
+        <i class="bi bi-arrow-left"></i> Volver
     </a>
+
+    <h1 class="text-center dashboard-main-title mb-3 animate__animated animate__bounceIn">
+        <i class="bi bi-wallet2"></i> Registrar Gasto
+    </h1>
+    <p class="text-center dashboard-subtitle animate__animated animate__fadeInUp">Completa el formulario para añadir un nuevo gasto a tu partida.</p>
+
+    @* Mensajes de éxito y error serán manejados por SweetAlert en el script *@
+    @* @if (TempData["SuccessMessage"] != null) { ... } *@
+    @* @if (!ViewData.ModelState.IsValid && ...) { ... } *@
+
+    <div class="form-card animate__animated animate__fadeInUp">
+        <form method="post" enctype="multipart/form-data">
+            <input type="hidden" id="BudgetPartId" name="BudgetPartId" value="@ViewBag.BudgetPartId" />
+
+            <div class="form-group">
+                <label for="BudgetPartDisplay">Partida Presupuestaria</label>
+                <input type="text" class="form-control" id="BudgetPartDisplay" value="@(ViewBag.BudgetPartName ?? $"ID de Partida: {ViewBag.BudgetPartId}")" readonly />
+                @if (ViewBag.RemainingAmount != null)
+                {
+                    <small class="form-text text-muted">Monto restante disponible: ₡@ViewBag.RemainingAmount.ToString("N0")</small>
+                }
+            </div>
+
+            <div class="form-group">
+                <label for="ExpenseAmount">Monto del Gasto</label>
+                <input type="number" class="form-control" id="ExpenseAmount" name="ExpenseAmount" placeholder="0.00" step="0.01" value="@Model.ExpenseAmount" required />
+                @Html.ValidationMessageFor(model => model.ExpenseAmount, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                <label for="ExpenseDate">Fecha del Gasto</label>
+                <input type="date" class="form-control" id="ExpenseDate" name="ExpenseDate" value="@(Model.ExpenseDate == default(DateOnly) ? "" : Model.ExpenseDate.ToString("yyyy-MM-dd"))" required />
+                @Html.ValidationMessageFor(model => model.ExpenseDate, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                <label for="DocumentFile">Subir Documento (Imagen)</label>
+                <input type="file" class="form-control" id="DocumentFile" name="DocumentFile" accept="image/*" />
+                @Html.ValidationMessageFor(model => model.DocumentReference, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                <label for="Description">Descripción</label>
+                <textarea class="form-control" id="Description" name="Description" placeholder="Descripción detallada del gasto" rows="4">@Model.Description</textarea>
+                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-submit">
+                    <i class="bi bi-plus-circle-fill"></i> Registrar Gasto
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
 
-<h1 class="text-center">Registrar Gasto</h1>
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation/1.19.5/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+    @* SweetAlert2 JS *@
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.8/dist/sweetalert2.all.min.js"></script>
 
-<!-- Mensaje de éxito (modal o card de notificación) -->
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        @TempData["SuccessMessage"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-}
+    <script>
+        $(document).ready(function() {
+            // Lógica para mostrar mensajes de éxito con SweetAlert2
+            var successMessage = '@TempData["SuccessMessage"]';
+            var redirectToUrl = '@TempData["RedirectUrl"]';
 
-<!-- Errores generales -->
-@if (!ViewData.ModelState.IsValid)
-{
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <strong>Errores:</strong>
-        <ul>
-            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
-            {
-                <li>@error.ErrorMessage</li>
+            if (successMessage && successMessage.trim() !== '') {
+                // Pequeño retraso para asegurar que la página se renderiza antes del modal
+                setTimeout(function() {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Éxito!',
+                        text: successMessage,
+                        confirmButtonText: 'Aceptar',
+                        customClass: {
+                            popup: 'animate__animated animate__fadeInDown'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Forzar el cierre de SweetAlert antes de redirigir
+                            Swal.close();
+
+                            // Pequeño retardo adicional antes de la redirección
+                            // Esto ayuda a que el modal se cierre visualmente antes de la navegación
+                            setTimeout(function() {
+                                if (redirectToUrl && redirectToUrl.trim() !== '') {
+                                    window.location.href = redirectToUrl; // Redirige a la URL especificada
+                                }
+                            }, 50); // 50ms de retardo
+                        }
+                    });
+                }, 100); // 100ms de retardo para que el DOM esté listo
             }
-        </ul>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
+
+
+            // Manejar errores de validación del modelo que IMPIDEN LA REDIRECCIÓN
+            var errorMessages = [];
+            @if (!ViewData.ModelState.IsValid)
+            {
+                    foreach (var modelState in ViewData.ModelState.Values)
+                    {
+                            foreach (var error in modelState.Errors)
+                            {
+                                    if (!string.IsNullOrEmpty(error.ErrorMessage))
+                                    {
+                                            @:errorMessages.push('@Html.Raw(error.ErrorMessage.Replace("'", "\\'"))');
+                                    }
+                            }
+                    }
+            }
+
+            if (errorMessages.length > 0) {
+                var errorMessageHtml = errorMessages.join('<br>');
+                Swal.fire({
+                    icon: 'error',
+                    title: '¡Error de Validación!',
+                    html: errorMessageHtml,
+                    confirmButtonText: 'Entendido',
+                    customClass: {
+                        popup: 'animate__animated animate__shakeX'
+                    }
+                });
+            }
+
+            // Manejar errores generales desde ViewBag.ErrorMessage que IMPIDEN LA REDIRECCIÓN
+            var generalErrorMessage = '@ViewBag.ErrorMessage';
+            if (generalErrorMessage && generalErrorMessage.trim() !== '') {
+                Swal.fire({
+                    icon: 'error',
+                    title: '¡Error!',
+                    text: generalErrorMessage,
+                    confirmButtonText: 'Aceptar',
+                    customClass: {
+                        popup: 'animate__animated animate__shakeX'
+                    }
+                });
+            }
+        });
+    </script>
 }
-
-<!-- Formulario de Registro de Gasto -->
-<form method="post" enctype="multipart/form-data" class="form-container">
-    <div class="form-group">
-        <label for="BudgetPartId">Partida Presupuestaria</label>
-        <input type="text" class="form-control" id="BudgetPartId" name="BudgetPartId" value="@ViewBag.BudgetPartId" readonly />
-        @if (ViewData.ModelState["BudgetPartId"]?.Errors.Any() == true)
-        {
-            <span class="text-danger">@ViewData.ModelState["BudgetPartId"]?.Errors.FirstOrDefault()?.ErrorMessage</span>
-        }
-    </div>
-
-    <div class="form-group">
-        <label for="ExpenseAmount">Monto del Gasto</label>
-        <input type="number" class="form-control" id="ExpenseAmount" name="ExpenseAmount" placeholder="Ingrese el monto" step="0.01" required />
-        @if (ViewData.ModelState["ExpenseAmount"]?.Errors.Any() == true)
-        {
-            <span class="text-danger">@ViewData.ModelState["ExpenseAmount"]?.Errors.FirstOrDefault()?.ErrorMessage</span>
-        }
-    </div>
-
-    <div class="form-group">
-        <label for="ExpenseDate">Fecha del Gasto</label>
-        <input type="date" class="form-control" id="ExpenseDate" name="ExpenseDate" required />
-        @if (ViewData.ModelState["ExpenseDate"]?.Errors.Any() == true)
-        {
-            <span class="text-danger">@ViewData.ModelState["ExpenseDate"]?.Errors.FirstOrDefault()?.ErrorMessage</span>
-        }
-    </div>
-
-    <!-- Campo para subir la imagen (referencia del documento) -->
-    <div class="form-group">
-        <label for="DocumentFile">Subir Documento (Imagen)</label>
-        <input type="file" class="form-control" id="DocumentFile" name="DocumentFile" accept="image/*" />
-        @if (ViewData.ModelState["DocumentFile"]?.Errors.Any() == true)
-        {
-            <span class="text-danger">@ViewData.ModelState["DocumentFile"]?.Errors.FirstOrDefault()?.ErrorMessage</span>
-        }
-    </div>
-
-    <div class="form-group">
-        <label for="Description">Descripción</label>
-        <textarea class="form-control" id="Description" name="Description" placeholder="Descripción del gasto" rows="4"></textarea>
-        @if (ViewData.ModelState["Description"]?.Errors.Any() == true)
-        {
-            <span class="text-danger">@ViewData.ModelState["Description"]?.Errors.FirstOrDefault()?.ErrorMessage</span>
-        }
-    </div>
-
-    <div class="form-group">
-        <button type="submit" class="btn btn-primary btn-block">Registrar Gasto</button>
-    </div>
-</form>

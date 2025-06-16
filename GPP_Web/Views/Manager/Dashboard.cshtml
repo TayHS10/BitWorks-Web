@@ -3,83 +3,345 @@
 @{
     ViewData["Title"] = "Dashboard";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    // Recupera los valores del ViewBag
+    string greetingMessage = ViewBag.GreetingMessage ?? "Hola";
+    string greetingIconClass = ViewBag.GreetingIconClass ?? "bi bi-sun"; // Ícono por defecto si no se establece
+
+    // Recupera las nuevas métricas del dashboard
+    int activeProjectsCount = ViewBag.ActiveProjectsCount ?? 0;
+    decimal totalExpensesToday = ViewBag.TotalExpensesToday ?? 0m; // Usar 0m para decimal
+    int completedProjectsCount = ViewBag.CompletedProjectsCount ?? 0;
 }
 
-<link rel="stylesheet" href="~/css/managerdashboard.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="~/css/manager-dashboard.css">
 
-<!-- Cards de acceso rápido con enlaces -->
-<div class="quick-access mb-5">
-    <a href="@Url.Action("ActiveProjects", "Projects")" class="card">
-        <img src="~/images/icons/projects.png" alt="Mis Proyectos Icon" class="card__icon">
-        <h3 class="card__title">Mis Proyectos</h3>
-        <p class="card__content">Accede a la lista de tus proyectos activos de manera rápida.</p>
-        <div class="card__arrow">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" height="15" width="15">
-                <path fill="#fff" d="M13.4697 17.9697C13.1768 18.2626 13.1768 18.7374 13.4697 19.0303C13.7626 19.3232 14.2374 19.3232 14.5303 19.0303L20.3232 13.2374C21.0066 12.554 21.0066 11.446 20.3232 10.7626L14.5303 4.96967C14.2374 4.67678 13.7626 4.67678 13.4697 4.96967C13.1768 5.26256 13.1768 5.73744 13.4697 6.03033L18.6893 11.25H4C3.58579 11.25 3.25 11.5858 3.25 12C3.25 12.4142 3.58579 12.75 4 12.75H18.6893L13.4697 17.9697Z"></path>
-            </svg>
-        </div>
-    </a>
+<style>
+    /* Colores y fuentes base (mantener si no están en _Layout o site.css) */
+    :root {
+        --light-gray-bg: #eff1f3;
+        --primary-color: #3A889D; /* Dark Slate Gray */
+        --secondary-color: #275849; /* Charcoal Blue (para contrastes) */
+        --dark-text-color: #343a40; /* Texto oscuro general */
+        --border-color: #e9ecef; /* Color de borde suave */
+    }
 
-    <a href="@Url.Action("Create", "Expenses")" class="card">
-        <img src="~/images/icons/agregar.png" alt="Agregar proyecto Icon" class="card__icon">
-        <h3 class="card__title">Registrar Gasto</h3>
-        <p class="card__content">Registra un nuevo gasto con un solo clic.</p>
-        <div class="card__arrow">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" height="15" width="15">
-                <path fill="#fff" d="M13.4697 17.9697C13.1768 18.2626 13.1768 18.7374 13.4697 19.0303C13.7626 19.3232 14.2374 19.3232 14.5303 19.0303L20.3232 13.2374C21.0066 12.554 21.0066 11.446 20.3232 10.7626L14.5303 4.96967C14.2374 4.67678 13.7626 4.67678 13.4697 4.96967C13.1768 5.26256 13.1768 5.73744 13.4697 6.03033L18.6893 11.25H4C3.58579 11.25 3.25 11.5858 3.25 12C3.25 12.4142 3.58579 12.75 4 12.75H18.6893L13.4697 17.9697Z"></path>
-            </svg>
-        </div>
-    </a>
+    body {
+        background-color: var(--light-gray-bg) !important;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        color: var(--dark-text-color);
+    }
 
-    <a href="@Url.Action("Statistics", "Projects")" class="card">
-        <img src="~/images/icons/gastos.png" alt="Historial de Gastos Icon" class="card__icon">
-        <h3 class="card__title">Historial de Gastos</h3>
-        <p class="card__content">Consulta el registro de gastos generales de los proyectos.</p>
-        <div class="card__arrow">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" height="15" width="15">
-                <path fill="#fff" d="M13.4697 17.9697C13.1768 18.2626 13.1768 18.7374 13.4697 19.0303C13.7626 19.3232 14.2374 19.3232 14.5303 19.0303L20.3232 13.2374C21.0066 12.554 21.0066 11.446 20.3232 10.7626L14.5303 4.96967C14.2374 4.67678 13.7626 4.67678 13.4697 4.96967C13.1768 5.26256 13.1768 5.73744 13.4697 6.03033L18.6893 11.25H4C3.58579 11.25 3.25 11.5858 3.25 12C3.25 12.4142 3.58579 12.75 4 12.75H18.6893L13.4697 17.9697Z"></path>
-            </svg>
-        </div>
-    </a>
-</div>
+    /* Contenedor principal del Dashboard */
+    .dashboard-container {
+        padding-top: 3rem;
+        padding-bottom: 3rem;
+        max-width: 1200px;
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 15px;
+        padding-right: 15px;
+    }
 
-<h1 class="text-center dashboard-title">Resumen</h1>
+    /* Título principal del Dashboard */
+    .dashboard-main-title {
+        font-size: 3.5rem;
+        font-weight: 800;
+        color: var(--dark-text-color); /* Color del texto del título */
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 1rem;
+        position: relative;
+        padding-bottom: 15px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        display: flex; /* Para alinear el texto y el ícono */
+        justify-content: center;
+        align-items: center;
+    }
 
-<!-- Tabla de proyectos -->
-<div class="table-responsive-container">
-    <table class="table table-striped table-responsive">
-        <thead>
-            <tr>
-                <th>Código</th>
-                <th>Título</th>
-                <th>Presupuesto</th>
-                <th>Presupuesto restante</th>
-                <th>Opciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>@Html.DisplayFor(modelItem => item.ProjectCode)</td>
-                    <td>@Html.DisplayFor(modelItem => item.ProjectName)</td>
-                    <td>₡@Html.DisplayFor(modelItem => item.Budget)</td>
-                    <td>₡@Html.DisplayFor(modelItem => item.RemainingBudget)</td>
-                    <td>
-                        <div class="dropdown">
-                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                                Opciones
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <li><a class="dropdown-item" href="@Url.Action("Index", "BudgetPart", new { projectId = item.ProjectId })">Ver Partidas</a></li>
-                                <li><a class="dropdown-item" href="@Url.Action("GeneralView", "Project", new { projectId = item.ProjectId })">Vista General</a></li>
-                            </ul>
-                        </div>
-                    </td>
-                </tr>
+        .dashboard-main-title i {
+            font-size: 3rem; /* Tamaño del ícono */
+            margin-right: 15px; /* Espacio entre el ícono y el texto */
+            color: var(--dark-text-color); /* Color del ícono */
+        }
+
+
+        .dashboard-main-title::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 6px;
+            background-color: var(--secondary-color);
+            border-radius: 3px;
+        }
+
+    /* Subtítulo de bienvenida */
+    .dashboard-subtitle {
+        font-size: 1.75rem;
+        color: var(--dark-text-color);
+        margin-bottom: 4rem;
+        font-weight: 600;
+    }
+
+    /* ESTILOS PARA LAS TARJETAS */
+    .dashboard-cards-section {
+        margin-bottom: 3rem;
+    }
+
+    .info-card {
+        background-color: #ffffff;
+        border-radius: 1rem;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        padding: 1.5rem;
+        text-align: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+        .info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .info-card .card-icon {
+            font-size: 3.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .info-card .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--dark-text-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .info-card .card-value {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--secondary-color);
+        }
+
+    /* Títulos de sección */
+    .section-title {
+        font-size: 2.25rem;
+        font-weight: 700;
+        color: var(--dark-text-color);
+        margin-bottom: 3rem;
+        position: relative;
+        padding-bottom: 10px;
+    }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            transform: translateX(-50%);
+            width: 70px;
+            height: 5px;
+            background-color: var(--primary-color);
+            border-radius: 2.5px;
+        }
+
+    /* SECCIÓN DE LA TABLA DE PROYECTOS */
+    .projects-summary-section {
+        padding: 2rem;
+        background-color: #ffffff;
+        border-radius: 1rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        margin-bottom: 3rem;
+    }
+
+    .table-responsive-wrapper {
+        overflow-x: auto;
+        border-radius: 0.75rem;
+        border: 1px solid var(--border-color);
+    }
+
+    .project-table {
+        width: 100%;
+        margin-bottom: 0;
+        border-collapse: collapse;
+    }
+
+        .project-table thead th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            padding: 15px 20px;
+            border-bottom: none;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+
+        .project-table tbody td {
+            padding: 12px 20px;
+            vertical-align: middle;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .project-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .project-table tbody tr:nth-child(even) {
+            background-color: #f6f9fc;
+        }
+
+        .project-table tbody tr:hover {
+            background-color: #e9f5fd;
+            cursor: pointer;
+        }
+
+    .project-options-btn {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        font-size: 0.9rem;
+        padding: 0.4rem 0.8rem;
+        border-radius: 0.5rem;
+        transition: all 0.2s ease;
+        color: white;
+    }
+
+        .project-options-btn:hover {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+
+    /* --- AJUSTES PARA EL MENÚ DESPLEGABLE DE LA TABLA --- */
+    .dropdown {
+        position: relative;
+        overflow: visible;
+    }
+
+    .dropdown-menu {
+        min-width: 180px;
+        border-radius: 0.5rem;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        border: 1px solid var(--border-color);
+        z-index: 1050;
+    }
+    /* --- FIN AJUSTES PARA EL MENÚ DESPLEGABLE --- */
+
+    .dropdown-item {
+        font-size: 0.95rem;
+        padding: 0.6rem 1rem;
+        transition: background-color 0.2s ease, color 0.2s ease;
+        display: flex;
+        align-items: center;
+    }
+
+        .dropdown-item i {
+            margin-right: 0.75rem;
+            font-size: 1.1rem;
+            color: #6c757d;
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+            .dropdown-item:hover i {
+                color: white;
             }
-        </tbody>
-    </table>
+</style>
+
+<div class="container-fluid dashboard-container">
+    <h1 class="text-center dashboard-main-title mb-3 animate__animated animate__bounceIn">
+        <i class="@greetingIconClass"></i> @greetingMessage
+    </h1>
+    <p class="text-center dashboard-subtitle animate__animated animate__fadeInUp">Bienvenido, @User.Identity.Name!</p>
+
+    <section class="dashboard-cards-section mb-5">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-4 mb-4 animate__animated animate__fadeInLeft">
+                <div class="info-card">
+                    <i class="bi bi-graph-up card-icon"></i>
+                    <h3 class="card-title">Proyectos Activos</h3>
+                    <p class="card-value">@activeProjectsCount</p> @* Valor dinámico *@
+                </div>
+            </div>
+            <div class="col-12 col-md-4 mb-4 animate__animated animate__fadeInUp">
+                <div class="info-card">
+                    <i class="bi bi-receipt card-icon"></i> @* Nuevo ícono para gastos *@
+                    <h3 class="card-title">Gastos de Hoy</h3> @* Nuevo título *@
+                    <p class="card-value">₡@totalExpensesToday.ToString("N0")</p> @* Valor dinámico con formato de moneda *@
+                </div>
+            </div>
+            <div class="col-12 col-md-4 mb-4 animate__animated animate__fadeInRight">
+                <div class="info-card">
+                    <i class="bi bi-check-circle card-icon"></i>
+                    <h3 class="card-title">Proyectos Completados</h3>
+                    <p class="card-value">@completedProjectsCount</p> @* Valor dinámico *@
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <h2 class="section-title text-center mb-4">Resumen de Proyectos</h2>
+
+    <section class="projects-summary-section mb-5">
+        <div class="table-responsive-wrapper shadow-sm">
+            <table class="table project-table table-hover align-middle">
+                <thead class="table-primary">
+                    <tr>
+                        <th scope="col">Código</th>
+                        <th scope="col">Título</th>
+                        <th scope="col" class="text-end">Presupuesto</th>
+                        <th scope="col" class="text-end">Presupuesto Restante</th>
+                        <th scope="col" class="text-center">Opciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@Html.DisplayFor(modelItem => item.ProjectCode)</td>
+                                <td>@Html.DisplayFor(modelItem => item.ProjectName)</td>
+                                <td class="text-end">₡@item.Budget.ToString("N0")</td> @* Usar "N0" para formato de número *@
+                                <td class="text-end">₡@item.RemainingBudget.ToString("N0")</td> @* Usar "N0" para formato de número *@
+                                <td class="text-center">
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm btn-primary dropdown-toggle project-options-btn" type="button" id="dropdownMenuButton_@item.ProjectId" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="bi bi-three-dots-vertical"></i> Opciones
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton_@item.ProjectId">
+                                            <li><a class="dropdown-item" href="@Url.Action("Index", "BudgetPart", new { projectId = item.ProjectId })"><i class="bi bi-cash-stack me-2"></i>Ver Partidas</a></li>
+                                            <li><a class="dropdown-item" href="@Url.Action("GeneralView", "Project", new { projectId = item.ProjectId })"><i class="bi bi-eye me-2"></i>Vista General</a></li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center py-4 text-muted">No hay proyectos para mostrar.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </section>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        console.log("Dashboard Manager Scripts cargados.");
+    </script>
+}

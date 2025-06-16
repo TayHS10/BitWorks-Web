@@ -7,21 +7,16 @@
     <meta name="author" content="GPP_Web Team" />
     <title>@ViewData["Title"] - GPP_Web</title>
 
-    <!-- Favicon-->
     <link rel="icon" type="image/x-xicon" href="~/images/logos/favicon.ico" />
 
-    <!-- Custom Google font: Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@100;200;300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet" />
 
-    <!-- Bootstrap icons-->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet" />
 
-    <!-- Hover.css -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hover.css/2.3.1/css/hover-min.css">
 
-    <!-- Core theme CSS (incluye Bootstrap, tu site.css y otros estilos) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" xintegrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/GPP_Web.styles.css" asp-append-version="true" />
@@ -30,7 +25,6 @@
 
     @if (!User.Identity.IsAuthenticated)
     {
-        <!-- Navegación Superior (Visible para usuarios NO autenticados) -->
         <nav id="topNavbar" class="navbar navbar-expand-lg navbar-light bg-white py-3">
             <div class="container px-5">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
@@ -52,15 +46,22 @@
         </nav>
     }
 
-    <!-- Contenedor principal con el sidebar y el contenido -->
     <div class="d-flex flex-grow-1">
         @if (User.Identity.IsAuthenticated)
         {
-            <!-- Sidebar Desktop (Visible para usuarios AUTENTICADOS en pantallas MD y mayores) -->
             <nav id="sidebarMenu" class="sidebar-desktop d-none d-md-flex flex-column flex-shrink-0 p-3 text-white bg-dark">
-                <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-                    <span class="fs-4">Dashboard</span>
-                </a>
+                <div class="d-flex align-items-center justify-content-center mb-3 mb-md-0 me-md-auto text-decoration-none">
+                    <div class="checkbox-wrapper-35">
+                        <input value="private" name="switch" id="darkModeSwitch" type="checkbox" class="switch">
+                        <label for="darkModeSwitch">
+                            <span class="switch-x-text">Modo </span>
+                            <span class="switch-x-toggletext">
+                                <span class="switch-x-unchecked"><span class="switch-x-hiddenlabel">Apagado: </span>Claro</span>
+                                <span class="switch-x-checked"><span class="switch-x-hiddenlabel">Encendido: </span>Oscuro</span>
+                            </span>
+                        </label>
+                    </div>
+                </div>
                 <hr>
                 <ul class="nav nav-pills flex-column mb-auto">
                     <li class="nav-item">
@@ -83,8 +84,6 @@
                                 <i class="bi bi-file-earmark-text me-2"></i>Mis Proyectos
                             </a>
                         </li>
-
-
                     }
                     @if (User.IsInRole("Accountant"))
                     {
@@ -98,20 +97,7 @@
                                 <i class="bi bi-file-earmark-x me-2"></i>Desactivar Proyecto
                             </a>
                         </li>
-
-
-
                     }
-                    @* <li>
-                        <a href="#" class="nav-link text-white">
-                            <i class="bi bi-file-earmark-bar-graph me-2"></i>Reportes
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="nav-link text-white">
-                            <i class="bi bi-people me-2"></i>Usuarios
-                        </a>
-                    </li> *@
                 </ul>
                 <hr>
                 <form asp-controller="Auth" asp-action="Logout" method="post">
@@ -122,13 +108,25 @@
                 </form>
             </nav>
 
-            <!-- Sidebar móvil (visible en pantallas pequeñas) -->
             <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileSidebar" aria-labelledby="mobileSidebarLabel">
                 <div class="offcanvas-header">
                     <h5 class="offcanvas-title" id="mobileSidebarLabel">Menú</h5>
                     <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                 </div>
                 <div class="offcanvas-body">
+                    <div class="d-flex align-items-center justify-content-center mb-3 mb-md-0 me-md-auto text-decoration-none">
+                        <div class="checkbox-wrapper-35">
+                            <input value="private" name="switch" id="darkModeSwitchMobile" type="checkbox" class="switch">
+                            <label for="darkModeSwitchMobile">
+                                <span class="switch-x-text">Claro </span>
+                                <span class="switch-x-toggletext">
+                                    <span class="switch-x-unchecked"><span class="switch-x-hiddenlabel">Apagado: </span>Oscuro</span>
+                                    <span class="switch-x-checked"><span class="switch-x-hiddenlabel">Encendido: </span>Claro</span>
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                    <hr>
                     <ul class="nav flex-column">
                         <li class="nav-item">
                             <a asp-area="" asp-controller="Home" asp-action="Index" class="nav-link">
@@ -151,18 +149,7 @@
                                 </a>
                             </li>
                         }
-                        <li>
-                            <a href="#" class="nav-link">
-                                Reportes
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="nav-link">
-                                Usuarios
-                            </a>
-                        </li>
                     </ul>
-                    <!-- Botón de Cerrar Sesión dentro del menú móvil -->
                     <form asp-controller="Auth" asp-action="Logout" method="post">
                         @Html.AntiForgeryToken()
                         <button type="submit" class="btn btn-logout-mobile w-100 mt-3">
@@ -172,9 +159,7 @@
                 </div>
             </div>
 
-            <!-- Main Content Area -->
             <div id="mainContent" class="flex-grow-1 content-shifted-left">
-                <!-- Button to open the mobile sidebar -->
                 <button class="btn btn-primary d-md-none m-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar" aria-controls="mobileSidebar">
                     <i class="bi bi-list"></i> Menú
                 </button>
@@ -194,7 +179,6 @@
         }
     </div>
 
-    <!-- Footer -->
     <footer class="bg-white py-4 mt-auto border-top">
         <div class="container px-5">
             <div class="row align-items-center justify-content-between flex-column flex-sm-row">
@@ -212,12 +196,143 @@
         </div>
     </footer>
 
-    <!-- Bootstrap core JS y tu JS personalizado -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.8/dist/sweetalert2.all.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            // Manejar mensajes de éxito globales desde TempData
+            var successMessage = '@TempData["SuccessMessage"]';
+            // También podemos necesitar la URL de redirección desde TempData
+            var redirectToUrl = '@TempData["RedirectUrl"]'; // Esta la pasaremos desde el controlador
+
+            if (successMessage && successMessage.trim() !== '') {
+                // Añadir un pequeño retardo para asegurar que el DOM esté completamente listo
+                // Y luego, al hacer clic en 'Aceptar', redirigir.
+                setTimeout(function() {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Éxito!',
+                        text: successMessage,
+                        confirmButtonText: 'Aceptar',
+                        customClass: {
+                            popup: 'animate__animated animate__fadeInDown'
+                        }
+                    }).then((result) => {
+                        // Si el usuario hace clic en Aceptar y hay una URL de redirección, redirigimos
+                        if (result.isConfirmed && redirectToUrl && redirectToUrl.trim() !== '') {
+                            window.location.href = redirectToUrl;
+                        }
+                    });
+                }, 100); // Retardo de 100 milisegundos
+            }
+
+            // ... (resto de tu script para errorMessage y DarkMode) ...
+        });
+    </script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const desktopSwitch = document.getElementById('darkModeSwitch');
+        const mobileSwitch = document.getElementById('darkModeSwitchMobile');
+        const sidebar = document.getElementById('sidebarMenu');
+        const mobileOffcanvas = document.getElementById('mobileSidebar'); // Obtener el offcanvas móvil
+
+        // Seleccionar los nav-links y el botón de logout de AMBOS sidebars
+        const navLinksDesktop = sidebar ? sidebar.querySelectorAll('.nav-link') : [];
+        const logoutButtonDesktop = sidebar ? sidebar.querySelector('.btn-outline-light') : null;
+
+        const navLinksMobile = mobileOffcanvas ? mobileOffcanvas.querySelectorAll('.nav-link') : [];
+        const logoutButtonMobile = mobileOffcanvas ? mobileOffcanvas.querySelector('.btn-logout-mobile') : null;
+
+
+        // Función para aplicar el modo oscuro/claro
+        function applyDarkMode(isDarkMode) {
+            // Aplicar al sidebar de escritorio
+            if (sidebar) {
+                if (isDarkMode) {
+                    sidebar.classList.remove('bg-dark');
+                    sidebar.classList.add('bg-light', 'dark-mode-sidebar');
+                    navLinksDesktop.forEach(link => link.classList.add('text-dark'));
+                    navLinksDesktop.forEach(link => link.classList.remove('text-white'));
+                    if (logoutButtonDesktop) {
+                        logoutButtonDesktop.classList.remove('btn-outline-light');
+                        logoutButtonDesktop.classList.add('btn-outline-dark');
+                    }
+                } else {
+                    sidebar.classList.remove('bg-light', 'dark-mode-sidebar');
+                    sidebar.classList.add('bg-dark');
+                    navLinksDesktop.forEach(link => link.classList.remove('text-dark'));
+                    navLinksDesktop.forEach(link => link.classList.add('text-white'));
+                    if (logoutButtonDesktop) {
+                        logoutButtonDesktop.classList.remove('btn-outline-dark');
+                        logoutButtonDesktop.classList.add('btn-outline-light');
+                    }
+                }
+            }
+
+            // Aplicar al offcanvas móvil
+            if (mobileOffcanvas) {
+                if (isDarkMode) {
+                    mobileOffcanvas.classList.remove('bg-dark'); // Asegúrate de que no tenga bg-dark si lo hereda
+                    mobileOffcanvas.classList.add('bg-light', 'dark-mode-sidebar'); // Añade bg-light y la clase de modo oscuro
+                    navLinksMobile.forEach(link => link.classList.add('text-dark'));
+                    navLinksMobile.forEach(link => link.classList.remove('text-white'));
+                    if (logoutButtonMobile) {
+                        logoutButtonMobile.classList.add('btn-dark-mode-logout'); // Nueva clase para el botón móvil
+                    }
+                } else {
+                    mobileOffcanvas.classList.remove('bg-light', 'dark-mode-sidebar');
+                    mobileOffcanvas.classList.add('bg-dark'); // Vuelve al bg-dark si lo necesitas
+                    navLinksMobile.forEach(link => link.classList.remove('text-dark'));
+                    navLinksMobile.forEach(link => link.classList.add('text-white'));
+                    if (logoutButtonMobile) {
+                        logoutButtonMobile.classList.remove('btn-dark-mode-logout');
+                    }
+                }
+            }
+        }
+
+        // Cargar preferencia al cargar la página
+        const savedDarkModePreference = localStorage.getItem('darkMode');
+        if (savedDarkModePreference === 'true') {
+            desktopSwitch.checked = true;
+            if (mobileSwitch) mobileSwitch.checked = true;
+            applyDarkMode(true);
+        } else {
+            desktopSwitch.checked = false;
+            if (mobileSwitch) mobileSwitch.checked = false;
+            applyDarkMode(false);
+        }
+
+        // Escuchar cambios en el switch de escritorio
+        desktopSwitch.addEventListener('change', function () {
+            const isDarkMode = this.checked;
+            applyDarkMode(isDarkMode);
+            localStorage.setItem('darkMode', isDarkMode);
+            // Sincronizar el switch móvil si existe
+            if (mobileSwitch) {
+                mobileSwitch.checked = isDarkMode;
+            }
+        });
+
+        // Escuchar cambios en el switch móvil (si existe)
+        if (mobileSwitch) {
+            mobileSwitch.addEventListener('change', function () {
+                const isDarkMode = this.checked;
+                applyDarkMode(isDarkMode);
+                localStorage.setItem('darkMode', isDarkMode);
+                // Sincronizar el switch de escritorio
+                desktopSwitch.checked = isDarkMode;
+            });
+        }
+    });
+</script>
+
 
 </body>
 </html>

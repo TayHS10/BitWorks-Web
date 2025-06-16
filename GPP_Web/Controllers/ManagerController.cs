@@ -3,7 +3,10 @@ using GPP_Web.Models;
 using GPP_Web.Services;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System;
 using System.Diagnostics;
+using TimeZoneConverter;
+using System.Linq;
 
 namespace GPP_Web.Controllers
 {
@@ -23,37 +26,111 @@ namespace GPP_Web.Controllers
             _logger = logger;
         }
 
-        /// <summary>
-        /// Maneja la solicitud para la vista principal del controlador, recuperando los proyectos asignados al manager desde la API.
-        /// </summary>
-        /// <returns>Una tarea que representa la operación asíncrona y devuelve un <see cref="IActionResult"/> con la vista que muestra los proyectos asignados o un mensaje de error en caso de fallo.</returns>
         public async Task<IActionResult> Dashboard()
         {
+            string greetingMessage;
+            string greetingIconClass;
+            TimeZoneInfo costaRicaTimeZone;
+            DateOnly todayCostaRica; // Declarar como DateOnly
+
             try
             {
-                var managerEmail = User.Identity.Name; // Obtener el email del manager desde el usuario autenticado
+                try
+                {
+                    costaRicaTimeZone = TZConvert.GetTimeZoneInfo("America/Costa_Rica");
+                }
+                catch (TimeZoneNotFoundException)
+                {
+                    costaRicaTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Central America Standard Time");
+                }
+
+                DateTime costaRicaTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, costaRicaTimeZone);
+                int hour = costaRicaTime.Hour;
+
+                if (hour >= 6 && hour < 12)
+                {
+                    greetingMessage = "Buenos Días";
+                    greetingIconClass = "bi bi-sun-fill";
+                }
+                else if (hour >= 12 && hour < 18)
+                {
+                    greetingMessage = "Buenas Tardes";
+                    greetingIconClass = "bi bi-cloud-sun-fill";
+                }
+                else
+                {
+                    greetingMessage = "Buenas Noches";
+                    greetingIconClass = "bi bi-moon-stars-fill";
+                }
+
+                // **CORRECCIÓN AQUÍ:** Convertir DateTime a DateOnly
+                todayCostaRica = DateOnly.FromDateTime(costaRicaTime);
+                ViewBag.TodayCostaRica = todayCostaRica; // Ahora ViewBag.TodayCostaRica es DateOnly
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al determinar la hora de Costa Rica: {ex.Message}");
+                greetingMessage = "Hola";
+                greetingIconClass = "bi bi-person-fill";
+                // Fallback: usar la fecha UTC actual como DateOnly
+                todayCostaRica = DateOnly.FromDateTime(DateTime.UtcNow);
+                ViewBag.TodayCostaRica = todayCostaRica;
+            }
+
+            ViewBag.GreetingMessage = greetingMessage;
+            ViewBag.GreetingIconClass = greetingIconClass;
+
+            List<ProjectResponseDTO> projects = new List<ProjectResponseDTO>();
+            try
+            {
+                var managerEmail = User.Identity.Name;
                 var response = await _apiClient.GetAsync<List<ProjectResponseDTO>>($"api/Project/manager/{managerEmail}");
 
                 if (response.Success && response.Data != null)
                 {
-                    return View(response.Data); // Pasa los proyectos a la vista
+                    projects = response.Data;
                 }
                 else
                 {
                     ViewBag.ErrorMessage = response.Message ?? "No se pudieron cargar los proyectos asignados.";
-                    return View(new List<ProjectResponseDTO>());
                 }
             }
             catch (HttpRequestException ex)
             {
                 ViewBag.ErrorMessage = $"Error de conexión con la API: {ex.Message}";
-                return View(new List<ProjectResponseDTO>());
             }
             catch (Exception ex)
             {
                 ViewBag.ErrorMessage = $"Ocurrió un error inesperado: {ex.Message}";
-                return View(new List<ProjectResponseDTO>());
             }
+
+            int activeProjectsCount = projects.Count(p => p.Status == "Active");
+            ViewBag.ActiveProjectsCount = activeProjectsCount;
+
+            decimal totalExpensesToday = 0;
+            foreach (var project in projects)
+            {
+                if (project.BudgetParts != null)
+                {
+                    foreach (var budgetPart in project.BudgetParts)
+                    {
+                        if (budgetPart.Expenses != null)
+                        {
+                            // **ESTA LÍNEA AHORA FUNCIONARÁ CORRECTAMENTE:**
+                            // Ambos lados de la comparación son DateOnly
+                            totalExpensesToday += budgetPart.Expenses
+                                                    .Where(e => e.ExpenseDate == todayCostaRica) // Usar la variable local todayCostaRica
+                                                    .Sum(e => e.ExpenseAmount);
+                        }
+                    }
+                }
+            }
+            ViewBag.TotalExpensesToday = totalExpensesToday;
+
+            int completedProjectsCount = projects.Count(p => p.RemainingBudget == 0);
+            ViewBag.CompletedProjectsCount = completedProjectsCount;
+
+            return View(projects);
         }
 
         /// <summary>

@@ -42,51 +42,47 @@ namespace GPP_Web.Controllers
             }
         }
 
-        // Acción para mostrar el formulario de transferencia de fondos entre partidas
+        // Acción para mostrar el formulario de transferencia de fondos entre partidas (SIN CAMBIOS AQUÍ)
         public async Task<IActionResult> TransferAmount(int budgetPartId)
         {
+            var model = new TransferFundsDTO { SourceBudgetPartId = budgetPartId };
+
             try
             {
-                // Obtener la partida de origen por su ID
                 var responseSource = await _apiClient.GetAsync<BudgetPartResponseDTO>($"api/BudgetPart/{budgetPartId}");
 
                 if (responseSource.Success && responseSource.Data != null)
                 {
-                    // Obtener el projectId de la partida origen
+                    model.SourceBudgetPartId = responseSource.Data.BudgetPartId;
                     int projectId = responseSource.Data.ProjectId;
+                    ViewBag.SourceBudgetPart = responseSource.Data;
 
-                    // Obtener todas las partidas de presupuesto
                     var responseAllParts = await _apiClient.GetAsync<List<BudgetPartResponseDTO>>("api/BudgetPart");
 
                     if (responseAllParts.Success && responseAllParts.Data != null)
                     {
-                        // Filtrar las partidas de destino, excluyendo la partida de origen y solo mostrando las partidas del mismo proyecto
                         var filteredParts = responseAllParts.Data
                             .Where(part => part.BudgetPartId != budgetPartId && part.ProjectId == projectId)
                             .ToList();
-
-                        // Asegúrate de que las variables no sean null antes de pasarlas a la vista
-                        ViewBag.SourceBudgetPart = responseSource.Data;  // Partida de origen
-                        ViewBag.AllBudgetParts = filteredParts;  // Partidas de destino disponibles
-
-                        return View();
+                        ViewBag.AllBudgetParts = filteredParts;
+                        return View(model);
                     }
                     else
                     {
                         ViewBag.ErrorMessage = "No se pudieron cargar las partidas de destino.";
-                        return View();
+                        return View(model);
                     }
                 }
                 else
                 {
                     ViewBag.ErrorMessage = "No se pudo cargar la partida origen.";
-                    return View();
+                    return View(model);
                 }
             }
             catch (Exception ex)
             {
                 ViewBag.ErrorMessage = $"Ocurrió un error inesperado: {ex.Message}";
-                return View();
+                return View(model);
             }
         }
 
@@ -94,17 +90,49 @@ namespace GPP_Web.Controllers
         [HttpPost]
         public async Task<IActionResult> TransferAmount(TransferFundsDTO transferFundsDto)
         {
+            // ... (Tu código existente para obtener SourceBudgetPart y AllBudgetParts) ...
+            var responseSource = await _apiClient.GetAsync<BudgetPartResponseDTO>($"api/BudgetPart/{transferFundsDto.SourceBudgetPartId}");
+            BudgetPartResponseDTO sourceBudgetPart = null;
+
+            if (responseSource.Success && responseSource.Data != null)
+            {
+                sourceBudgetPart = responseSource.Data;
+                ViewBag.SourceBudgetPart = sourceBudgetPart;
+            }
+            else
+            {
+                ModelState.AddModelError(string.Empty, "No se pudo recuperar la partida de origen para validar el monto.");
+            }
+
+            var responseAllParts = await _apiClient.GetAsync<List<BudgetPartResponseDTO>>("api/BudgetPart");
+            if (responseAllParts.Success && responseAllParts.Data != null && sourceBudgetPart != null)
+            {
+                var filteredParts = responseAllParts.Data
+                    .Where(part => part.BudgetPartId != transferFundsDto.SourceBudgetPartId && part.ProjectId == sourceBudgetPart.ProjectId)
+                    .ToList();
+                ViewBag.AllBudgetParts = filteredParts;
+            }
+
             if (ModelState.IsValid)
             {
+                if (sourceBudgetPart != null && transferFundsDto.Amount > sourceBudgetPart.RemainingAmount)
+                {
+                    ModelState.AddModelError("Amount", $"El monto a transferir (₡{transferFundsDto.Amount:N0}) sobrepasa el monto restante disponible en la partida de origen (₡{sourceBudgetPart.RemainingAmount:N0}).");
+                    return View(transferFundsDto);
+                }
+
                 try
                 {
-                    // Realizamos la solicitud a la API para transferir los fondos entre las partidas
                     var response = await _apiClient.PostAsync<TransferFundsDTO, ApiResponse<object>>("api/BudgetPart/TransferFunds", transferFundsDto);
 
                     if (response.Success)
                     {
                         TempData["SuccessMessage"] = "Los fondos se han transferido correctamente.";
-                        return RedirectToAction("Index"); // Redirige a la vista con las partidas
+                        // **NUEVO:** Almacenar la URL de redirección en TempData
+                        TempData["RedirectUrl"] = Url.Action("Dashboard", "Manager"); // Genera la URL para el Dashboard del Manager
+
+                       
+                        return RedirectToAction("Dashboard", "Manager");
                     }
                     else
                     {
